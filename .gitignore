@@ -1,0 +1,8 @@
+# Build folder
+tmpbuild
+
+# Other folders
+closure-compiler
+
+# Zip files
+*.zip
