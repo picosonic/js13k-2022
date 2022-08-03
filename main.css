@@ -1,4 +1,32 @@
+*
+{
+  margin:0px;
+  padding:0px;
+
+  user-select:none; /* Chrome and Opera */
+  -webkit-user-select:none; /* Safari */
+  -moz-user-select:none; /* Firefox */
+
+  touch-action:none; /* disable panning/zooming gestures */
+}
+
 body
 {
-  background:black;
+  overflow:hidden;
+  background:#000;
+}
+
+#wrapper
+{
+  position:absolute;
+  left:0px;
+  top:0px;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+canvas
+{
+  position:absolute;
 }
