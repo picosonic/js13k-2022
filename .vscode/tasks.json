@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "command": "bash",
+    "echoCommand": true,
+    "args": [
+        "-c"
+    ],
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "args": [
+                "-c",
+                "${workspaceFolder}/build.sh \"${workspaceFolder}\""
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run in browser",
+            "type": "shell",
+            "args": [
+                "-c",
+                "firefox ${workspaceFolder}/index.html"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        }
+    ]
+}
