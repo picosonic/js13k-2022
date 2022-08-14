@@ -1,5 +1,5 @@
 # js13k-2022
-JS13KGames entry for 2021
+JS13KGames entry for 2022
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
