@@ -6,3 +6,6 @@ closure-compiler
 
 # Zip files
 *.zip
+
+# Other files
+tilemap.js

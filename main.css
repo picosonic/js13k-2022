@@ -29,4 +29,12 @@ body
 canvas
 {
   position:absolute;
+  padding:0px;
+  margin:0px;
+  overflow:hidden;
+
+  image-rendering:-moz-crisp-edges;
+  image-rendering:-webkit-crisp-edges;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
 }

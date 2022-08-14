@@ -12,15 +12,39 @@ zipfile="js13k.zip"
 buildpath="tmpbuild"
 jscat="${buildpath}/min.js"
 indexcat="${buildpath}/index.html"
+assetsrc="assets/tilemap_packed.png"
+assetjs="tilemap.js"
 
 # Create clean build folder
 rm -Rf "${buildpath}" >/dev/null 2>&1
 rm -Rf "${zipfile}" >/dev/null 2>&1
 mkdir "${buildpath}"
 
+# See if the asset needs to be rebuilt
+srcdate=`stat -c %Y ${assetsrc} 2>/dev/null`
+destdate=`stat -c %Y ${assetjs} 2>/dev/null`
+
+# If no js asset found, force build
+if [ "${destdate}" == "" ]
+then
+  destdate=0
+fi
+
+# When source is newer, rebuild
+if [ ${srcdate} -gt ${destdate} ]
+then
+  # Remove old dest
+  rm "${assetjs}" >/dev/null 2>&1
+
+  # Convert from src to dest
+  echo -n 'const tilemap="data:image/png;base64,' > "${assetjs}"
+  base64 -w 0 "${assetsrc}" >> "${assetjs}"
+  echo '";' >> "${assetjs}"
+fi
+
 # Concatenate the JS files
 touch "${jscat}" >/dev/null 2>&1
-for file in "main.js"
+for file in "${assetjs}" "main.js"
 do
   cat "${file}" >> "${jscat}"
 done
