@@ -78,3 +78,9 @@ Updated "run" action in VSCode to also rebuild assets if required but not build 
 Added my timeline library as used in previous years, since it proved so useful. I'll use it to schedule things to happen on a timeline, for animations and game progression.
 
 Updated build/run script to auto build levels if Tiled level files are modified.
+
+Created a sample map in Tiled. Using most of the available tiles and chars. Then fixed Tiled version compatibility issue with build script where I was being restrictively specific.
+
+Updated to draw level to canvas rather than just available tiles.
+
+Added loading of levels (to be used for switching levels), this splits chars and adds them as objects to gamestate.
