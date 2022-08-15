@@ -23,7 +23,7 @@
             "type": "shell",
             "args": [
                 "-c",
-                "firefox ${workspaceFolder}/index.html"
+                "${workspaceFolder}/build.sh \"${workspaceFolder}\" run"
             ],
             "problemMatcher": [],
             "group": {

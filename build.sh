@@ -1,12 +1,19 @@
 #!/bin/bash
 
 # Check for work folder specified
-if [ $# -eq 1 ]
+if [ $# -ge 1 ]
 then
   workdir=$1
   echo "Entering ${workdir}"
   cd "${workdir}"
 fi
+
+if [ $# -ge 2 ]
+then
+  param=$2
+else
+  param=""
+fi 
 
 zipfile="js13k.zip"
 buildpath="tmpbuild"
@@ -14,11 +21,6 @@ jscat="${buildpath}/min.js"
 indexcat="${buildpath}/index.html"
 assetsrc="assets/tilemap_packed.png"
 assetjs="tilemap.js"
-
-# Create clean build folder
-rm -Rf "${buildpath}" >/dev/null 2>&1
-rm -Rf "${zipfile}" >/dev/null 2>&1
-mkdir "${buildpath}"
 
 # See if the asset needs to be rebuilt
 srcdate=`stat -c %Y ${assetsrc} 2>/dev/null`
@@ -41,6 +43,23 @@ then
   base64 -w 0 "${assetsrc}" >> "${assetjs}"
   echo '";' >> "${assetjs}"
 fi
+
+if [ "${param}" == "run" ]
+then
+  curbrowser=`which xdg-open >/dev/null 2>&1`
+  if [ "${curbrowser}" == "" ]
+  then
+    curbrowser="firefox"
+  fi
+
+  ${curbrowser} "index.html"
+  exit 0
+fi
+
+# Create clean build folder
+rm -Rf "${buildpath}" >/dev/null 2>&1
+rm -Rf "${zipfile}" >/dev/null 2>&1
+mkdir "${buildpath}"
 
 # Concatenate the JS files
 touch "${jscat}" >/dev/null 2>&1
