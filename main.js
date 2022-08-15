@@ -92,6 +92,8 @@ var gs={
   fall:false, // falling
   dir:0, //direction (-1=left, 0=none, 1=right)
 
+  level:0,
+
   debug:false
 };
 
@@ -214,6 +216,26 @@ function drawtile(tileid, x, y)
     x, y, tilesize, tilesize);
 }
 
+// Draw level
+function drawlevel()
+{
+  var width=parseInt(levels[gs.level].width);
+  var height=parseInt(levels[gs.level].height);
+
+  for (var y=0; y<height; y++)
+  {
+    for (var x=0; x<width; x++)
+    {
+      var tile=parseInt(levels[gs.level].tiles[(y*width)+x]||1);
+      drawtile(tile-1, x*tilesize, y*tilesize);
+
+      tile=parseInt(levels[gs.level].chars[(y*width)+x]||0);
+      if (tile!=0)
+        drawtile(tile-1, x*tilesize, y*tilesize);
+    }
+  }
+}
+
 // Entry point
 function init()
 {
@@ -246,11 +268,7 @@ function init()
   playfieldsize();
 
   gs.tilemap=new Image;
-  gs.tilemap.onload=function()
-  {
-    for (var i=0; i<80; i++)
-      drawtile(i, ((tilesize*i) % (tilesperrow*tilesize)), Math.floor((tilesize*i) / (tilesperrow*tilesize))*tilesize);
-  };
+  gs.tilemap.onload=function() {drawlevel();};
   gs.tilemap.src=tilemap;
 }
 
