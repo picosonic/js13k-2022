@@ -68,3 +68,13 @@ Still too hot to think or code, but ultimately I've decided to go with a 2D plat
 I've added the assets to the project and created a way to draw individual tiles to the canvas. Due to the pixel nature of the assets, I'm going to limit the play area to 16:9 aspect ratio at 640x360 ([nHD](https://en.wikipedia.org/wiki/Graphics_display_resolution#640_%C3%97_360_(nHD))), that will auto centre in a reactive way to browser resizing.
 
 I want to put together some maps using [Tiled](https://www.mapeditor.org/) next so that I can get a feel for the physics required.
+
+15th August
+-----------
+Added an initial [Tiled](https://www.mapeditor.org/) level to get the ball rolling.
+
+Updated "run" action in VSCode to also rebuild assets if required but not build .zip file before starting browser.
+
+Added my timeline library as used in previous years, since it proved so useful. I'll use it to schedule things to happen on a timeline, for animations and game progression.
+
+Updated build/run script to auto build levels if Tiled level files are modified.
