@@ -47,10 +47,18 @@ then
   for file in assets/level*.tmx
   do
     echo -n "{" >> "${leveljs}"
+
+    for attrib in "width" "height"
+    do
+      echo -n '"'${attrib}'":"' >> "${leveljs}"
+      cat "${file}" | grep "<map " | tr ' ' '\n' | grep '^'${attrib}'=' | awk -F'"' '{ print $2 }' | tr -d '\n' >> "${leveljs}"
+      echo -n '",' >> "${leveljs}"
+    done
+
     for assettype in "tiles" "chars"
     do
       echo -n "\"${assettype}\":[" >> "${leveljs}"
-      cat "${file}" | tr -d '\n' | sed 's/<layer name=/\n<layer name=/g' | grep "${assettype}" | sed 's/</\n</g' | grep "<data encoding=" | awk -F'>' '{ print $2 }' | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/^0,/,/g' | sed 's/,0$/,/g' >> "${leveljs}"
+      cat "${file}" | tr -d '\n' | sed 's/<layer name=/\n<layer name=/g' | grep "${assettype}" | sed 's/</\n</g' | grep "<data encoding=" | awk -F'>' '{ print $2 }' | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/^0,/,/g' | sed 's/,0$/,/g' | tr -d '\n' >> "${leveljs}"
       echo -n "]," >> "${leveljs}"
     done
     echo -n "}," >> "${leveljs}"
@@ -90,7 +98,7 @@ then
     curbrowser="firefox"
   fi
 
-  ${curbrowser} "index.html"
+  ${curbrowser} "index.html" >/dev/null 2>&1
   exit 0
 fi
 
