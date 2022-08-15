@@ -39,9 +39,10 @@ if [ ${srcdate} -gt ${destdate} ]
 then
   echo "Rebuilding levels"
 
-  # Remove old dest
-  rm "${leveljs}" >/dev/null 2>&1
+  # Clear old dest
+  echo -n "" > "${leveljs}"
 
+  # Start new file
   echo -n "var levels=[" > "${leveljs}"
   for file in assets/level*.tmx
   do
@@ -72,8 +73,8 @@ if [ ${srcdate} -gt ${destdate} ]
 then
   echo "Rebuilding tilemap"
 
-  # Remove old dest
-  rm "${assetjs}" >/dev/null 2>&1
+  # Clear old dest
+  echo -n "" > "${assetjs}"
 
   # Convert from src to dest
   echo -n 'const tilemap="data:image/png;base64,' > "${assetjs}"
@@ -95,7 +96,6 @@ fi
 
 # Create clean build folder
 rm -Rf "${buildpath}" >/dev/null 2>&1
-rm -Rf "${zipfile}" >/dev/null 2>&1
 mkdir "${buildpath}"
 
 # Concatenate the JS files
@@ -125,6 +125,9 @@ echo -n '</script><meta name="viewport" content="width=device-width, initial-sca
 
 # Remove the minified JS
 rm "${jscat}" >/dev/null 2>&1
+
+# Remove old zip
+rm -Rf "${zipfile}" >/dev/null 2>&1
 
 # Zip everything up
 zip -j "${zipfile}" "${buildpath}"/*
