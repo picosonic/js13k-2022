@@ -80,6 +80,8 @@ var gs={
   canvas:null,
   ctx:null,
   scale:1,
+
+  // Tilemap image
   tilemap:null,
 
   // Main character
@@ -92,8 +94,15 @@ var gs={
   fall:false, // falling
   dir:0, //direction (-1=left, 0=none, 1=right)
 
+  // Level attributes
   level:0,
+  width:0,
+  height:0,
 
+  // Characters
+  chars:[],
+
+  // Debug flag
   debug:false
 };
 
@@ -216,24 +225,78 @@ function drawtile(tileid, x, y)
     x, y, tilesize, tilesize);
 }
 
+// Load level
+function loadlevel(level)
+{
+  gs.level=level;
+
+  gs.width=parseInt(levels[gs.level].width);
+  gs.height=parseInt(levels[gs.level].height);
+
+  gs.chars=[];
+
+  // Find chars
+  for (var y=0; y<gs.height; y++)
+  {
+    for (var x=0; x<gs.width; x++)
+    {
+      var tile=parseInt(levels[gs.level].chars[(y*gs.width)+x]||0);
+
+      if (tile!=0)
+      {
+        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize)};
+
+        switch (tile-1)
+        {
+          case 51: // Bee
+          case 52:
+          case 53: // Fly
+          case 54:
+          case 55: // Grub
+          case 56:
+            gs.chars.push(obj);
+            break;
+
+          case 40: // Player
+          case 41:
+          case 42:
+          case 45:
+          case 46:
+            gs.x=obj.x;
+            gs.y=obj.y;
+            gs.vs=0;
+            gs.hs=0;
+            gs.jump=false;
+            gs.fall=false;
+            gs.dir=0;
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+  }
+}
+
 // Draw level
 function drawlevel()
 {
-  var width=parseInt(levels[gs.level].width);
-  var height=parseInt(levels[gs.level].height);
-
-  for (var y=0; y<height; y++)
+  for (var y=0; y<gs.height; y++)
   {
-    for (var x=0; x<width; x++)
+    for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level].tiles[(y*width)+x]||1);
+      var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1);
       drawtile(tile-1, x*tilesize, y*tilesize);
-
-      tile=parseInt(levels[gs.level].chars[(y*width)+x]||0);
-      if (tile!=0)
-        drawtile(tile-1, x*tilesize, y*tilesize);
     }
   }
+}
+
+// Draw chars
+function drawchars()
+{
+  for (var id=0; id<gs.chars.length; id++)
+    drawtile(gs.chars[id].id, gs.chars[id].x, gs.chars[id].y);
 }
 
 // Entry point
@@ -268,7 +331,7 @@ function init()
   playfieldsize();
 
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() {drawlevel();};
+  gs.tilemap.onload=function() {loadlevel(0); drawlevel(); drawchars();};
   gs.tilemap.src=tilemap;
 }
 
