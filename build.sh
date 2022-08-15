@@ -21,8 +21,43 @@ jscat="${buildpath}/min.js"
 indexcat="${buildpath}/index.html"
 assetsrc="assets/tilemap_packed.png"
 assetjs="tilemap.js"
+leveljs="levels.js"
 
-# See if the asset needs to be rebuilt
+# See if the levels asset need to be rebuilt
+mostrecentlevel=`ls -larth assets/level*.tmx | tail -1 | awk '{ print $NF }'`
+srcdate=`stat -c %Y ${mostrecentlevel} 2>/dev/null`
+destdate=`stat -c %Y ${leveljs} 2>/dev/null`
+
+# If no js asset found, force build
+if [ "${destdate}" == "" ]
+then
+  destdate=0
+fi
+
+# When source is newer, rebuild
+if [ ${srcdate} -gt ${destdate} ]
+then
+  echo "Rebuilding levels"
+
+  # Remove old dest
+  rm "${leveljs}" >/dev/null 2>&1
+
+  echo -n "var levels=[" > "${leveljs}"
+  for file in assets/level*.tmx
+  do
+    echo -n "{" >> "${leveljs}"
+    for assettype in "tiles" "chars"
+    do
+      echo -n "\"${assettype}\":[" >> "${leveljs}"
+      cat "${file}" | tr -d '\n' | sed 's/<layer name=/\n<layer name=/g' | grep "${assettype}" | sed 's/</\n</g' | grep "<data encoding=" | awk -F'>' '{ print $2 }' | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/^0,/,/g' | sed 's/,0$/,/g' >> "${leveljs}"
+      echo -n "]," >> "${leveljs}"
+    done
+    echo -n "}," >> "${leveljs}"
+  done
+  echo -n "];" >> "${leveljs}"
+fi
+
+# See if the tilemap asset needs to be rebuilt
 srcdate=`stat -c %Y ${assetsrc} 2>/dev/null`
 destdate=`stat -c %Y ${assetjs} 2>/dev/null`
 
@@ -35,6 +70,8 @@ fi
 # When source is newer, rebuild
 if [ ${srcdate} -gt ${destdate} ]
 then
+  echo "Rebuilding tilemap"
+
   # Remove old dest
   rm "${assetjs}" >/dev/null 2>&1
 
@@ -63,7 +100,7 @@ mkdir "${buildpath}"
 
 # Concatenate the JS files
 touch "${jscat}" >/dev/null 2>&1
-for file in "timeline.js" "${assetjs}" "main.js"
+for file in "timeline.js" "${assetjs}" "${leveljs}" "main.js"
 do
   cat "${file}" >> "${jscat}"
 done
