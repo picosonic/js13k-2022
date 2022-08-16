@@ -230,8 +230,8 @@ function loadlevel(level)
 {
   gs.level=level;
 
-  gs.width=parseInt(levels[gs.level].width);
-  gs.height=parseInt(levels[gs.level].height);
+  gs.width=parseInt(levels[gs.level].width, 10);
+  gs.height=parseInt(levels[gs.level].height, 10);
 
   gs.chars=[];
 
@@ -240,7 +240,7 @@ function loadlevel(level)
   {
     for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level].chars[(y*gs.width)+x]||0);
+      var tile=parseInt(levels[gs.level].chars[(y*gs.width)+x]||0, 10);
 
       if (tile!=0)
       {
@@ -286,7 +286,7 @@ function drawlevel()
   {
     for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1);
+      var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1, 10);
       drawtile(tile-1, x*tilesize, y*tilesize);
     }
   }
