@@ -290,6 +290,8 @@ function drawlevel()
       drawtile(tile-1, x*tilesize, y*tilesize);
     }
   }
+
+  write(gs.ctx, 10, 10, "Level "+(gs.level+1), 1, "rgb(0,0,0)");
 }
 
 // Draw chars
