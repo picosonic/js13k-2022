@@ -1,8 +1,8 @@
 // JS 13k 2022 entry
 
 // Global constants
-const xmax=640;
-const ymax=360;
+const xmax=320;
+const ymax=180;
 const tilesize=16;
 const tilesperrow=10;
 
