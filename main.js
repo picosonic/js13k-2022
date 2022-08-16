@@ -77,9 +77,11 @@ const tilesperrow=10;
 // Game state
 var gs={
   // Canvas
-  canvas:null,
+  canvas:null, // Tiles
   ctx:null,
-  scale:1,
+  scanvas:null, // Sprites
+  sctx:null,
+  scale:1, // Changes when resizing window
 
   // Tilemap image
   tilemap:null,
@@ -88,6 +90,8 @@ var gs={
   keystate:0,
   x:0, // x position
   y:0, // y position
+  sx:0, // start x position (for current level)
+  sy:0, // start y position (for current level)
   vs:0, // vertical speed
   hs:0, // horizontal speed
   jump:false, // jumping
@@ -95,9 +99,9 @@ var gs={
   dir:0, //direction (-1=left, 0=none, 1=right)
 
   // Level attributes
-  level:0,
-  width:0,
-  height:0,
+  level:0, // Level number (0 based)
+  width:0, // Width in tiles
+  height:0, // height in tiles
 
   // Characters
   chars:[],
@@ -193,7 +197,6 @@ function updatekeystate(e, dir)
 function playfieldsize()
 {
   var height=window.innerHeight;
-  var aspectratio=xmax/ymax;
   var ratio=xmax/ymax;
   var width=Math.floor(height*ratio);
   var top=0;
@@ -211,10 +214,17 @@ function playfieldsize()
   
   gs.scale=(height/ymax);
 
+  // Tiles
   gs.canvas.style.top=top+"px";
   gs.canvas.style.left=left+"px";
   gs.canvas.style.transformOrigin='0 0';
   gs.canvas.style.transform='scale('+gs.scale+')';
+
+  // Sprites
+  gs.scanvas.style.top=top+"px";
+  gs.scanvas.style.left=left+"px";
+  gs.scanvas.style.transformOrigin='0 0';
+  gs.scanvas.style.transform='scale('+gs.scale+')';
 }
 
 // Draw tile
@@ -262,9 +272,13 @@ function loadlevel(level)
           case 42:
           case 45:
           case 46:
-            gs.x=obj.x;
+            gs.x=obj.x; // Set current position
             gs.y=obj.y;
-            gs.vs=0;
+
+            gs.sx=obj.x; // Set start position
+            gs.sy=obj.y;
+
+            gs.vs=0; // Start not moving
             gs.hs=0;
             gs.jump=false;
             gs.fall=false;
@@ -324,9 +338,13 @@ function init()
     e.preventDefault();
   };
 
-  // Set up canvas
-  gs.canvas=document.getElementById("canvas");
+  // Set up tiles canvas
+  gs.canvas=document.getElementById("tiles");
   gs.ctx=gs.canvas.getContext("2d");
+
+  // Set up sprites canvas
+  gs.scanvas=document.getElementById("sprites");
+  gs.sctx=gs.canvas.getContext("2d");
 
   window.addEventListener("resize", function() { playfieldsize(); });
 
