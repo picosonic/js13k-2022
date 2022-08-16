@@ -84,3 +84,13 @@ Created a sample map in Tiled. Using most of the available tiles and chars. Then
 Updated to draw level to canvas rather than just available tiles.
 
 Added loading of levels (to be used for switching levels), this splits chars and adds them as objects to gamestate.
+
+16th August
+-----------
+Added radix to parseInt() due to complaints by closure compiler.
+
+Decided the resolution was too high for a pixel art feel, so reduced to 320x180.
+
+Added 8-bit font (used in previous competitions) and a writer library.
+
+Moved sprites onto a separate canvas than the tiles.
