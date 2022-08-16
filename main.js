@@ -230,9 +230,15 @@ function playfieldsize()
 // Draw tile
 function drawtile(tileid, x, y)
 {
-  // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
     x, y, tilesize, tilesize);
+}
+
+// Draw sprite
+function drawsprite(sprite)
+{
+  gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
+    sprite.x, sprite.y, tilesize, tilesize);
 }
 
 // Load level
@@ -312,7 +318,7 @@ function drawlevel()
 function drawchars()
 {
   for (var id=0; id<gs.chars.length; id++)
-    drawtile(gs.chars[id].id, gs.chars[id].x, gs.chars[id].y);
+    drawsprite(gs.chars[id]);
 }
 
 // Entry point
@@ -344,7 +350,7 @@ function init()
 
   // Set up sprites canvas
   gs.scanvas=document.getElementById("sprites");
-  gs.sctx=gs.canvas.getContext("2d");
+  gs.sctx=gs.scanvas.getContext("2d");
 
   window.addEventListener("resize", function() { playfieldsize(); });
 
