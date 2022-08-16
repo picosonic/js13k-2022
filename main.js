@@ -230,8 +230,14 @@ function playfieldsize()
 // Draw tile
 function drawtile(tileid, x, y)
 {
-  gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
-    x, y, tilesize, tilesize);
+  // to draw flipped
+  //
+  // gs.ctx.save();
+  // gs.scale(-1, 1);
+  // gs.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x, y, tilesize*-1, tilesize)
+  // gs.ctx.restore();
+
+  gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x, y, tilesize, tilesize);
 }
 
 // Draw sprite
