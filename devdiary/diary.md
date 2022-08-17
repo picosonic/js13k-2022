@@ -118,3 +118,17 @@ Made all tiles in chars[] visible and not solid, interactions will come later (i
 Testing the platformer physics, collision detection and animations.
 
 ![Testing platformer physics](bees.gif?raw=true "Testing platformer physics")
+
+Added player animation cycling.
+
+Added player/char collision testing, and ability to pick up gun.
+
+To improve readability, changed constants to uppercase and added keystate bitmask constants.
+
+Changed jump from SPACE/ENTER to UP, which seems more intuitve, leaving those free for actions.
+
+Edited tilemap to change "gate" into "bee hive".
+
+Added scrolling of map to player including multiple scroll speeds and dampening.
+
+![PLayer animation and scrolling](bees2.gif?raw=true "Player animation and scrolling")
