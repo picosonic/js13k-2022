@@ -279,7 +279,6 @@ function drawsprite(sprite)
   if (sprite.flip)
   {
    gs.sctx.save();
-   //gs.sctx.translate(-1, 1);
    gs.sctx.scale(-1, 1);
    gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
       Math.floor(sprite.x)*-1, Math.floor(sprite.y), TILESIZE*-1, TILESIZE);
@@ -330,6 +329,7 @@ function loadlevel(level)
             gs.fall=false;
             gs.dir=0;
             gs.flip=false;
+            gs.gun=false;
             break;
 
           default:
