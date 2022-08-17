@@ -461,7 +461,7 @@ function jumpcheck()
 function collisioncheck()
 {
   // Check for horizontal collisions
-  if (playercollide(gs.x+gs.hs, gs.y))
+  if ((gs.hs!=0) && (playercollide(gs.x+gs.hs, gs.y)))
   {
     // A collision occured, so move the character until it hits
     while (!playercollide(gs.x+(gs.hs>0?1:-1), gs.y))
@@ -473,7 +473,7 @@ function collisioncheck()
   gs.x+=Math.floor(gs.hs);
 
   // Check for vertical collisions
-  if (playercollide(gs.x, gs.y+gs.vs))
+  if ((gs.vs!=0) && (playercollide(gs.x, gs.y+gs.vs)))
   {
     // A collision occured, so move the character until it hits
     while (!playercollide(gs.x, gs.y+(gs.vs>0?1:-1)))
