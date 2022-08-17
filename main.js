@@ -745,7 +745,13 @@ function scrolltoplayer(dampened)
   if (newxoffs!=gs.xoffset)
   {
     if (dampened)
-      gs.xoffset+=newxoffs>gs.xoffset?1:-1;
+    {
+      var xdelta=1;
+
+      if (Math.abs(gs.xoffset-newxoffs)>(XMAX/5)) xdelta=4;
+
+      gs.xoffset+=newxoffs>gs.xoffset?xdelta:-xdelta;
+    }
     else
       gs.xoffset=newxoffs;
   }
@@ -754,7 +760,13 @@ function scrolltoplayer(dampened)
   if (newyoffs!=gs.yoffset)
   {
     if (dampened)
-      gs.yoffset+=newyoffs>gs.yoffset?1:-1;
+    {
+      var ydelta=1;
+
+      if (Math.abs(gs.yoffset-newyoffs)>(YMAX/5)) ydelta=4;
+
+      gs.yoffset+=newyoffs>gs.yoffset?ydelta:-ydelta;
+    }
     else
       gs.yoffset=newyoffs;
   }
