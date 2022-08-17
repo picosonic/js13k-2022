@@ -94,3 +94,15 @@ Decided the resolution was too high for a pixel art feel, so reduced to 320x180.
 Added 8-bit font (used in previous competitions) and a writer library.
 
 Moved sprites onto a separate canvas than the tiles.
+
+Draw characters to sprite canvas, and moved sprite drawing to vsync handler.
+
+Added some test levels, 2d platformer scratch level, top down maze and spritesheet test.
+
+Looked up how to do flipped drawImage, seems a bit hacky.
+
+Added initial platformer movement system.
+
+Added sprite animation.
+
+Fixed issue where sprite x or y with fractional values would render slightly blurry.
