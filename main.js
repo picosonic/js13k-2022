@@ -117,6 +117,9 @@ var gs={
   jumpspeed:5, // jumping speed
   coyote:0, // coyote timer (time after leaving ground where you can still jump)
   life:100, // remaining "life force" as percentage
+  tileid:45, // current player tile
+  flip:false, // if player is horizontally flipped
+  gun:false, // if the player holds the gun
 
   // Level attributes
   level:0, // Level number (0 based)
@@ -257,8 +260,8 @@ function drawtile(tileid, x, y)
   // to draw flipped
   //
   // gs.ctx.save();
-  // gs.scale(-1, 1);
-  // gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x, y, tilesize*-1, tilesize)
+  // gs.ctx.scale(-1, 1);
+  // gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x*-1, y, tilesize*-1, tilesize);
   // gs.ctx.restore();
 
   gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x, y, tilesize, tilesize);
@@ -267,8 +270,18 @@ function drawtile(tileid, x, y)
 // Draw sprite
 function drawsprite(sprite)
 {
-  gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
-    Math.floor(sprite.x), Math.floor(sprite.y), tilesize, tilesize);
+  if (sprite.flip)
+  {
+   gs.sctx.save();
+   //gs.sctx.translate(-1, 1);
+   gs.sctx.scale(-1, 1);
+   gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
+      Math.floor(sprite.x)*-1, Math.floor(sprite.y), tilesize*-1, tilesize);
+   gs.sctx.restore();
+  }
+  else
+    gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
+      Math.floor(sprite.x), Math.floor(sprite.y), tilesize, tilesize);
 }
 
 // Load level
@@ -290,7 +303,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize)};
+        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize), flip:false};
 
         switch (tile-1)
         {
@@ -310,6 +323,7 @@ function loadlevel(level)
             gs.jump=false;
             gs.fall=false;
             gs.dir=0;
+            gs.flip=false;
             break;
 
           default:
@@ -525,6 +539,15 @@ function updateanimation()
 {
   if (gs.anim==0)
   {
+    // Player animation
+    if (gs.hs!=0)
+    {
+      gs.tileid==45?gs.tileid=46:gs.tileid=45;
+    }
+    else
+      gs.tileid=45
+
+    // Char animation
     for (var id=0; id<gs.chars.length; id++)
     {
       switch (gs.chars[id].id)
@@ -590,6 +613,7 @@ function updatemovements()
     {
       gs.hs=gs.htime==0?-gs.speed:-2;
       gs.dir=-1;
+      gs.flip=true;
     }
 
     // Right key
@@ -597,6 +621,7 @@ function updatemovements()
     {
       gs.hs=gs.htime==0?gs.speed:2;
       gs.dir=1;
+      gs.flip=false;
     }
   }
 
@@ -650,7 +675,7 @@ function rafcallback(timestamp)
     drawchars();
 
     // Draw the player
-    drawsprite({id:45, x:gs.x, y:gs.y});
+    drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
 
     // If the update took us out of play state then stop now
     if (gs.state!=2)
