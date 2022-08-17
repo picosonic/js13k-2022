@@ -303,7 +303,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize), flip:false};
+        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize), flip:false, del:false};
 
         switch (tile-1)
         {
@@ -542,10 +542,23 @@ function updateanimation()
     // Player animation
     if (gs.hs!=0)
     {
-      gs.tileid==45?gs.tileid=46:gs.tileid=45;
+      if (gs.gun)
+      {
+        gs.tileid++;
+
+        if (gs.tileid>42)
+          gs.tileid=40;
+      }
+      else
+        gs.tileid==45?gs.tileid=46:gs.tileid=45;
     }
     else
-      gs.tileid=45
+    {
+      if (gs.gun)
+        gs.tileid=40;
+      else
+        gs.tileid=45;
+    }
 
     // Char animation
     for (var id=0; id<gs.chars.length; id++)
@@ -632,6 +645,44 @@ function updatemovements()
   updateanimation();
 }
 
+// Check for collision between player and character/collectable
+function updateplayerchar()
+{
+  // Generate player hitbox
+  var px=gs.x+(tilesize/3);
+  var py=gs.y+((tilesize/5)*2);
+  var pw=(tilesize/3);
+  var ph=(tilesize/5)*3;
+  var id=0;
+
+  for (id=0; id<gs.chars.length; id++)
+  {
+    // Check for collision with this char
+    if (overlap(px, py, pw, ph, gs.chars[id].x, gs.chars[id].y, tilesize, tilesize))
+    {
+      switch (gs.chars[id].id)
+      {
+        case 50: // gun
+          gs.gun=true;
+          gs.tileid=40;
+          gs.chars[id].del=true;
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  // Remove anything marked for deletion
+  id=gs.chars.length;
+  while (id--)
+  {
+    if (gs.chars[id].del)
+      gs.chars.splice(id, 1);
+  }
+}
+
 // Update function called once per frame
 function update()
 {
@@ -640,12 +691,10 @@ function update()
 
   // Update other character movements / AI
   // TODO
+  // updatecharAI();
 
-  // Check for player/character collision
-  // TODO
-
-  // Check for player/collectable collision
-  // TODO
+  // Check for player/character/collectable collisions
+  updateplayerchar();
 }
 
 // Request animation frame callback
