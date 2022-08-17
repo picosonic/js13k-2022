@@ -52,7 +52,7 @@ const KEYACTION=16;
 // plant
 //   34 (double)
 //   35 (tall)
-// gate
+// hive
 //   36
 //   37 (broken)
 // tree
@@ -131,6 +131,8 @@ var gs={
   level:0, // Level number (0 based)
   width:0, // Width in tiles
   height:0, // height in tiles
+  xoffset:0, // current view offset from left
+  yoffset:0, // current view offset from top
 
   // Characters
   chars:[],
@@ -263,6 +265,13 @@ function playfieldsize()
 // Draw tile
 function drawtile(tileid, x, y)
 {
+  // Clip to what's visible
+  if (((x-gs.xoffset)<-TILESIZE) && // clip left
+      ((x-gs.xoffset)>XMAX) && // clip right
+      ((y-gs.yoffset)<-TILESIZE) && // clip top
+      ((y-gs.yoffset)>YMAX))   // clip bottom
+    return;
+
   // to draw flipped
   //
   // gs.ctx.save();
@@ -270,23 +279,30 @@ function drawtile(tileid, x, y)
   // gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x*-1, y, tilesize*-1, tilesize);
   // gs.ctx.restore();
 
-  gs.ctx.drawImage(gs.tilemap, (tileid*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((tileid*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE, x, y, TILESIZE, TILESIZE);
+  gs.ctx.drawImage(gs.tilemap, (tileid*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((tileid*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE, x-gs.xoffset, y-gs.yoffset, TILESIZE, TILESIZE);
 }
 
 // Draw sprite
 function drawsprite(sprite)
 {
+  // Clip to what's visible
+  if (((Math.floor(sprite.x)-gs.xoffset)<-TILESIZE) && // clip left
+      ((Math.floor(sprite.x)-gs.xoffset)>XMAX) && // clip right
+      ((Math.floor(sprite.y)-gs.yoffset)<-TILESIZE) && // clip top
+      ((Math.floor(sprite.y)-gs.yoffset)>YMAX))   // clip bottom
+    return;
+
   if (sprite.flip)
   {
    gs.sctx.save();
    gs.sctx.scale(-1, 1);
    gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
-      Math.floor(sprite.x)*-1, Math.floor(sprite.y), TILESIZE*-1, TILESIZE);
+      (Math.floor(sprite.x)-gs.xoffset)*-1, (Math.floor(sprite.y)-gs.yoffset), TILESIZE*-1, TILESIZE);
    gs.sctx.restore();
   }
   else
     gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
-      Math.floor(sprite.x), Math.floor(sprite.y), TILESIZE, TILESIZE);
+      Math.floor(sprite.x)-gs.xoffset, Math.floor(sprite.y)-gs.yoffset, TILESIZE, TILESIZE);
 }
 
 // Load level
@@ -339,6 +355,8 @@ function loadlevel(level)
       }
     }
   }
+
+  scrolltoplayer(false);
 }
 
 // Draw level
@@ -366,10 +384,12 @@ function drawchars()
 // Check if player has left the map
 function offmapcheck()
 {
-  if ((gs.x<0) || (gs.y>levels[gs.level].height*TILESIZE))
+  if ((gs.x<0) || (gs.x>levels[gs.level].width*TILESIZE) || (gs.y>levels[gs.level].height*TILESIZE))
   {
     gs.x=gs.sx;
     gs.y=gs.sy;
+
+    scrolltoplayer(false);
   }
 }
 
@@ -703,6 +723,65 @@ function update()
   updateplayerchar();
 }
 
+// Scroll level to player
+function scrolltoplayer(dampened)
+{
+  var xmiddle=Math.floor((XMAX-TILESIZE)/2);
+  var ymiddle=Math.floor((YMAX-TILESIZE)/2);
+  var maxxoffs=((levels[gs.level].width*TILESIZE)-XMAX);
+  var maxyoffs=((levels[gs.level].height*TILESIZE)-YMAX);
+
+  // Work out where x and y offsets should be
+  var newxoffs=gs.x-xmiddle;
+  var newyoffs=gs.y-ymiddle;
+
+  if (newxoffs>maxxoffs) newxoffs=maxxoffs;
+  if (newyoffs>maxyoffs) newyoffs=maxyoffs;
+
+  if (newxoffs<0) newxoffs=0;
+  if (newyoffs<0) newyoffs=0;
+
+  // Determine if xoffset should be changed
+  if (newxoffs!=gs.xoffset)
+  {
+    if (dampened)
+      gs.xoffset+=newxoffs>gs.xoffset?1:-1;
+    else
+      gs.xoffset=newxoffs;
+  }
+
+  // Determine if xoffset should be changed
+  if (newyoffs!=gs.yoffset)
+  {
+    if (dampened)
+      gs.yoffset+=newyoffs>gs.yoffset?1:-1;
+    else
+      gs.yoffset=newyoffs;
+  }
+}
+
+// Redraw the game world
+function redraw()
+{
+  // Scroll to keep player in view
+  scrolltoplayer(true);
+
+  // Clear the tile canvas
+  gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+  // Draw the level
+  drawlevel();
+
+  // Clear the sprites canvas
+  gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+
+  // Draw the chars
+  drawchars();
+
+  // Draw the player
+  drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
+}
+
 // Request animation frame callback
 function rafcallback(timestamp)
 {
@@ -723,14 +802,7 @@ function rafcallback(timestamp)
       gs.acc-=gs.step;
     }
 
-    // Clear the sprites canvas
-    gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
-
-    // Draw the chars
-    drawchars();
-
-    // Draw the player
-    drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
+    redraw();
 
     // If the update took us out of play state then stop now
     if (gs.state!=2)
@@ -781,7 +853,7 @@ function init()
   playfieldsize();
 
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() {loadlevel(0); drawlevel(); window.requestAnimationFrame(rafcallback);};
+  gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
   gs.tilemap.src=tilemap;
 }
 
