@@ -37,7 +37,7 @@ fi
 # When source is newer, rebuild
 if [ ${srcdate} -gt ${destdate} ]
 then
-  echo "Rebuilding levels"
+  echo -n "Rebuilding levels..."
 
   # Clear old dest
   echo -n "" > "${leveljs}"
@@ -64,6 +64,8 @@ then
     echo -n "}," >> "${leveljs}"
   done
   echo -n "];" >> "${leveljs}"
+
+  echo "done"
 fi
 
 # See if the tilemap asset needs to be rebuilt
@@ -79,7 +81,7 @@ fi
 # When source is newer, rebuild
 if [ ${srcdate} -gt ${destdate} ]
 then
-  echo "Rebuilding tilemap"
+  echo -n "Rebuilding tilemap..."
 
   # Clear old dest
   echo -n "" > "${assetjs}"
@@ -88,6 +90,8 @@ then
   echo -n 'const tilemap="data:image/png;base64,' > "${assetjs}"
   base64 -w 0 "${assetsrc}" >> "${assetjs}"
   echo '";' >> "${assetjs}"
+
+  echo "done"
 fi
 
 if [ "${param}" == "run" ]
@@ -103,10 +107,12 @@ then
 fi
 
 # Create clean build folder
+echo "Cleaning build folder"
 rm -Rf "${buildpath}" >/dev/null 2>&1
 mkdir "${buildpath}"
 
 # Concatenate the JS files
+echo "Concatenating JS"
 touch "${jscat}" >/dev/null 2>&1
 for file in "timeline.js" "font.js" "writer.js" "${assetjs}" "${leveljs}" "main.js"
 do
@@ -117,6 +123,7 @@ done
 echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>JS13k 2022</title><style>' > "${indexcat}"
 
 # Inject the concatenated and minified CSS files
+echo "Minifying CSS"
 for file in "main.css"
 do
   JAVA_CMD=java yui-compressor "${file}" >> "${indexcat}"
@@ -126,6 +133,7 @@ done
 echo -n '</style><script type="text/javascript">' >> "${indexcat}"
 
 # Inject the closure-ised and minified JS
+echo "Using closure to minify JS"
 ./closeyoureyes.sh "${jscat}" >> "${indexcat}"
 
 # Add on the rest of the index file
@@ -138,9 +146,11 @@ rm "${jscat}" >/dev/null 2>&1
 rm -Rf "${zipfile}" >/dev/null 2>&1
 
 # Zip everything up
+echo "ZIP build folder"
 zip -j "${zipfile}" "${buildpath}"/*
 
 # Re-Zip with advzip to save a bit more
+echo "Trying to reduce ZIP size"
 advzip -i 200 -k -z -4 "${zipfile}"
 
 # Determine file sizes and compression
