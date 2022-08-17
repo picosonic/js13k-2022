@@ -1,10 +1,16 @@
 // JS 13k 2022 entry
 
 // Global constants
-const xmax=320;
-const ymax=180;
-const tilesize=16;
-const tilesperrow=10;
+const XMAX=320;
+const YMAX=180;
+const TILESIZE=16;
+const TILESPERROW=10;
+
+const KEYLEFT=1;
+const KEYUP=2;
+const KEYRIGHT=4;
+const KEYDOWN=8;
+const KEYACTION=16;
 
 // Tiles list
 //
@@ -158,9 +164,9 @@ function updatekeystate(e, dir)
     case 65: // A
     case 90: // Z
       if (dir==1)
-        gs.keystate|=1;
+        gs.keystate|=KEYLEFT;
       else
-        gs.keystate&=~1;
+        gs.keystate&=~KEYLEFT;
 
       e.preventDefault();
       break;
@@ -169,9 +175,9 @@ function updatekeystate(e, dir)
     case 87: // W
     case 59: // semicolon
       if (dir==1)
-        gs.keystate|=2;
+        gs.keystate|=KEYUP;
       else
-        gs.keystate&=~2;
+        gs.keystate&=~KEYUP;
 
       e.preventDefault();
       break;
@@ -180,9 +186,9 @@ function updatekeystate(e, dir)
     case 68: // D
     case 88: // X
       if (dir==1)
-        gs.keystate|=4;
+        gs.keystate|=KEYRIGHT;
       else
-        gs.keystate&=~4;
+        gs.keystate&=~KEYRIGHT;
 
       e.preventDefault();
       break;
@@ -191,9 +197,9 @@ function updatekeystate(e, dir)
     case 83: // S
     case 190: // dot
       if (dir==1)
-        gs.keystate|=8;
+        gs.keystate|=KEYDOWN;
       else
-        gs.keystate&=~8;
+        gs.keystate&=~KEYDOWN;
 
       e.preventDefault();
       break;
@@ -201,9 +207,9 @@ function updatekeystate(e, dir)
     case 13: // enter
     case 32: // space
       if (dir==1)
-        gs.keystate|=16;
+        gs.keystate|=KEYACTION;
       else
-        gs.keystate&=~16;
+        gs.keystate&=~KEYACTION;
 
       e.preventDefault();
       break;
@@ -224,7 +230,7 @@ function updatekeystate(e, dir)
 function playfieldsize()
 {
   var height=window.innerHeight;
-  var ratio=xmax/ymax;
+  var ratio=XMAX/YMAX;
   var width=Math.floor(height*ratio);
   var top=0;
   var left=Math.floor((window.innerWidth/2)-(width/2));
@@ -232,14 +238,14 @@ function playfieldsize()
   if (width>window.innerWidth)
   {
     width=window.innerWidth;
-    ratio=ymax/xmax;
+    ratio=YMAX/XMAX;
     height=Math.floor(width*ratio);
 
     left=0;
     top=Math.floor((window.innerHeight/2)-(height/2));
   }
   
-  gs.scale=(height/ymax);
+  gs.scale=(height/YMAX);
 
   // Tiles
   gs.canvas.style.top=top+"px";
@@ -264,7 +270,7 @@ function drawtile(tileid, x, y)
   // gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x*-1, y, tilesize*-1, tilesize);
   // gs.ctx.restore();
 
-  gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x, y, tilesize, tilesize);
+  gs.ctx.drawImage(gs.tilemap, (tileid*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((tileid*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE, x, y, TILESIZE, TILESIZE);
 }
 
 // Draw sprite
@@ -275,13 +281,13 @@ function drawsprite(sprite)
    gs.sctx.save();
    //gs.sctx.translate(-1, 1);
    gs.sctx.scale(-1, 1);
-   gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
-      Math.floor(sprite.x)*-1, Math.floor(sprite.y), tilesize*-1, tilesize);
+   gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
+      Math.floor(sprite.x)*-1, Math.floor(sprite.y), TILESIZE*-1, TILESIZE);
    gs.sctx.restore();
   }
   else
-    gs.sctx.drawImage(gs.tilemap, (sprite.id*tilesize) % (tilesperrow*tilesize), Math.floor((sprite.id*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize,
-      Math.floor(sprite.x), Math.floor(sprite.y), tilesize, tilesize);
+    gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
+      Math.floor(sprite.x), Math.floor(sprite.y), TILESIZE, TILESIZE);
 }
 
 // Load level
@@ -303,7 +309,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*tilesize), y:(y*tilesize), flip:false, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, del:false};
 
         switch (tile-1)
         {
@@ -343,7 +349,7 @@ function drawlevel()
     for (var x=0; x<gs.width; x++)
     {
       var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1, 10);
-      drawtile(tile-1, x*tilesize, y*tilesize);
+      drawtile(tile-1, x*TILESIZE, y*TILESIZE);
     }
   }
 
@@ -360,7 +366,7 @@ function drawchars()
 // Check if player has left the map
 function offmapcheck()
 {
-  if ((gs.x<0) || (gs.y>levels[gs.level].height*tilesize))
+  if ((gs.x<0) || (gs.y>levels[gs.level].height*TILESIZE))
   {
     gs.x=gs.sx;
     gs.y=gs.sy;
@@ -392,7 +398,7 @@ function collide(px, py, pw, ph)
 
       if ((tile-1)!=0)
       {
-        if (overlap(px, py, pw, ph, x*tilesize, y*tilesize, tilesize, tilesize))
+        if (overlap(px, py, pw, ph, x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE))
           return true;
       }
     }
@@ -404,7 +410,7 @@ function collide(px, py, pw, ph)
 // Collision check with player hitbox
 function playercollide(x, y)
 {
-  return collide(x+(tilesize/3), y+((tilesize/5)*2), tilesize/3, (tilesize/5)*3);
+  return collide(x+(TILESIZE/3), y+((TILESIZE/5)*2), TILESIZE/3, (TILESIZE/5)*3);
 }
 
 // Check if player on the ground or falling
@@ -423,7 +429,7 @@ function groundcheck()
     gs.coyote=15;
 
     // Check for jump pressed, when not ducking
-    if ((ispressed(16)) && (!gs.duck))
+    if ((ispressed(KEYUP)) && (!gs.duck))
     {
       gs.jump=true;
       gs.vs=-gs.jumpspeed;
@@ -432,7 +438,7 @@ function groundcheck()
   else
   {
     // Check for jump pressed, when not ducking, and coyote time not expired
-    if ((ispressed(16)) && (!gs.duck) && (gs.jump==false) && (gs.coyote>0))
+    if ((ispressed(KEYUP)) && (!gs.duck) && (gs.jump==false) && (gs.coyote>0))
     {
       gs.jump=true;
       gs.vs=-gs.jumpspeed;
@@ -495,14 +501,14 @@ function collisioncheck()
 function standcheck()
 {
   // Check for ducking, or injured
-  if ((ispressed(8)) || (gs.htime>0))
+  if ((ispressed(KEYDOWN)) || (gs.htime>0))
     gs.duck=true;
   else
     gs.duck=false;
 
   // When no horizontal movement pressed, slow down by friction
-  if (((!ispressed(1)) && (!ispressed(4))) ||
-      ((ispressed(1)) && (ispressed(4))))
+  if (((!ispressed(KEYLEFT)) && (!ispressed(KEYRIGHT))) ||
+      ((ispressed(KEYLEFT)) && (ispressed(KEYRIGHT))))
   {
     // Going left
     if (gs.dir==-1)
@@ -622,7 +628,7 @@ function updatemovements()
   if (gs.keystate!=0)
   {
     // Left key
-    if ((ispressed(1)) && (!ispressed(4)))
+    if ((ispressed(KEYLEFT)) && (!ispressed(KEYRIGHT)))
     {
       gs.hs=gs.htime==0?-gs.speed:-2;
       gs.dir=-1;
@@ -630,7 +636,7 @@ function updatemovements()
     }
 
     // Right key
-    if ((ispressed(4)) && (!ispressed(1)))
+    if ((ispressed(KEYRIGHT)) && (!ispressed(KEYLEFT)))
     {
       gs.hs=gs.htime==0?gs.speed:2;
       gs.dir=1;
@@ -649,16 +655,16 @@ function updatemovements()
 function updateplayerchar()
 {
   // Generate player hitbox
-  var px=gs.x+(tilesize/3);
-  var py=gs.y+((tilesize/5)*2);
-  var pw=(tilesize/3);
-  var ph=(tilesize/5)*3;
+  var px=gs.x+(TILESIZE/3);
+  var py=gs.y+((TILESIZE/5)*2);
+  var pw=(TILESIZE/3);
+  var ph=(TILESIZE/5)*3;
   var id=0;
 
   for (id=0; id<gs.chars.length; id++)
   {
     // Check for collision with this char
-    if (overlap(px, py, pw, ph, gs.chars[id].x, gs.chars[id].y, tilesize, tilesize))
+    if (overlap(px, py, pw, ph, gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE))
     {
       switch (gs.chars[id].id)
       {
