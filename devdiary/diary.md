@@ -106,3 +106,15 @@ Added initial platformer movement system.
 Added sprite animation.
 
 Fixed issue where sprite x or y with fractional values would render slightly blurry.
+
+17th August
+-----------
+Improved feel of player hit detection, by making the collision box smaller. It's now 1/3rd of a tile wide (centered), and 3/5th of a tile high (clamped to the bottom).
+
+Reduce CPU load by not doing movement hit detection when not moving.
+
+Made all tiles in chars[] visible and not solid, interactions will come later (if required). This means all defined tiles in tiles[] are now solid. The player tile is still treated separately.
+
+Testing the platformer physics, collision detection and animations.
+
+![Testing platformer physics](bees.gif?raw=true "Testing platformer physics")
