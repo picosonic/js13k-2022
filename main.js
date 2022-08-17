@@ -361,21 +361,21 @@ function offmapcheck()
   }
 }
 
-// Check if one tile overlaps with another
-function overlap(ax, ay, bx, by)
+// Check if area a overlaps with area b
+function overlap(ax, ay, aw, ah, bx, by, bw, bh)
 {
   // Check horizontally
-  if ((ax<bx) && ((ax+tilesize))<=bx) return false; // a too far left of b
-  if ((ax>bx) && ((bx+tilesize))<=ax) return false; // a too far right of b
+  if ((ax<bx) && ((ax+aw))<=bx) return false; // a too far left of b
+  if ((ax>bx) && ((bx+bw))<=ax) return false; // a too far right of b
 
   // Check vertically
-  if ((ay<by) && ((ay+tilesize))<=by) return false; // a too far above b
-  if ((ay>by) && ((by+tilesize))<=ay) return false; // a too far below b
+  if ((ay<by) && ((ay+ah))<=by) return false; // a too far above b
+  if ((ay>by) && ((by+bh))<=ay) return false; // a too far below b
 
   return true;
 }
 
-function collide(px, py)
+function collide(px, py, pw, ph)
 {
   // Look through all the tiles for a collision
   for (var y=0; y<gs.height; y++)
@@ -386,13 +386,19 @@ function collide(px, py)
 
       if ((tile-1)!=0)
       {
-        if (overlap(px, py, x*tilesize, y*tilesize))
+        if (overlap(px, py, pw, ph, x*tilesize, y*tilesize, tilesize, tilesize))
           return true;
       }
     }
   }
 
   return false;
+}
+
+// Collision check with player hitbox
+function playercollide(x, y)
+{
+  return collide(x+(tilesize/3), y+((tilesize/5)*2), tilesize/3, (tilesize/5)*3);
 }
 
 // Check if player on the ground or falling
@@ -403,7 +409,7 @@ function groundcheck()
     gs.coyote--;
 
   // Check we are on the ground
-  if (collide(gs.x, gs.y+1))
+  if (playercollide(gs.x, gs.y+1))
   {
     gs.vs=0;
     gs.jump=false;
@@ -455,10 +461,10 @@ function jumpcheck()
 function collisioncheck()
 {
   // Check for horizontal collisions
-  if (collide(gs.x+gs.hs, gs.y))
+  if (playercollide(gs.x+gs.hs, gs.y))
   {
     // A collision occured, so move the character until it hits
-    while (!collide(gs.x+(gs.hs>0?1:-1), gs.y))
+    while (!playercollide(gs.x+(gs.hs>0?1:-1), gs.y))
       gs.x+=(gs.hs>0?1:-1);
 
     // Stop horizontal movement
@@ -467,10 +473,10 @@ function collisioncheck()
   gs.x+=Math.floor(gs.hs);
 
   // Check for vertical collisions
-  if (collide(gs.x, gs.y+gs.vs))
+  if (playercollide(gs.x, gs.y+gs.vs))
   {
     // A collision occured, so move the character until it hits
-    while (!collide(gs.x, gs.y+(gs.vs>0?1:-1)))
+    while (!playercollide(gs.x, gs.y+(gs.vs>0?1:-1)))
       gs.y+=(gs.vs>0?1:-1);
 
     // Stop vertical movement
