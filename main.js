@@ -281,7 +281,7 @@ function loadlevel(level)
 
   gs.chars=[];
 
-  // Find chars
+  // Populate chars (non solid tiles)
   for (var y=0; y<gs.height; y++)
   {
     for (var x=0; x<gs.width; x++)
@@ -294,15 +294,6 @@ function loadlevel(level)
 
         switch (tile-1)
         {
-          case 51: // Bee
-          case 52:
-          case 53: // Fly
-          case 54:
-          case 55: // Grub
-          case 56:
-            gs.chars.push(obj);
-            break;
-
           case 40: // Player
           case 41:
           case 42:
@@ -322,6 +313,7 @@ function loadlevel(level)
             break;
 
           default:
+            gs.chars.push(obj); // Everything else
             break;
         }
       }
