@@ -416,7 +416,7 @@ function drawshots()
 // Check if player has left the map
 function offmapcheck()
 {
-  if ((gs.x<0) || (gs.x>gs.width*TILESIZE) || (gs.y>gs.height*TILESIZE))
+  if ((gs.x<(0-TILESIZE)) || ((gs.x+1)>gs.width*TILESIZE) || (gs.y>gs.height*TILESIZE))
   {
     gs.x=gs.sx;
     gs.y=gs.sy;
@@ -441,6 +441,10 @@ function overlap(ax, ay, aw, ah, bx, by, bw, bh)
 
 function collide(px, py, pw, ph)
 {
+  // Check for screen edge collision
+  if (px<=(0-(TILESIZE/5))) return true;
+  if ((px+(TILESIZE/3))>=(gs.width*TILESIZE)) return true;
+
   // Look through all the tiles for a collision
   for (var y=0; y<gs.height; y++)
   {
