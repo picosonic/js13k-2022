@@ -152,3 +152,7 @@ Added particle system. Initally used for exploding enemies.
 Added grub movements, just left/right for now, turning when blocked or reaching an edge.
 
 Needed to sort char array so that sprites come last, otherwise the grub could go behind non-solid tiles.
+
+Added a transition tile to switch between 2D platformer and top-down so a level can be a combination of both.
+
+![2D or topdown transition](bees4.gif?raw=true "2D or topdown transition")

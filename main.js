@@ -138,6 +138,7 @@ var gs={
   height:0, // height in tiles
   xoffset:0, // current view offset from left
   yoffset:0, // current view offset from top
+  topdown:false, // is the level in top-down mode, otherwise it's 2D platformer
 
   // Tiles
   tiles:[], // copy of current level (to allow destruction)
@@ -382,6 +383,7 @@ function loadlevel(level)
             gs.shots=[];
             gs.gunheat=0;
             gs.particles=[];
+            gs.topdown=false;
             break;
 
           case 53: // fly
@@ -645,6 +647,27 @@ function standcheck()
       }
     }
   }
+
+  // Extra checks for top-down levels
+  if (gs.topdown)
+  {
+    // When no horizontal movement pressed, slow down by friction
+    if (((!ispressed(KEYUP)) && (!ispressed(KEYDOWN))) ||
+    ((ispressed(KEYUP)) && (ispressed(KEYDOWN))))
+    {
+      // Going up
+      if (gs.vs<0)
+      {
+        gs.vs+=gs.friction;
+      }
+
+      // Going down
+      if (gs.vs>0)
+      {
+        gs.vs-=gs.friction;
+      }
+    }
+  }
 }
 
 // Move animation frame onwards
@@ -653,7 +676,7 @@ function updateanimation()
   if (gs.anim==0)
   {
     // Player animation
-    if (gs.hs!=0)
+    if ((gs.hs!=0) || ((gs.topdown) && (gs.vs!=0)))
     {
       if (gs.gun)
       {
@@ -837,11 +860,15 @@ function updatemovements()
   // Check if player has left the map
   offmapcheck();
 
-  // Check if player on the ground or falling
-  groundcheck();
+  // Only apply 2D physics when not in top-down mode
+  if (!gs.topdown)
+  {
+    // Check if player on the ground or falling
+    groundcheck();
 
-  // Process jumping
-  jumpcheck();
+    // Process jumping
+    jumpcheck();
+  }
 
   // Move player by appropriate amount, up to a collision
   collisioncheck();
@@ -855,7 +882,7 @@ function updatemovements()
   // Check for particle usage
   particlecheck();
 
-  // When a horizontal movement key is pressed, adjust players horizontal speed and direction
+  // When a movement key is pressed, adjust players speed and direction
   if (gs.keystate!=0)
   {
     // Left key
@@ -872,6 +899,22 @@ function updatemovements()
       gs.hs=gs.htime==0?gs.speed:2;
       gs.dir=1;
       gs.flip=false;
+    }
+
+    // Extra processing for top-down levels
+    if (gs.topdown)
+    {
+      // Up key
+      if ((ispressed(KEYUP)) && (!ispressed(KEYDOWN)))
+      {
+        gs.vs=gs.htime==0?-gs.speed:-2;
+      }
+
+      // Down key
+      if ((ispressed(KEYDOWN)) && (!ispressed(KEYUP)))
+      {
+        gs.vs=gs.htime==0?gs.speed:2;
+      } 
     }
   }
 
@@ -899,6 +942,10 @@ function updateplayerchar()
     {
       switch (gs.chars[id].id)
       {
+        case 0: // flip between 2D and topdown
+          gs.topdown=(gs.vs<0); // pass over moving up for topdown, otherwise 2D
+          break;
+
         case 50: // gun
           gs.gun=true;
           gs.tileid=40;
