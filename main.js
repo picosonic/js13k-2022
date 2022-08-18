@@ -316,6 +316,25 @@ function drawsprite(sprite)
       Math.floor(sprite.x)-gs.xoffset, Math.floor(sprite.y)-gs.yoffset, TILESIZE, TILESIZE);
 }
 
+// Sort the chars so sprites are last (so they appear in front of non-solid tiles)
+function sortChars(a, b)
+{
+  if (a.id!=b.id) // extra processing if they are different ids
+  {
+    var aspr=(((a.id>=40) && (a.id<=46)) || ((a.id>=50) && (a.id<=56))); // see if a is a sprite
+    var bspr=(((b.id>=40) && (b.id<=46)) || ((b.id>=50) && (b.id<=56))); // see if b is a sprite
+
+    if (aspr==bspr) return 0; // both sprites, so don't swap
+
+    if (aspr)
+      return 1; // sort a after b
+    else
+      return -1; // sort a before b
+  }
+
+  return 0; // same id
+}
+
 // Load level
 function loadlevel(level)
 {
@@ -338,7 +357,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, del:false};
 
         switch (tile-1)
         {
@@ -374,6 +393,7 @@ function loadlevel(level)
           case 55: // grub
           case 56:
             obj.health=HEALTHGRUB;
+            obj.hs=0.25;
             gs.chars.push(obj);
             break;
 
@@ -384,6 +404,9 @@ function loadlevel(level)
       }
     }
   }
+
+  // Sort chars such sprites are at the end (so are drawn last, i.e on top)
+  gs.chars.sort(sortChars);
 
   scrolltoplayer(false);
 }
@@ -897,6 +920,39 @@ function updateplayerchar()
   }
 }
 
+function updatecharAI()
+{
+  var id=0;
+  var nx=0; // new x position
+  var ny=0; // new y position
+
+  for (id=0; id<gs.chars.length; id++)
+  {
+    switch (gs.chars[id].id)
+    {
+      case 55: // grub
+      case 56:
+        nx=(gs.chars[id].x+=gs.chars[id].hs); // calculate new x position
+        if ((collide(nx, gs.chars[id].y, TILESIZE, TILESIZE)) || // blocked by something
+            (
+              (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y, TILESIZE, TILESIZE)) && // not blocked forwards
+              (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y+(TILESIZE/2), TILESIZE, TILESIZE)) // not blocked forwards+down (i.e. edge)
+            ))
+        {
+          // Turn around
+          gs.chars[id].hs*=-1;
+          gs.chars[id].flip=!gs.chars[id].flip;
+        }
+        else
+          gs.chars[id].x=nx;
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
 // Update function called once per frame
 function update()
 {
@@ -906,8 +962,7 @@ function update()
   updatemovements();
 
   // Update other character movements / AI
-  // TODO
-  // updatecharAI();
+  updatecharAI();
 
   // Check for player/character/collectable collisions
   updateplayerchar();

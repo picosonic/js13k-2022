@@ -148,3 +148,7 @@ Added predictable random number generator using Wichmann-Hill algorithm.
 Added particle system. Initally used for exploding enemies.
 
 ![Shooting and particle explosions](bees3.gif?raw=true "Shooting and particle explosions")
+
+Added grub movements, just left/right for now, turning when blocked or reaching an edge.
+
+Needed to sort char array so that sprites come last, otherwise the grub could go behind non-solid tiles.
