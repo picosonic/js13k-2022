@@ -138,3 +138,5 @@ Added scrolling of map to player including multiple scroll speeds and dampening.
 Added ability to shoot the gun. It has a cool down timer so you don't get too many shots at once and they don't overlap on screen.
 
 Added shot collision detection. Allow grub and fly to be shot, with health values rather than 1-shot death.
+
+Do a deep copy of the level's tile list so that it can be modified during gameplay.

@@ -139,6 +139,9 @@ var gs={
   xoffset:0, // current view offset from left
   yoffset:0, // current view offset from top
 
+  // Tiles
+  tiles:[], // copy of current level (to allow destruction)
+
   // Characters
   chars:[],
   anim:8, // time until next character animation frame
@@ -315,6 +318,9 @@ function loadlevel(level)
 {
   gs.level=level;
 
+  // Deep copy tiles list to allow changes
+  gs.tiles=JSON.parse(JSON.stringify(levels[gs.level].tiles));
+
   gs.width=parseInt(levels[gs.level].width, 10);
   gs.height=parseInt(levels[gs.level].height, 10);
 
@@ -385,7 +391,7 @@ function drawlevel()
   {
     for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1, 10);
+      var tile=parseInt(gs.tiles[(y*gs.width)+x]||1, 10);
       drawtile(tile-1, x*TILESIZE, y*TILESIZE);
     }
   }
@@ -410,7 +416,7 @@ function drawshots()
 // Check if player has left the map
 function offmapcheck()
 {
-  if ((gs.x<0) || (gs.x>levels[gs.level].width*TILESIZE) || (gs.y>levels[gs.level].height*TILESIZE))
+  if ((gs.x<0) || (gs.x>gs.width*TILESIZE) || (gs.y>gs.height*TILESIZE))
   {
     gs.x=gs.sx;
     gs.y=gs.sy;
@@ -440,7 +446,7 @@ function collide(px, py, pw, ph)
   {
     for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level].tiles[(y*gs.width)+x]||1, 10);
+      var tile=parseInt(gs.tiles[(y*gs.width)+x]||1, 10);
 
       if ((tile-1)!=0)
       {
@@ -829,8 +835,8 @@ function scrolltoplayer(dampened)
 {
   var xmiddle=Math.floor((XMAX-TILESIZE)/2);
   var ymiddle=Math.floor((YMAX-TILESIZE)/2);
-  var maxxoffs=((levels[gs.level].width*TILESIZE)-XMAX);
-  var maxyoffs=((levels[gs.level].height*TILESIZE)-YMAX);
+  var maxxoffs=((gs.width*TILESIZE)-XMAX);
+  var maxyoffs=((gs.height*TILESIZE)-YMAX);
 
   // Work out where x and y offsets should be
   var newxoffs=gs.x-xmiddle;
