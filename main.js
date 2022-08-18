@@ -146,6 +146,9 @@ var gs={
   chars:[],
   anim:8, // time until next character animation frame
 
+  // Particles
+  particles:[], // an array of particles for explosion frage, footprint / jump dust
+
   // Game state
   state:2, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
 
@@ -359,6 +362,7 @@ function loadlevel(level)
             gs.gun=false;
             gs.shots=[];
             gs.gunheat=0;
+            gs.particles=[];
             break;
 
           case 53: // fly
@@ -411,6 +415,30 @@ function drawshots()
 {
   for (var i=0; i<gs.shots.length; i++)
     drawsprite(gs.shots[i]);
+}
+
+// Draw single particle
+function drawparticle(particle)
+{
+  var x=particle.x+(particle.t*Math.cos(particle.ang));
+  var y=particle.y+(particle.t*Math.sin(particle.ang));
+
+  // Clip to what's visible
+    if (((Math.floor(x)-gs.xoffset)<0) && // clip left
+    ((Math.floor(x)-gs.xoffset)>XMAX) && // clip right
+    ((Math.floor(y)-gs.yoffset)<0) && // clip top
+    ((Math.floor(y)-gs.yoffset)>YMAX))   // clip bottom
+  return;
+
+  gs.ctx.fillStyle="rgba("+particle.r+","+particle.g+","+particle.b+","+particle.a+")";
+  gs.ctx.fillRect(Math.floor(x)-gs.xoffset, Math.floor(y)-gs.yoffset, 1, 1);
+}
+
+// Draw particles
+function drawparticles()
+{
+  for (var i=0; i<gs.particles.length; i++)
+    drawparticle(gs.particles[i]);
 }
 
 // Check if player has left the map
@@ -662,6 +690,19 @@ function updateanimation()
     gs.anim--;
 }
 
+// Generate some particles around an origin
+function generateparticles(cx, cy, r, g, b)
+{
+  for (var i=0; i<32; i++)
+  {
+    var ang=(Math.floor(rng()*360)); // angle to eminate from
+    var t=Math.floor(rng()*16); // travel from centre
+
+    gs.particles.push({x:cx, y:cy, ang:ang, t:t, r:r, g:g, b:b, a:1.0});
+  }
+}
+
+// Do processing for gun
 function guncheck()
 {
   var i;
@@ -698,7 +739,11 @@ function guncheck()
           case 54:
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
+            {
               gs.chars[id].del=true;
+
+              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 44, 197, 246);
+            }
 
             gs.shots[i].dir=0;
             gs.shots[i].ttl=3;
@@ -708,7 +753,11 @@ function guncheck()
           case 56:
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
+            {
               gs.chars[id].del=true;
+
+              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 252, 104, 59);
+            }
 
               gs.shots[i].dir=0;
               gs.shots[i].ttl=3;
@@ -734,6 +783,31 @@ function guncheck()
   }
 }
 
+// Do processing for particles
+function particlecheck()
+{
+  var i=0;
+
+  // Process particles
+  for (i=0; i<gs.particles.length; i++)
+  {
+    // Move particle
+    gs.particles[i].t+=0.5;
+    gs.particles[i].y+=(gs.gravity*2);
+
+    // Decay particle
+    gs.particles[i].a-=0.007;
+  }
+
+  // Remove particles which have decayed
+  i=gs.particles.length;
+  while (i--)
+  {
+    if (gs.particles[i].a<=0)
+      gs.particles.splice(i, 1);
+  }
+}
+
 // Update player movements
 function updatemovements()
 {
@@ -754,6 +828,9 @@ function updatemovements()
 
   // Check for gun usage
   guncheck();
+
+  // Check for particle usage
+  particlecheck();
 
   // When a horizontal movement key is pressed, adjust players horizontal speed and direction
   if (gs.keystate!=0)
@@ -823,6 +900,8 @@ function updateplayerchar()
 // Update function called once per frame
 function update()
 {
+  var a=rng(); // advance rng
+
   // Apply keystate/physics to player
   updatemovements();
 
@@ -906,6 +985,9 @@ function redraw()
 
   // Draw the shots
   drawshots();
+
+  // Draw the particles
+  drawparticles();
 }
 
 // Request animation frame callback

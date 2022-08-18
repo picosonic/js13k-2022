@@ -140,3 +140,11 @@ Added ability to shoot the gun. It has a cool down timer so you don't get too ma
 Added shot collision detection. Allow grub and fly to be shot, with health values rather than 1-shot death.
 
 Do a deep copy of the level's tile list so that it can be modified during gameplay.
+
+Prevent player going off the left/right of the level.
+
+Added predictable random number generator using Wichmann-Hill algorithm.
+
+Added particle system. Initally used for exploding enemies.
+
+![Shooting and particle explosions](bees3.gif?raw=true "Shooting and particle explosions")
