@@ -12,6 +12,9 @@ const KEYRIGHT=4;
 const KEYDOWN=8;
 const KEYACTION=16;
 
+const HEALTHFLY=8;
+const HEALTHGRUB=3;
+
 // Tiles list
 //
 // blanks
@@ -352,6 +355,18 @@ function loadlevel(level)
             gs.gunheat=0;
             break;
 
+          case 53: // fly
+          case 54:
+            obj.health=HEALTHFLY;
+            gs.chars.push(obj);
+            break;
+
+          case 55: // grub
+          case 56:
+            obj.health=HEALTHGRUB;
+            gs.chars.push(obj);
+            break;
+
           default:
             gs.chars.push(obj); // Everything else
             break;
@@ -655,17 +670,52 @@ function guncheck()
     gs.gunheat=10; // Set time until next shot
   }
 
-  // Move shots onwards
+  // Move shots onwards / check for collisions
   for (i=0; i<gs.shots.length; i++)
   {
+    // Move shot onwards
     gs.shots[i].x+=gs.shots[i].dir;
+
+    // Check shot collisions
+    for (var id=0; id<gs.chars.length; id++)
+    {
+      // Check for collision with this char
+      if ((gs.shots[i].dir!=0) && (overlap(gs.shots[i].x, gs.shots[i].y, TILESIZE, TILESIZE, gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE)))
+      {
+        switch (gs.chars[id].id)
+        {
+          case 53: // fly
+          case 54:
+            gs.chars[id].health--;
+            if (gs.chars[id].health<=0)
+              gs.chars[id].del=true;
+
+            gs.shots[i].dir=0;
+            gs.shots[i].ttl=3;
+            break;
+
+          case 55: // grub
+          case 56:
+            gs.chars[id].health--;
+            if (gs.chars[id].health<=0)
+              gs.chars[id].del=true;
+
+              gs.shots[i].dir=0;
+              gs.shots[i].ttl=3;
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
 
     // Decrease time-to-live, mark for deletion when expired
     gs.shots[i].ttl--;
     if (gs.shots[i].ttl<=0) gs.shots[i].del=true;
   }
 
-  // Remove anything marked for deletion
+  // Remove shots marked for deletion
   i=gs.shots.length;
   while (i--)
   {
