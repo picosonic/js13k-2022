@@ -132,3 +132,7 @@ Edited tilemap to change "gate" into "bee hive".
 Added scrolling of map to player including multiple scroll speeds and dampening.
 
 ![PLayer animation and scrolling](bees2.gif?raw=true "Player animation and scrolling")
+
+18th August
+-----------
+Added ability to shoot the gun. It has a cool down timer so you don't get oo many shots at once and they don't overlap on screen.

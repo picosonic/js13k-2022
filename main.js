@@ -126,6 +126,8 @@ var gs={
   tileid:45, // current player tile
   flip:false, // if player is horizontally flipped
   gun:false, // if the player holds the gun
+  shots:[], // an array of shots from the gun
+  gunheat:0, // countdown to next shot
 
   // Level attributes
   level:0, // Level number (0 based)
@@ -346,6 +348,8 @@ function loadlevel(level)
             gs.dir=0;
             gs.flip=false;
             gs.gun=false;
+            gs.shots=[];
+            gs.gunheat=0;
             break;
 
           default:
@@ -379,6 +383,13 @@ function drawchars()
 {
   for (var id=0; id<gs.chars.length; id++)
     drawsprite(gs.chars[id]);
+}
+
+// Draw shots
+function drawshots()
+{
+  for (var i=0; i<gs.shots.length; i++)
+    drawsprite(gs.shots[i]);
 }
 
 // Check if player has left the map
@@ -626,6 +637,43 @@ function updateanimation()
     gs.anim--;
 }
 
+function guncheck()
+{
+  var i;
+
+  // Cool gun down
+  if (gs.gunheat>0) gs.gunheat--;
+
+  // Check for having gun and want to use it
+  if ((gs.gun==true) && (gs.gunheat==0) && (gs.keystate!=0) && (ispressed(KEYACTION)))
+  {
+    var velocity=(gs.flip?-5:5);
+    var shot={x:gs.x+velocity, y:gs.y+3, dir:velocity, flip:gs.flip, ttl:40, id:44, del:false};
+
+    gs.shots.push(shot);
+
+    gs.gunheat=10; // Set time until next shot
+  }
+
+  // Move shots onwards
+  for (i=0; i<gs.shots.length; i++)
+  {
+    gs.shots[i].x+=gs.shots[i].dir;
+
+    // Decrease time-to-live, mark for deletion when expired
+    gs.shots[i].ttl--;
+    if (gs.shots[i].ttl<=0) gs.shots[i].del=true;
+  }
+
+  // Remove anything marked for deletion
+  i=gs.shots.length;
+  while (i--)
+  {
+    if (gs.shots[i].del)
+      gs.shots.splice(i, 1);
+  }
+}
+
 // Update player movements
 function updatemovements()
 {
@@ -643,6 +691,9 @@ function updatemovements()
 
   // If no input detected, slow the player using friction
   standcheck();
+
+  // Check for gun usage
+  guncheck();
 
   // When a horizontal movement key is pressed, adjust players horizontal speed and direction
   if (gs.keystate!=0)
@@ -792,6 +843,9 @@ function redraw()
 
   // Draw the player
   drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
+
+  // Draw the shots
+  drawshots();
 }
 
 // Request animation frame callback
