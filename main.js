@@ -186,11 +186,11 @@ function updatekeystate(e, dir)
 {
   var a=rng(); // advance rng
 
-  switch (e.which)
+  switch (e.code)
   {
-    case 37: // cursor left
-    case 65: // A
-    case 90: // Z
+    case "ArrowLeft": // cursor left
+    case "KeyA": // A
+    case "KeyZ": // Z
       if (dir==1)
         gs.keystate|=KEYLEFT;
       else
@@ -199,9 +199,9 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case 38: // cursor up
-    case 87: // W
-    case 59: // semicolon
+    case "ArrowUp": // cursor up
+    case "KeyW": // W
+    case "Semiolon": // semicolon
       if (dir==1)
         gs.keystate|=KEYUP;
       else
@@ -210,9 +210,9 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case 39: // cursor right
-    case 68: // D
-    case 88: // X
+    case "ArrowRight": // cursor right
+    case "KeyD": // D
+    case "KeyX": // X
       if (dir==1)
         gs.keystate|=KEYRIGHT;
       else
@@ -221,9 +221,9 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case 40: // cursor down
-    case 83: // S
-    case 190: // dot
+    case "ArrowDown": // cursor down
+    case "KeyS": // S
+    case "Period": // dot
       if (dir==1)
         gs.keystate|=KEYDOWN;
       else
@@ -232,8 +232,10 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case 13: // enter
-    case 32: // space
+    case "Enter": // enter
+    case "ShiftLeft": // L shift
+    case "ShiftRight": // R shift
+    case "Space": // space
       if (dir==1)
         gs.keystate|=KEYACTION;
       else
