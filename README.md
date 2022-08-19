@@ -30,7 +30,6 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 - [ ] Slugs need to stop at toadstools and eat them. Once they have had enough bites, then turn into flying killers. Toadstools shrink when bitten
 - [ ] Make flying killers chase closest bees or hives to damage
 - [ ] Make bees fly between flowers and hives, with route finding
-- [ ] Change spritesheet background to transparent to allow changing background
 - [ ] Day / night transition
 - [ ] Parallax scrolling, with clouds or stars
 - [ ] State machine

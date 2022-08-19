@@ -158,3 +158,7 @@ Added a transition tile to switch between 2D platformer and top-down so a level 
 ![2D or topdown transition](bees4.gif?raw=true "2D or topdown transition")
 
 Added muzzle flash.
+
+19th August
+-----------
+Changed spritesheet to remove background colour, this is so that I can change the background colour on the fly or have gradients, parallax or particle effects.

@@ -5,6 +5,7 @@ const XMAX=320;
 const YMAX=180;
 const TILESIZE=16;
 const TILESPERROW=10;
+const BGCOLOUR="rgb(252, 223, 205)";
 
 const KEYLEFT=1;
 const KEYUP=2;
@@ -277,6 +278,9 @@ function playfieldsize()
 // Draw tile
 function drawtile(tileid, x, y)
 {
+  // Don't draw tile 0 (background)
+  if (tileid==0) return;
+
   // Clip to what's visible
   if (((x-gs.xoffset)<-TILESIZE) && // clip left
       ((x-gs.xoffset)>XMAX) && // clip right
@@ -1076,7 +1080,8 @@ function redraw()
   scrolltoplayer(true);
 
   // Clear the tile canvas
-  gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+  gs.ctx.fillStyle=BGCOLOUR;
+  gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
 
   // Draw the level
   drawlevel();
