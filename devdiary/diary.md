@@ -57,7 +57,7 @@ Here is a rough diary of progress as posted on [Twitter](https://twitter.com/fem
 -----------
 Volunteering with my son at [RMCRetro museum](https://www.rmcretro.com/), playing on retro consoles, computers, cabinets and gaming devices to get some inspiration. Looking back at some of my previous JS13k entries the one which did the best was a 2D platformer which used vector graphics.
 
-Prior to the theme announcement I did have some genres which I wanted to code a game for but haven't yet, including: driving, puzzle, fighting, 3D platformer.
+Prior to the theme announcement I did have some genres which I wanted to code a game for but haven't yet, including: driving, puzzle, fighting, 3D platformer. I'm thinking puzzle suits the theme best.
 
 Having said that it's been way too hot to do too much thinking or coding yet.
 
@@ -73,7 +73,7 @@ I want to put together some maps using [Tiled](https://www.mapeditor.org/) next 
 -----------
 Added an initial [Tiled](https://www.mapeditor.org/) level to get the ball rolling.
 
-Updated "run" action in VSCode to also rebuild assets if required but not build .zip file before starting browser.
+Updated "run" action in VSCode to also rebuild assets if required but not build .zip file before starting browser. This makes it much quicker to prototype and debug as I don't have to wait for the slow job of making the zip file and then optimising it.
 
 Added my timeline library as used in previous years, since it proved so useful. I'll use it to schedule things to happen on a timeline, for animations and game progression.
 
@@ -87,39 +87,37 @@ Added loading of levels (to be used for switching levels), this splits chars and
 
 16th August
 -----------
-Added radix to parseInt() due to complaints by closure compiler.
+Added decimal radix to parseInt() due to complaints by closure compiler.
 
-Decided the resolution was too high for a pixel art feel, so reduced to 320x180.
+Decided the resolution was too high for a pixel art feel, so reduced to 320x180. This is closer to some old games from DOS days which ran in 320x200, but in a 16:9 aspect ratio to suit modern monitors.
 
-Added 8-bit font (used in previous competitions) and a writer library.
+Added 8-bit font and a writer library (used in previous competitions). May change later, but just wanted to maintain the low res pixel feel.
 
-Moved sprites onto a separate canvas than the tiles.
+Moved sprites onto a separate canvas than the tiles. Draw characters to sprite canvas, and moved sprite drawing to vsync handler. I have an optimisation idea where the tiles can be kept still while the sprites are moved on a foreground transparent canvas.
 
-Draw characters to sprite canvas, and moved sprite drawing to vsync handler.
+Added some test levels, 2D platformer scratch level, top down maze and a spritesheet test.
 
-Added some test levels, 2d platformer scratch level, top down maze and spritesheet test.
+Looked up how to do flipped drawImage, seems a bit hacky. You need to save canvas context state, scale to negative in the x axis, draw the image (but at a negative x position and with a negative width), lastly restore canvas state. The alternative seems to be to generate all the sprites in a flipped tilesheet.
 
-Looked up how to do flipped drawImage, seems a bit hacky.
+Added initial platformer movement system. To get feel for jump ability, speed of level traversal, e.t.c.
 
-Added initial platformer movement system.
+Added sprite animation, every 8 frames (7.5 x per second @ 60Hz) it moves on to the next character.
 
-Added sprite animation.
-
-Fixed issue where sprite x or y with fractional values would render slightly blurry.
+Fixed issue where sprite x or y with fractional values would render slightly blurry. The canvas pixelated render would do some kind of sub-pixel sampling or anti-aliasing making it look blurry depending on the fractional value.
 
 17th August
 -----------
-Improved feel of player hit detection, by making the collision box smaller. It's now 1/3rd of a tile wide (centered), and 3/5th of a tile high (clamped to the bottom).
+Improved feel of player hit detection, by making the collision box smaller. It's now 1/3rd of a tile wide (centered), and 3/5th of a tile high (clamped to the bottom). This smaller size means it's easier to navigate single-tile-wide spaces. It also means that the player's body/legs are the collision area, so the head/arms are not included, this gives a nice sprite overlap when against solid edges.
 
 Reduce CPU load by not doing movement hit detection when not moving.
 
 Made all tiles in chars[] visible and not solid, interactions will come later (if required). This means all defined tiles in tiles[] are now solid. The player tile is still treated separately.
 
-Testing the platformer physics, collision detection and animations.
+Testing the platformer physics, collision detection and animations. I borrowed code from my first game jam entry to reduce the learning curve.
 
 ![Testing platformer physics](bees.gif?raw=true "Testing platformer physics")
 
-Added player animation cycling.
+Added player animation cycling. This depends on if the player is holding the gun or not.
 
 Added player/char collision testing, and ability to pick up gun.
 
@@ -127,38 +125,50 @@ To improve readability, changed constants to uppercase and added keystate bitmas
 
 Changed jump from SPACE/ENTER to UP, which seems more intuitve, leaving those free for actions.
 
-Edited tilemap to change "gate" into "bee hive".
+Edited tilemap to change "gate" into "bee hive". This is so bees have somewhere to return to, plus I wanted the tile to be full height so when the player stands on it they don't appear to hover.
 
-Added scrolling of map to player including multiple scroll speeds and dampening.
+Added scrolling of map to player including multiple scroll speeds and dampening. A delta value is worked out from where the level is currently scrolled at to where it wants to be, to keep the player in the centre. Scrolling starts off slow, but goes to a higher speed if the player is getting near the edges of the screen (a high delta value). It won't scroll past the edges of the screen meaning the player won't be in the centre any more when near the edges. Turning off dampening does and instant scroll to keep the player in the centre.
 
-![PLayer animation and scrolling](bees2.gif?raw=true "Player animation and scrolling")
+![Player animation and scrolling](bees2.gif?raw=true "Player animation and scrolling")
 
 18th August
 -----------
-Added ability to shoot the gun. It has a cool down timer so you don't get too many shots at once and they don't overlap on screen.
+Added ability to shoot the gun. It has a cool down timer so you don't get too many shots at once and they don't overlap on screen. Shots are destroyed when then hit something shootable, otherwise they travel until their time-to-live counter elapses (currently 40 frames).
 
-Added shot collision detection. Allow grub and fly to be shot, with health values rather than 1-shot death.
+Added shot collision detection. Allow grub and fly to be shot, with health values rather than 1-shot death. Currently grub takes 3 shots and fly takes 8.
 
-Do a deep copy of the level's tile list so that it can be modified during gameplay.
+Do a deep copy of the level's tile list so that it can be modified during gameplay. I'm thinking certain solid tiles could have a high health value and so be destroyed with heavy fire.
 
-Prevent player going off the left/right of the level.
+Prevent player going off the left/right of the level. Previously all my test levels didn't have solid edges at left/right meaning the player could fall off the level and would respawn at the start point.
 
-Added predictable random number generator using Wichmann-Hill algorithm.
+Added predictable random number generator using Wichmann-Hill algorithm. I've used this in previous game jam entries and had good success with it.
 
-Added particle system. Initally used for exploding enemies.
+Added particle system. Initally used for exploding enemies. They get drawn last so are always visible. Currently 32 particles are generated in a specified RGB colour and scattered around a specified central point at random polar coordinates (angle and distance). They are then reduced in alpha value (become more transparent) as they decay, once 0 is reached for alpha the particle is deleted. Particles travel outwards away from their central point but are subject to a fixed (non-accelerating) gravity.
 
 ![Shooting and particle explosions](bees3.gif?raw=true "Shooting and particle explosions")
 
 Added grub movements, just left/right for now, turning when blocked or reaching an edge.
 
-Needed to sort char array so that sprites come last, otherwise the grub could go behind non-solid tiles.
+Needed to sort char array so that sprites come last, otherwise the grub could go behind non-solid tiles. I didn't want to have another array of objects for the sprites, so I'm thinking of the tiles as being solid and the chars as being squashy so you can collide with them.
 
-Added a transition tile to switch between 2D platformer and top-down so a level can be a combination of both.
+Added a transition tile to switch between 2D platformer and top-down so a level can be a combination of both. You need to go through this invisible gateway with a negative vertical speed (i.e. going upwards as part of a jump). Colliding with the tile in any other direction will set 2D platformer mode and re-enable gravity.
 
 ![2D or topdown transition](bees4.gif?raw=true "2D or topdown transition")
 
-Added muzzle flash.
+Added muzzle flash, so for the first few frames a shot will have a muzzle sprite.
 
 19th August
 -----------
+Decided on the name **Bee Kind** for the game.
+
+Created a roughly ordered todo list. For things I'd like to implement in the game.
+
 Changed spritesheet to remove background colour, this is so that I can change the background colour on the fly or have gradients, parallax or particle effects.
+
+Added spawning of toadstools and flowers. A spawn check is made every 8 seconds. First it looks in the current tile map to create a list of horizontal, flat-topped, solid platforms where there is nothing above and it is at least 2 tiles away from other entities. Then if the list is not empty it randomly chooses one of these spawn points, and randomly chooses either a toadstool or flower to spawn there.
+
+Added some entropy to the random number generator by using milliseconds + seconds of the time that the game was started to advance random seeds.
+
+Found some keyboards are worse than others at rollover, and so often only 2 keys can be detected as held at once, however this can vary between keyboards. For example, holding Up+Left arrows, then pressing Space might fail where pressing Enter would work. So I've decided to add Shift as an action key since this works better in combination with other keys. I used a [key rollover test page](https://www.mechanical-keyboard.org/key-rollover-test/) to determine what worked best.
+
+Also on the topic of keyboards, in terms of the events generated by keypresses, I was using **event.which**. While this worked, it is considered deprecated. So I've switched to using **event.code** which should mean that keyboard layouts shouldn't matter as it maps to physical layout.
