@@ -1262,10 +1262,6 @@ function init()
 
   playfieldsize();
 
-  gs.tilemap=new Image;
-  gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
-  gs.tilemap.src=tilemap;
-
   // Add a bit of entropy to the rng
   var ms=STARTED.getMilliseconds();
   while (ms>=0)
@@ -1273,6 +1269,10 @@ function init()
     var a=rng(); // advance rng
     ms--;
   }
+
+  gs.tilemap=new Image;
+  gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
+  gs.tilemap.src=tilemap;
 }
 
 // Run the init() once page has loaded
