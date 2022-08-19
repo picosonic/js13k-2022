@@ -22,6 +22,10 @@ const KEYACTION=16;
 const HEALTHFLY=8;
 const HEALTHGRUB=3;
 
+const SPAWNTIME=(8*60); // Time between spawns
+
+const started=new Date(); // Time at which the game was started
+
 // Tiles list
 //
 // blanks
@@ -53,7 +57,7 @@ const HEALTHGRUB=3;
 //  27 (top left fade)
 //  28 (top right fade)
 //  29 (small bottom fade)
-// mushroom
+// toadstool
 //   30 (tall)
 //   31 (short)
 // flower
@@ -146,6 +150,7 @@ var gs={
   xoffset:0, // current view offset from left
   yoffset:0, // current view offset from top
   topdown:false, // is the level in top-down mode, otherwise it's 2D platformer
+  spawntime:SPAWNTIME, // time in frames until next spawn event
 
   // Tiles
   tiles:[], // copy of current level (to allow destruction)
@@ -179,6 +184,8 @@ function ispressed(keybit)
 // Update the player key state
 function updatekeystate(e, dir)
 {
+  var a=rng(); // advance rng
+
   switch (e.which)
   {
     case 37: // cursor left
@@ -394,6 +401,7 @@ function loadlevel(level)
             gs.gunheat=0;
             gs.particles=[];
             gs.topdown=false;
+            gs.spawntime=SPAWNTIME;
             break;
 
           case 53: // fly
@@ -1015,6 +1023,72 @@ function updatecharAI()
   }
 }
 
+// Determine distance (Hypotenuse) between two lengths in 2D space (using Pythagoras)
+function calcHypotenuse(a, b)
+{
+  return(Math.sqrt((a * a) + (b * b)));
+}
+
+function checkspawn()
+{
+  gs.spawntime--;
+  if (gs.spawntime<=0)
+  {
+    var sps=[];
+
+    // Create list of all possible spawn points
+    for (var y=1; y<gs.height; y++)
+    {
+      for (var x=0; x<gs.width; x++)
+      {
+        var tile=parseInt(gs.tiles[(y*gs.width)+x]||1, 10);
+        var tileabove=parseInt(gs.tiles[((y-1)*gs.width)+x]||1, 10);
+        var skip=false;
+
+        // Must be above flat edge
+        switch (tile-1)
+        {
+          case 4:
+          case 7:
+          case 19:
+          case 20:
+          case 21:
+          case 22:
+            // Must have no tile above it
+            if ((tileabove-1)==0)
+            {
+              // Must be certain distance away from all other chars
+              for (var id=0; id<gs.chars.length; id++)
+              {
+                if (calcHypotenuse(Math.abs((x*TILESIZE)-gs.chars[id].x), Math.abs((y*TILESIZE)-gs.chars[id].y))<(2*TILESIZE))
+                  skip=true;
+              }
+
+              // Add to list of potential spawn points
+              if (!skip)
+                sps.push({x:x, y:y-1});
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+
+    if (sps.length>0)
+    {
+      var spid=Math.floor(rng()*sps.length); // Pick random spawn point from list
+      var spawnid=(rng()<0.5)?31:33; // Pick randomly between flowers and toadstools
+
+      // Add spawned item to front of chars
+      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, del:false});
+    }
+
+    gs.spawntime=SPAWNTIME; // Set up for next spawn check
+  }
+}
+
 // Update function called once per frame
 function update()
 {
@@ -1028,6 +1102,9 @@ function update()
 
   // Check for player/character/collectable collisions
   updateplayerchar();
+
+  // Check for spawn event
+  checkspawn();
 }
 
 // Scroll level to player
@@ -1181,6 +1258,14 @@ function init()
   gs.tilemap=new Image;
   gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
   gs.tilemap.src=tilemap;
+
+  // Add a bit of entropy to the rng
+  var ms=started.getMilliseconds();
+  while (ms>=0)
+  {
+    var a=rng(); // advance rng
+    ms--;
+  }
 }
 
 // Run the init() once page has loaded
