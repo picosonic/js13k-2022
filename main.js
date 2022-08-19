@@ -1048,12 +1048,19 @@ function checkspawn()
         // Must be above flat edge
         switch (tile-1)
         {
+          case 3:
           case 4:
+          case 5:
+          case 6:
           case 7:
+          case 8:
+          case 9:
           case 19:
           case 20:
           case 21:
           case 22:
+          case 27:
+          case 28:
             // Must have no tile above it
             if ((tileabove-1)==0)
             {
