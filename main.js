@@ -439,7 +439,12 @@ function drawchars()
 function drawshots()
 {
   for (var i=0; i<gs.shots.length; i++)
-    drawsprite(gs.shots[i]);
+  {
+    if (gs.shots[i].ttl<35)
+      drawsprite(gs.shots[i]); // normal
+    else
+      drawsprite({id:43, x:gs.shots[i].x, y:gs.shots[i].y, flip:gs.shots[i].flip}); // muzzle flash
+  }
 }
 
 // Draw single particle

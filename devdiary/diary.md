@@ -156,3 +156,5 @@ Needed to sort char array so that sprites come last, otherwise the grub could go
 Added a transition tile to switch between 2D platformer and top-down so a level can be a combination of both.
 
 ![2D or topdown transition](bees4.gif?raw=true "2D or topdown transition")
+
+Added muzzle flash.
