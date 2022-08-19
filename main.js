@@ -24,7 +24,7 @@ const HEALTHGRUB=3;
 
 const SPAWNTIME=(8*60); // Time between spawns
 
-const started=new Date(); // Time at which the game was started
+const STARTED=new Date(); // Time at which the game was started
 
 // Tiles list
 //
@@ -1267,7 +1267,7 @@ function init()
   gs.tilemap.src=tilemap;
 
   // Add a bit of entropy to the rng
-  var ms=started.getMilliseconds();
+  var ms=STARTED.getMilliseconds();
   while (ms>=0)
   {
     var a=rng(); // advance rng
