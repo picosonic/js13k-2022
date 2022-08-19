@@ -120,7 +120,7 @@ do
 done
 
 # Add the index header
-echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>JS13k 2022</title><style>' > "${indexcat}"
+echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>Bee Kind</title><style>' > "${indexcat}"
 
 # Inject the concatenated and minified CSS files
 echo "Minifying CSS"
