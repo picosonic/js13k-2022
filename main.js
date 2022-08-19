@@ -7,6 +7,12 @@ const TILESIZE=16;
 const TILESPERROW=10;
 const BGCOLOUR="rgb(252, 223, 205)";
 
+const STATEINTRO=0;
+const STATEMENU=1;
+const STATEPLAYING=2;
+const STATECOMPLETE=3;
+
+const KEYNONE=0;
 const KEYLEFT=1;
 const KEYUP=2;
 const KEYRIGHT=4;
@@ -107,7 +113,7 @@ var gs={
   tilemap:null,
 
   // Main character
-  keystate:0,
+  keystate:KEYNONE,
   x:0, // x position
   y:0, // y position
   px:0, // previous x position
@@ -161,7 +167,7 @@ var gs={
 // Clear keyboard input state
 function clearinputstate()
 {
-  gs.keystate=0;
+  gs.keystate=KEYNONE;
 }
 
 // Check if an input is set in keyboard input state
@@ -766,7 +772,7 @@ function guncheck()
   if (gs.gunheat>0) gs.gunheat--;
 
   // Check for having gun and want to use it
-  if ((gs.gun==true) && (gs.gunheat==0) && (gs.keystate!=0) && (ispressed(KEYACTION)))
+  if ((gs.gun==true) && (gs.gunheat==0) && (gs.keystate!=KEYNONE) && (ispressed(KEYACTION)))
   {
     var velocity=(gs.flip?-5:5);
     var shot={x:gs.x+velocity, y:gs.y+3, dir:velocity, flip:gs.flip, ttl:40, id:44, del:false};
@@ -892,7 +898,7 @@ function updatemovements()
   particlecheck();
 
   // When a movement key is pressed, adjust players speed and direction
-  if (gs.keystate!=0)
+  if (gs.keystate!=KEYNONE)
   {
     // Left key
     if ((ispressed(KEYLEFT)) && (!ispressed(KEYRIGHT)))
@@ -1125,7 +1131,7 @@ function rafcallback(timestamp)
     redraw();
 
     // If the update took us out of play state then stop now
-    if (gs.state!=2)
+    if (gs.state!=STATEPLAYING)
       return;
   }
 
@@ -1133,7 +1139,7 @@ function rafcallback(timestamp)
   gs.lasttime=timestamp;
 
   // Request we are called on the next frame, but only if still playing
-  if (gs.state==2)
+  if (gs.state==STATEPLAYING)
     window.requestAnimationFrame(rafcallback);
 }
 
