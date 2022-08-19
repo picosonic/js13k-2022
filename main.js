@@ -19,8 +19,9 @@ const KEYRIGHT=4;
 const KEYDOWN=8;
 const KEYACTION=16;
 
-const HEALTHFLY=8;
-const HEALTHGRUB=3;
+const HEALTHFLY=10;
+const HEALTHGRUB=5;
+const HEALTHPLANT=2;
 
 const SPAWNTIME=(8*60); // Time between spawns
 
@@ -406,6 +407,12 @@ function loadlevel(level)
             gs.spawntime=SPAWNTIME;
             break;
 
+          case 30: // toadstool
+          case 31:
+            obj.health=HEALTHPLANT;
+            gs.chars.push(obj);
+            break;
+
           case 53: // fly
           case 54:
             obj.health=HEALTHFLY;
@@ -762,12 +769,12 @@ function updateanimation()
 }
 
 // Generate some particles around an origin
-function generateparticles(cx, cy, r, g, b)
+function generateparticles(cx, cy, mt, count, r, g, b)
 {
-  for (var i=0; i<32; i++)
+  for (var i=0; i<count; i++)
   {
     var ang=(Math.floor(rng()*360)); // angle to eminate from
-    var t=Math.floor(rng()*16); // travel from centre
+    var t=Math.floor(rng()*mt); // travel from centre
 
     gs.particles.push({x:cx, y:cy, ang:ang, t:t, r:r, g:g, b:b, a:1.0});
   }
@@ -806,15 +813,33 @@ function guncheck()
       {
         switch (gs.chars[id].id)
         {
+          case 30: // toadstool
+          case 31:
+            gs.chars[id].health--;
+            if (gs.chars[id].health<=0)
+            {
+              if (gs.chars[id].id==30)
+              {
+                gs.chars[id].health=HEALTHPLANT;
+                gs.chars[id].id=31;
+              }
+              else
+                gs.chars[id].del=true;
+            }
+
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 8, (gs.chars[id].health<=0)?16:2, 252, 104, 59);
+
+            gs.shots[i].dir=0;
+            gs.shots[i].ttl=3;
+            break;
+
           case 53: // fly
           case 54:
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
-            {
               gs.chars[id].del=true;
 
-              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 44, 197, 246);
-            }
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, 44, 197, 246);
 
             gs.shots[i].dir=0;
             gs.shots[i].ttl=3;
@@ -824,14 +849,12 @@ function guncheck()
           case 56:
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
-            {
               gs.chars[id].del=true;
 
-              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 252, 104, 59);
-            }
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, 252, 104, 59);
 
-              gs.shots[i].dir=0;
-              gs.shots[i].ttl=3;
+            gs.shots[i].dir=0;
+            gs.shots[i].ttl=3;
             break;
 
           default:
@@ -1091,7 +1114,7 @@ function checkspawn()
       var spawnid=(rng()<0.5)?31:33; // Pick randomly between flowers and toadstools
 
       // Add spawned item to front of chars
-      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, del:false});
+      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, health:HEALTHPLANT, del:false});
     }
 
     gs.spawntime=SPAWNTIME; // Set up for next spawn check

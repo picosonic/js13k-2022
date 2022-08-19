@@ -25,7 +25,7 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * [advzip](https://github.com/amadvance/advancecomp) (uses [7-Zip](https://sourceforge.net/projects/sevenzip/files/7-Zip/) deflate to compress further)
 
 # To do list
-- [ ] Get toadstools/flowers to appear randomly and have small ones grow, but spaced apart
+- [ ] Get small toadstools/flowers to grow
 - [ ] Allow toadstools to be shot, reducing in size then exploding
 - [ ] Slugs need to stop at toadstools and eat them. Once they have had enough bites, then turn into flying killers. Toadstools shrink when bitten
 - [ ] Make flying killers chase closest bees or hives to damage
