@@ -1265,7 +1265,7 @@ function init()
   playfieldsize();
 
   // Add a bit of entropy to the rng
-  var ms=STARTED.getMilliseconds();
+  var ms=STARTED.getMilliseconds()+STARTED.getSeconds();
   while (ms>=0)
   {
     var a=rng(); // advance rng
