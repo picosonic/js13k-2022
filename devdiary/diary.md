@@ -153,7 +153,7 @@ Needed to sort char array so that sprites come last, otherwise the grub could go
 
 Added a transition tile to switch between 2D platformer and top-down so a level can be a combination of both. You need to go through this invisible gateway with a negative vertical speed (i.e. going upwards as part of a jump). Colliding with the tile in any other direction will set 2D platformer mode and re-enable gravity.
 
-![2D or topdown transition](bees4.gif?raw=true "2D or topdown transition")
+![Metamorphosis](bees4.gif?raw=true "Metamorphosis")
 
 Added muzzle flash, so for the first few frames a shot will have a muzzle sprite.
 
@@ -187,3 +187,6 @@ Made grubs start moving in a random direction, previously they always went right
 
 When grubs eat they gain health as the toadstools loose it. Large toadstools will get smaller, small ones will disappear. Once it's finished eating all of a toadstool, if a grub gets enough health it turns into a killer fly to cause more mischief elsewhere.
 
+![Metamorphosis](bees5.gif?raw=true "Metamorphosis")
+
+My next JS13k challenge is to get pathfinding working. I found a really in depth and useful 6-page article in [issue 48 of Wireframe magazine](https://wireframe.raspberrypi.com/issues/48) written by Paul Roberts. It goes in to some detail about the algorithm

@@ -1043,6 +1043,14 @@ function updatecharAI()
           gs.chars[id].id--; // Switch tile to bigger version of plant
         break;
 
+      case 51: // bee
+      case 52:
+        // If full of pollen
+          // Find nearest hive
+        // else
+          // Find nearest flower
+        break;
+
       case 55: // grub
       case 56:
         var eaten=false;
@@ -1096,6 +1104,10 @@ function updatecharAI()
             if (gs.chars[id].health>(HEALTHGRUB*1.5))
             {
               gs.chars[id].id=53;
+              gs.chars[id].health=HEALTHFLY;
+
+              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, 255, 191, 0);
+
               return;
             }
           }
