@@ -360,11 +360,16 @@ function sortChars(a, b)
 // Load level
 function loadlevel(level)
 {
+  // Make sure it exists
+  if ((level>=0) && (levels.length-1<level)) return;
+
+  // Set current level to new one
   gs.level=level;
 
   // Deep copy tiles list to allow changes
   gs.tiles=JSON.parse(JSON.stringify(levels[gs.level].tiles));
 
+  // Get width/height of new level
   gs.width=parseInt(levels[gs.level].width, 10);
   gs.height=parseInt(levels[gs.level].height, 10);
 
@@ -498,7 +503,7 @@ function drawparticle(particle)
   return;
 
   gs.ctx.fillStyle="rgba("+particle.r+","+particle.g+","+particle.b+","+particle.a+")";
-  gs.ctx.fillRect(Math.floor(x)-gs.xoffset, Math.floor(y)-gs.yoffset, 1, 1);
+  gs.ctx.fillRect(Math.floor(x)-gs.xoffset, Math.floor(y)-gs.yoffset, particle.s, particle.s);
 }
 
 // Draw particles
@@ -786,7 +791,7 @@ function generateparticles(cx, cy, mt, count, r, g, b)
     var ang=(Math.floor(rng()*360)); // angle to eminate from
     var t=Math.floor(rng()*mt); // travel from centre
 
-    gs.particles.push({x:cx, y:cy, ang:ang, t:t, r:r, g:g, b:b, a:1.0});
+    gs.particles.push({x:cx, y:cy, ang:ang, t:t, r:r, g:g, b:b, a:1.0, s:(rng()<0.05)?2:1});
   }
 }
 
@@ -1178,7 +1183,7 @@ function checkspawn()
               // Must be certain distance away from all other chars
               for (var id=0; id<gs.chars.length; id++)
               {
-                if (calcHypotenuse(Math.abs((x*TILESIZE)-gs.chars[id].x), Math.abs((y*TILESIZE)-gs.chars[id].y))<(2*TILESIZE))
+                if (calcHypotenuse(Math.abs((x*TILESIZE)-gs.chars[id].x), Math.abs((y*TILESIZE)-gs.chars[id].y))<(((rng()<0.5)?3:4)*TILESIZE))
                   skip=true;
               }
 

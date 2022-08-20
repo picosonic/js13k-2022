@@ -189,4 +189,6 @@ When grubs eat they gain health as the toadstools loose it. Large toadstools wil
 
 ![Metamorphosis](bees5.gif?raw=true "Metamorphosis")
 
+Made particles randomly include up to 5% larger particles to represent chunks.
+
 My next JS13k challenge is to get pathfinding working. I found a really in depth and useful 6-page article in [issue 48 of Wireframe magazine](https://wireframe.raspberrypi.com/issues/48) written by Paul Roberts. It goes in to some detail about the algorithm
