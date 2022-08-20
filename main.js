@@ -22,7 +22,7 @@ const KEYACTION=16;
 const HEALTHFLY=10;
 const HEALTHGRUB=5;
 const HEALTHPLANT=2;
-const GROWTIME=(30*60); // Time to grow plant from small to big
+const GROWTIME=(15*60); // Time to grow plant from small to big
 
 const SPAWNTIME=(8*60); // Time between spawns
 
@@ -379,7 +379,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, del:false};
 
         switch (tile-1)
         {
@@ -431,7 +431,8 @@ function loadlevel(level)
           case 55: // grub
           case 56:
             obj.health=HEALTHGRUB;
-            obj.hs=0.25;
+            obj.hs=(rng()<0.5)?0.25:-0.25;
+            obj.flip=(obj.hs<0);
             gs.chars.push(obj);
             break;
 
@@ -827,7 +828,7 @@ function guncheck()
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
             {
-              if (gs.chars[id].id==30) // If it's tall, change to small toadstool - TODO FIX
+              if (gs.chars[id].id==30) // If it's tall, change to small toadstool
               {
                 gs.chars[id].health=HEALTHPLANT;
                 gs.chars[id].growtime=GROWTIME;
@@ -1035,8 +1036,8 @@ function updatecharAI()
   {
     switch (gs.chars[id].id)
     {
-      case 31:
-      case 33:
+      case 31: // toadstool
+      case 33: // flower
         gs.chars[id].growtime--;
         if (gs.chars[id].growtime<=0)
           gs.chars[id].id--; // Switch tile to bigger version of plant
@@ -1044,19 +1045,75 @@ function updatecharAI()
 
       case 55: // grub
       case 56:
-        nx=(gs.chars[id].x+=gs.chars[id].hs); // calculate new x position
-        if ((collide(nx, gs.chars[id].y, TILESIZE, TILESIZE)) || // blocked by something
-            (
-              (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y, TILESIZE, TILESIZE)) && // not blocked forwards
-              (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y+(TILESIZE/2), TILESIZE, TILESIZE)) // not blocked forwards+down (i.e. edge)
-            ))
+        var eaten=false;
+
+        // Check if overlapping a toadstool, if so stop and eat some
+        for (var id2=0; id2<gs.chars.length; id2++)
         {
-          // Turn around
-          gs.chars[id].hs*=-1;
-          gs.chars[id].flip=!gs.chars[id].flip;
+          if ((((gs.chars[id2].id==30) || (gs.chars[id2].id==31)) && overlap(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 1, 1, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
+          {
+            if (gs.chars[id].hs!=0)
+              gs.chars[id].dwell=(3*60); // wait here for a bit
+
+            gs.chars[id].hs=0; // Stop moving
+
+            gs.chars[id].dwell--;
+
+            if (gs.chars[id].dwell<0)
+            {
+              gs.chars[id].health++; // Increase grub health
+
+              gs.chars[id2].health--; // Decrease toadstool health
+              if (gs.chars[id2].health<=0)
+              {
+                if (gs.chars[id2].id==30) // If it's tall, change to small toadstool, then eat a bit more
+                {
+                  gs.chars[id2].health=HEALTHPLANT;
+                  gs.chars[id2].growtime=GROWTIME;
+                  gs.chars[id2].id=31;
+
+                  gs.chars[id].dwell=(3*60);
+                }
+                else
+                  gs.chars[id2].del=true;
+              }
+            }
+
+            eaten=true;
+
+            break;
+          }
         }
-        else
-          gs.chars[id].x=nx;
+
+        if (eaten==false)
+        {
+          if (gs.chars[id].hs==0)
+          {
+            gs.chars[id].hs=(rng()<0.5)?-0.25:0.25; // Nothing eaten so move onwards
+            gs.chars[id].flip=(gs.chars[id].hs<0);
+
+            // If this grub is well fed, turn it into a fly
+            if (gs.chars[id].health>(HEALTHGRUB*1.5))
+            {
+              gs.chars[id].id=53;
+              return;
+            }
+          }
+
+          nx=(gs.chars[id].x+=gs.chars[id].hs); // calculate new x position
+          if ((collide(nx, gs.chars[id].y, TILESIZE, TILESIZE)) || // blocked by something
+              (
+                (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y, TILESIZE, TILESIZE)) && // not blocked forwards
+                (!collide(nx+(gs.chars[id].flip?(TILESIZE/2)*-1:(TILESIZE)/2), gs.chars[id].y+(TILESIZE/2), TILESIZE, TILESIZE)) // not blocked forwards+down (i.e. edge)
+              ))
+          {
+            // Turn around
+            gs.chars[id].hs*=-1;
+            gs.chars[id].flip=!gs.chars[id].flip;
+          }
+          else
+            gs.chars[id].x=nx;
+        }
         break;
 
       default:
