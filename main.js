@@ -22,6 +22,7 @@ const KEYACTION=16;
 const HEALTHFLY=10;
 const HEALTHGRUB=5;
 const HEALTHPLANT=2;
+const GROWTIME=(30*60); // Time to grow plant from small to big
 
 const SPAWNTIME=(8*60); // Time between spawns
 
@@ -410,6 +411,14 @@ function loadlevel(level)
           case 30: // toadstool
           case 31:
             obj.health=HEALTHPLANT;
+            obj.growtime=GROWTIME;
+            gs.chars.push(obj);
+            break;
+
+          case 32: // flower
+          case 33:
+            obj.health=HEALTHPLANT;
+            obj.growtime=GROWTIME;
             gs.chars.push(obj);
             break;
 
@@ -818,9 +827,10 @@ function guncheck()
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
             {
-              if (gs.chars[id].id==30)
+              if (gs.chars[id].id==30) // If it's tall, change to small toadstool - TODO FIX
               {
                 gs.chars[id].health=HEALTHPLANT;
+                gs.chars[id].growtime=GROWTIME;
                 gs.chars[id].id=31;
               }
               else
@@ -1025,6 +1035,13 @@ function updatecharAI()
   {
     switch (gs.chars[id].id)
     {
+      case 31:
+      case 33:
+        gs.chars[id].growtime--;
+        if (gs.chars[id].growtime<=0)
+          gs.chars[id].id--; // Switch tile to bigger version of plant
+        break;
+
       case 55: // grub
       case 56:
         nx=(gs.chars[id].x+=gs.chars[id].hs); // calculate new x position
@@ -1114,7 +1131,7 @@ function checkspawn()
       var spawnid=(rng()<0.5)?31:33; // Pick randomly between flowers and toadstools
 
       // Add spawned item to front of chars
-      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, health:HEALTHPLANT, del:false});
+      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, health:HEALTHPLANT, growtime:GROWTIME, del:false});
     }
 
     gs.spawntime=SPAWNTIME; // Set up for next spawn check
