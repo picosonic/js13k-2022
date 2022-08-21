@@ -192,3 +192,7 @@ When grubs eat they gain health as the toadstools loose it. Large toadstools wil
 Made particles randomly include up to 5% larger particles to represent chunks.
 
 My next JS13k challenge is to get pathfinding working. I found a really in depth and useful 6-page article in [issue 48 of Wireframe magazine](https://wireframe.raspberrypi.com/issues/48) written by Paul Roberts. It goes in to some detail about the algorithm
+
+21st August
+-----------
+Made the bees alternate between flowers and hives depending on amount of pollen that they are carrying. Each flower or hive can only be visited by a single bee at a time meaning they will seek out other resources rather than end up on top of each other.

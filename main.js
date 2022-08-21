@@ -384,7 +384,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, inuse:false, del:false};
 
         switch (tile-1)
         {
@@ -430,6 +430,12 @@ function loadlevel(level)
           case 53: // fly
           case 54:
             obj.health=HEALTHFLY;
+            gs.chars.push(obj);
+            break;
+
+          case 51: // bee
+          case 52:
+            obj.pollen=0;
             gs.chars.push(obj);
             break;
 
@@ -1031,9 +1037,34 @@ function updateplayerchar()
   }
 }
 
+// Find the nearst char of type tileid to given x, y point or -1
+function findnearestunusedchar(x, y, tileids)
+{
+  var closest=(gs.width*gs.height*TILESIZE);
+  var charid=-1;
+  var dist;
+
+  for (var id=0; id<gs.chars.length; id++)
+  {
+    if ((tileids.includes(gs.chars[id].id)) && (gs.chars[id].inuse==false))
+    {
+      dist=calcHypotenuse(Math.abs(x-gs.chars[id].x), Math.abs(y-gs.chars[id].y));
+
+      if (dist<closest)
+      {
+        charid=id;
+        closest=dist;
+      }
+    }
+  }
+
+  return charid;
+}
+
 function updatecharAI()
 {
   var id=0;
+  var nid=-1;
   var nx=0; // new x position
   var ny=0; // new y position
 
@@ -1050,10 +1081,79 @@ function updatecharAI()
 
       case 51: // bee
       case 52:
+        // Check if dwelling
+        if (gs.chars[id].dwell>0)
+        {
+          gs.chars[id].dwell--;
+
+          // If bee stopped dwelling, if over a flower pick up pollen, if over hive dump pollen
+          if (gs.chars[id].dwell==0)
+          {
+            // Check if overlapping a toadstool, if so stop and eat some
+            for (var id2=0; id2<gs.chars.length; id2++)
+            {
+              if ((((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
+                  overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
+              {
+                switch (gs.chars[id2].id)
+                {
+                  case 32: // flower
+                  case 33:
+                    gs.chars[id].pollen++;
+                    break;
+  
+                  case 36: // hive
+                  case 37:
+                    gs.chars[id].pollen=0;
+                    break;
+  
+                  default:
+                    break;
+                }
+  
+                gs.chars[id2].inuse=false;
+              }
+            }
+          }
+        }
+
         // If full of pollen
-          // Find nearest hive
-        // else
-          // Find nearest flower
+        if (gs.chars[id].pollen>=3)
+          nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [36, 37]); // Find nearest hive
+        else
+          nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [32, 33]); // Find nearest flower
+        
+        // If something was found, move towards it
+        if (nid!=-1)
+        {
+          var deltax=Math.abs(gs.chars[nid].x-gs.chars[id].x);
+          var deltay=Math.abs(gs.chars[nid].y-gs.chars[id].y);
+
+          if ((deltax<=(TILESIZE/2)) && (deltay<=(TILESIZE/2)))
+          {
+            if (!gs.chars[nid].inuse)
+            {
+              gs.chars[id].dwell=(2*60);
+              gs.chars[nid].inuse=true;
+            }
+          }
+          
+          // Only move if we're not busy
+          if (gs.chars[id].dwell==0)
+          {
+            if (deltax!=0)
+            {
+              deltax=Math.min(deltax/80, 0.25);
+              gs.chars[id].x+=(gs.chars[nid].x<gs.chars[id].x)?-deltax:deltax;
+            }
+
+            if (deltay!=0)
+            {
+              deltay=Math.min(deltay/80, 0.25);
+              gs.chars[id].y+=(gs.chars[nid].y<gs.chars[id].y)?-deltay:deltay;
+            }
+          }
+        }
         break;
 
       case 55: // grub
