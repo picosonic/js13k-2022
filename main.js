@@ -246,7 +246,7 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case 73: // I (for info/debug)
+    case "KeyI": // I (for info/debug)
       if (dir==1)
         gs.debug=(!gs.debug);
 
@@ -439,6 +439,12 @@ function loadlevel(level)
             gs.chars.push(obj);
             break;
 
+          case 36: // hive
+          case 37:
+            obj.pollen=0;
+            gs.chars.push(obj);
+            break;
+
           case 55: // grub
           case 56:
             obj.health=HEALTHGRUB;
@@ -480,7 +486,20 @@ function drawlevel()
 function drawchars()
 {
   for (var id=0; id<gs.chars.length; id++)
+  {
     drawsprite(gs.chars[id]);
+
+    if (gs.debug)
+    {
+      // Draw health above it
+      if (gs.chars[id].health||0!=0)
+        write(gs.ctx, gs.chars[id].x-gs.xoffset, (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].health, 1, "rgb(0,0,0)");
+
+      // Draw pollen above it
+      if (gs.chars[id].pollen||0!=0)
+        write(gs.ctx, gs.chars[id].x-gs.xoffset, (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
+    }
+  }
 }
 
 // Draw shots
@@ -1027,14 +1046,6 @@ function updateplayerchar()
       }
     }
   }
-
-  // Remove anything marked for deletion
-  id=gs.chars.length;
-  while (id--)
-  {
-    if (gs.chars[id].del)
-      gs.chars.splice(id, 1);
-  }
 }
 
 // Find the nearst char of type tileid to given x, y point or -1
@@ -1064,7 +1075,6 @@ function findnearestunusedchar(x, y, tileids)
 function updatecharAI()
 {
   var id=0;
-  var nid=-1;
   var nx=0; // new x position
   var ny=0; // new y position
 
@@ -1074,55 +1084,97 @@ function updatecharAI()
     {
       case 31: // toadstool
       case 33: // flower
-        gs.chars[id].growtime--;
-        if (gs.chars[id].growtime<=0)
-          gs.chars[id].id--; // Switch tile to bigger version of plant
+        if (!gs.chars[id].inuse)
+        {
+          gs.chars[id].growtime--;
+          if (gs.chars[id].growtime<=0)
+          {
+            gs.chars[id].health=HEALTHPLANT;
+            gs.chars[id].id--; // Switch tile to bigger version of plant
+          }
+        }
         break;
 
       case 51: // bee
       case 52:
+        var nid=-1; // next target id
+        var hid=-1; // next hive id
+        var fid=-1; // next flower id
+
         // Check if dwelling
         if (gs.chars[id].dwell>0)
         {
           gs.chars[id].dwell--;
 
-          // If bee stopped dwelling, if over a flower pick up pollen, if over hive dump pollen
+          // When bee stops dwelling, if over a flower pick up pollen, if over hive dump pollen
           if (gs.chars[id].dwell==0)
           {
-            // Check if overlapping a toadstool, if so stop and eat some
+            // Depending on what the bee just visited, transfer pollen to bee or to hive
             for (var id2=0; id2<gs.chars.length; id2++)
             {
-              if ((((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
-                  overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
+              if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
+                  (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
               {
                 switch (gs.chars[id2].id)
                 {
                   case 32: // flower
                   case 33:
-                    gs.chars[id].pollen++;
+                    gs.chars[id].pollen++; // Increase pollen that the bee is carrying
+
+                    gs.chars[id2].health--; // Decrease flower health
+                    if (gs.chars[id2].health<=0)
+                    {
+                      if (gs.chars[id2].id==32) // If it's big, change to small flower, then the bee can get a bit more pollen
+                      {
+                        gs.chars[id2].health=HEALTHPLANT;
+                        gs.chars[id2].growtime=GROWTIME;
+                        gs.chars[id2].id=33;
+      
+                        gs.chars[id].dwell=(2*60);
+                      }
+                      else
+                      {
+                        gs.chars[id].dwell=0; // This bee can move on now
+                        gs.chars[id2].del=true; // Remove plant
+                      }
+                    }
                     break;
   
                   case 36: // hive
                   case 37:
+                    // Transfer pollen from bee to hive
+                    gs.chars[id2].pollen+=gs.chars[id].pollen;
                     gs.chars[id].pollen=0;
                     break;
   
                   default:
                     break;
                 }
-  
-                gs.chars[id2].inuse=false;
+
+                // If bee is leaving, mark this as no longer in use
+                if (gs.chars[id].dwell==0)
+                  gs.chars[id2].inuse=false;
               }
             }
           }
+          else
+            continue;
         }
 
-        // If full of pollen
-        if (gs.chars[id].pollen>=3)
-          nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [36, 37]); // Find nearest hive
-        else
-          nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [32, 33]); // Find nearest flower
+        // Find nearest hive
+        hid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [36, 37]);
         
+        // Find nearest flower
+        fid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [32, 33]);
+
+        // If we have any pollen, go to nearest hive
+        if (gs.chars[id].pollen>0)
+          nid=hid;
+
+        // However, if we need more pollen and there is a flower available, go there first
+        if ((fid!=-1) && (gs.chars[id].pollen<5))
+          nid=fid;
+
         // If something was found, move towards it
         if (nid!=-1)
         {
@@ -1144,7 +1196,9 @@ function updatecharAI()
             if (deltax!=0)
             {
               deltax=Math.min(deltax/80, 0.25);
-              gs.chars[id].x+=(gs.chars[nid].x<gs.chars[id].x)?-deltax:deltax;
+              gs.chars[id].hs=(gs.chars[nid].x<gs.chars[id].x)?-deltax:deltax;
+              gs.chars[id].x+=gs.chars[id].hs;
+              gs.chars[id].flip=(gs.chars[id].hs<0);
             }
 
             if (deltay!=0)
@@ -1237,6 +1291,14 @@ function updatecharAI()
         break;
     }
   }
+
+  // Remove anything marked for deletion
+  id=gs.chars.length;
+  while (id--)
+  {
+    if (gs.chars[id].del)
+      gs.chars.splice(id, 1);
+  }
 }
 
 // Determine distance (Hypotenuse) between two lengths in 2D space (using Pythagoras)
@@ -1302,10 +1364,10 @@ function checkspawn()
     if (sps.length>0)
     {
       var spid=Math.floor(rng()*sps.length); // Pick random spawn point from list
-      var spawnid=(rng()<0.5)?31:33; // Pick randomly between flowers and toadstools
+      var spawnid=(rng()<0.6)?31:33; // Pick randomly between flowers and toadstools
 
       // Add spawned item to front of chars
-      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, health:HEALTHPLANT, growtime:GROWTIME, del:false});
+      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, inuse:false, health:HEALTHPLANT, growtime:GROWTIME, del:false});
     }
 
     gs.spawntime=SPAWNTIME; // Set up for next spawn check

@@ -196,3 +196,7 @@ My next JS13k challenge is to get pathfinding working. I found a really in depth
 21st August
 -----------
 Made the bees alternate between flowers and hives depending on amount of pollen that they are carrying. Each flower or hive can only be visited by a single bee at a time meaning they will seek out other resources rather than end up on top of each other.
+
+![Bee AI debug](beedebug.png?raw=true "Bee AI debug")
+
+Added a debug indicator of pollen carried (bees/hives) and remaining health (plants/characters). This is so that I can verify the bee's descisions when moving around prior to implementing the pathfinding. Since when the pathfinding is enabled I won't as easily know where the bees are going because they won't be travelling line of sight anymore.
