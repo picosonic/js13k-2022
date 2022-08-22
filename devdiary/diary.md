@@ -202,3 +202,11 @@ Made the bees alternate between flowers and hives depending on amount of pollen 
 Added a debug indicator of pollen carried (bees/hives) and remaining health (plants/characters). This is so that I can verify the bee's descisions when moving around prior to implementing the pathfinding. Since when the pathfinding is enabled I won't as easily know where the bees are going because they won't be travelling line of sight anymore.
 
 Just about to turn in for the night, when I thought I'd test the minified version that Google Closure is outputting, however it failed to run citing undefined variables. It turned out that the 2 arrays of level data for tiles and characters within the levels was getting assigned a new variable name that wasn't in the data. By changing the way I access these it started working again. So *levels[gs.level].tiles* needed to be changed to *levels[gs.level]['tiles']* for the Closure output to be valid.
+
+After doing a bit more digging, this is a known "feature" of Google Closure when run with ADVANCED compilation level. It turned out that my levels were defined using Javascript object that had string keys, but in the code I was accessing those keys using dot notation. So changing the object accessing as described above or by making the object declaration use identifiers rather than keys also fixed it. This feature is documented on the Google Closure website [here](https://developers.google.com/closure/compiler/docs/api-tutorial3#propnames), and says there will be issues with the resultant code if mixing key types and access methods.
+
+![Mixed keys](closure.png?raw=true "Mixed keys")
+
+This gets optimised to something which doesn't work (because *g* doesn't exist) ..
+
+    for(var a=[{tiles:[]}],b=0;b<a.length;b++)console.log(a[b].g[0]||0);
