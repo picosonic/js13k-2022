@@ -367,7 +367,7 @@ function loadlevel(level)
   gs.level=level;
 
   // Deep copy tiles list to allow changes
-  gs.tiles=JSON.parse(JSON.stringify(levels[gs.level]['tiles']));
+  gs.tiles=JSON.parse(JSON.stringify(levels[gs.level].tiles));
 
   // Get width/height of new level
   gs.width=parseInt(levels[gs.level].width, 10);
@@ -380,7 +380,7 @@ function loadlevel(level)
   {
     for (var x=0; x<gs.width; x++)
     {
-      var tile=parseInt(levels[gs.level]['chars'][(y*gs.width)+x]||0, 10);
+      var tile=parseInt(levels[gs.level].chars[(y*gs.width)+x]||0, 10);
 
       if (tile!=0)
       {

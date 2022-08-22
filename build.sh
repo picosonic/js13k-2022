@@ -50,14 +50,14 @@ then
 
     for attrib in "width" "height"
     do
-      echo -n '"'${attrib}'":"' >> "${leveljs}"
+      echo -n "${attrib}:" >> "${leveljs}"
       cat "${file}" | grep "<map " | tr ' ' '\n' | grep '^'${attrib}'=' | awk -F'"' '{ print $2 }' | tr -d '\n' >> "${leveljs}"
-      echo -n '",' >> "${leveljs}"
+      echo -n ',' >> "${leveljs}"
     done
 
     for assettype in "tiles" "chars"
     do
-      echo -n "\"${assettype}\":[" >> "${leveljs}"
+      echo -n "${assettype}:[" >> "${leveljs}"
       cat "${file}" | tr -d '\n' | sed 's/<layer /\n<layer /g' | grep "${assettype}" | sed 's/</\n</g' | grep "<data " | awk -F'>' '{ print $2 }' | sed 's/,0,/,,/g' | sed 's/,0,/,,/g' | sed 's/^0,/,/g' | sed 's/,0$/,/g' | tr -d '\n' >> "${leveljs}"
       echo -n "]," >> "${leveljs}"
     done
