@@ -210,3 +210,7 @@ After doing a bit more digging, this is a known "feature" of Google Closure when
 This gets optimised to something which doesn't work (because *g* doesn't exist) ..
 
     for(var a=[{tiles:[]}],b=0;b<a.length;b++)console.log(a[b].g[0]||0);
+
+22nd August
+-----------
+Implemented a rough pathfinder algorithm to test how it works with dummy data. This is based on the [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
