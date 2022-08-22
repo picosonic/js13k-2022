@@ -200,3 +200,5 @@ Made the bees alternate between flowers and hives depending on amount of pollen 
 ![Bee AI debug](beedebug.png?raw=true "Bee AI debug")
 
 Added a debug indicator of pollen carried (bees/hives) and remaining health (plants/characters). This is so that I can verify the bee's descisions when moving around prior to implementing the pathfinding. Since when the pathfinding is enabled I won't as easily know where the bees are going because they won't be travelling line of sight anymore.
+
+Just about to turn in for the night, when I thought I'd test the minified version that Google Closure is outputting, however it failed to run citing undefined variables. It turned out that the 2 arrays of level data for tiles and characters within the levels was getting assigned a new variable name that wasn't in the data. By changing the way I access these it started working again. So *levels[gs.level].tiles* needed to be changed to *levels[gs.level]['tiles']* for the Closure output to be valid.
