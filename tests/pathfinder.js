@@ -1,6 +1,15 @@
 // A* algorithm from pseudocode in Wireframe magazine issue 48, by Paul Roberts
 
-var level={width:4, height:4, data:[0,0,0,0, 1,1,0,0, 0,0,0,0, 0,0,0,0]};
+var level={width:8, height:9, data:[
+  0,0,0,0,0,0,0,0,
+  0,1,1,0,1,1,1,1,
+  0,1,0,0,0,0,0,0,
+  0,1,1,1,1,0,1,1,
+  0,1,0,0,0,0,0,0,
+  0,1,0,1,1,1,1,1,
+  0,1,0,0,0,0,0,0,
+  0,1,1,1,1,1,1,0,
+  0,0,0,0,0,0,0,0]};
 var openlist=[];
 var closedlist=[];
 var usedlist=[];
@@ -22,6 +31,11 @@ function issolid(x, y)
 function manhattan_cost(x1, y1, x2, y2)
 {
   return (Math.abs(x1-x2)+Math.abs(y1-y2));
+}
+
+function sumcost(x, y, acc)
+{
+  return (acc+manhattan_cost(x, y, dx, dy));
 }
 
 function addnode(id, x, y, prev, acc)
@@ -52,7 +66,16 @@ function findcheapestopenlist()
   return openlist[idx];
 }
 
-// Is given node id in the openlist list
+// Get index on given list
+function getidx(givenlist, id)
+{
+  for (var i=0; i<givenlist.length; i++)
+  if (givenlist[i].id==id) return i;
+
+  return -1;
+}
+
+// Is given node id on the openlist
 function isopen(id)
 {
   for (var i=0; i<openlist.length; i++)
@@ -61,7 +84,7 @@ function isopen(id)
   return false;
 }
 
-// Is given node id in the closedlist list
+// Is given node id on the closedlist
 function isclosed(id)
 {
   for (var i=0; i<closedlist.length; i++)
@@ -90,11 +113,17 @@ function findparent(id)
 
   for (i=0; i<closedlist.length; i++)
     if (closedlist[i].id==id)
+    {
+      usedlist[closedlist[i].x+(closedlist[i].y*level.width)]=3;
       return closedlist[i].p;
+    }
 
   for (i=0; i<openlist.length; i++)
     if (openlist[i].id==id)
+    {
+      usedlist[openlist[i].x+(openlist[i].y*level.width)]=3;
       return openlist[i].p;
+    }
 
   return -1;
 }
@@ -103,14 +132,16 @@ function retracepath()
 {
   var path=""+destination;
   var prev=findparent(destination);
+  var steps=0;
   
   while (prev!=-1)
   {
+    steps++;
     path=""+prev+"->"+path;
     prev=findparent(prev);
   }
 
-  document.write(path);
+  document.write("In "+steps+" step(s) <br/>"+path);
 
   path="<table>";
   for (y=0; y<level.height; y++)
@@ -121,15 +152,16 @@ function retracepath()
       path+="<td style='font-weight:bold; text-align:center; background-color:";
       if (issolid(x, y))
       {
-        path+="black; color:magenta; background:repeating-linear-gradient(45deg,black,black 2px, white 2px, white 4px)";
+        path+="black; color:rgba(0,0,0,0); background:repeating-linear-gradient(45deg,black,black 2px, white 2px, white 4px)";
       }
       else
       {
         switch (usedlist[(y*level.width)+x]||0)
         {
-          case 1: path+="green"; break;
-          case 2: path+="red"; break;
-          default: path+="gray"; break;
+          case 1: path+="lightblue"; break; // Open list
+          case 2: path+="tomato"; break; // Closed list
+          case 3: path+="lightgreen"; break; // Found path
+          default: path+="lightgray"; break; // Unvisited
         }
       }
       path+=";'>"+(y*level.width+x)+"</td>";
@@ -159,6 +191,9 @@ function init(src, dest)
   source=src;
   destination=dest;
 
+  document.body.innerHTML="";
+  document.write("Looking for path from "+src+" to "+dest+"<br/><br/>");
+
   // Add source to openlist list
   addnode(source, nx, ny, -1, 0);
   n=findcheapestopenlist();
@@ -173,35 +208,29 @@ function init(src, dest)
     if (n.id==dest) break;
 
     // Check for unexplored nodes connecting to n
-    c=n.id-level.width; // Above
-    cx=n.x;
-    cy=n.y-1;
-    if ((!issolid(cx, cy)) && (!isopen(c)) && (!isclosed(c)))
-      addnode(c, cx, cy, n.id, n.f+1);
+    [
+      [0, -1], // Above
+      [1, 0],  // Right
+      [0, 1],  // Below
+      [-1 , 0] // Left
+    ].forEach(function(dir)
+    {
+      c=n.id+(dir[0]+(dir[1]*level.width));
+      cx=n.x+dir[0];
+      cy=n.y+dir[1];
 
-    c=n.id+1; // Right
-    cx=n.x+1;
-    cy=n.y;
-    if ((!issolid(cx, cy)) && (!isopen(c)) && (!isclosed(c)))
-      addnode(c, cx, cy, n.id, n.f+1);
+      // If it's a valid square, not solid, nor on any list, then add it
+      if (!issolid(cx, cy) && (!isopen(c)) && (!isclosed(c)))
+        addnode(c, cx, cy, n.id, n.f+1); // Add to open list
 
-    c=n.id+level.width; // Below
-    cx=n.x;
-    cy=n.y+1;
-    if ((!issolid(cx, cy)) && (!isopen(c)) && (!isclosed(c)))
-      addnode(c, cx, cy, n.id, n.f+1);
-
-    c=n.id-1; // Left
-    cx=n.x-1;
-    cy=n.y;
-    if ((!issolid(cx, cy)) && (!isopen(c)) && (!isclosed(c)))
-      addnode(c, cx, cy, n.id, n.f+1);
+      // NOTE : No cheaper path replacements done. This is when a cheaper path
+      // is found to get to a certain point already visited. If found the costs
+      // and parent data should be updated.
+    });
 
     // Move n to the closedlist list
     movetoclosedlist(n.id);
   }
-
-  document.body.innerHTML="";
 
   if (n.id==dest)
   {
@@ -212,4 +241,4 @@ function init(src, dest)
     document.write("No path found");
 }
 
-window.onload=function() { init(12, 0); };
+window.onload=function() { init(69, 7); };

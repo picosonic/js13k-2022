@@ -214,3 +214,7 @@ This gets optimised to something which doesn't work (because *g* doesn't exist) 
 22nd August
 -----------
 Implemented a rough pathfinder algorithm to test how it works with dummy data. This is based on the [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
+
+I wasn't able to see any path reductions so took that bit of code out. This is when more than one way to get to the same point is found and the more recently found one is shorter to get to and is the closer to the target (so ends up with a smaller overall cost).
+
+![Path finder](pathfinder.png?raw=true "Path finder")
