@@ -218,3 +218,9 @@ Implemented a rough pathfinder algorithm to test how it works with dummy data. T
 I wasn't able to see any path reductions so took that bit of code out. This is when more than one way to get to the same point is found and the more recently found one is shorter to get to and is the closer to the target (so ends up with a smaller overall cost).
 
 ![Path finder](pathfinder.png?raw=true "Path finder")
+
+23rd August
+-----------
+Tested out pathfinder algorithm on a moderate sized maze with good results.
+
+![Path through maze](maze_pathfinder.png?raw=true "Path through maze")
