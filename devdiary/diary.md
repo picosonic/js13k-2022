@@ -224,3 +224,5 @@ I wasn't able to see any path reductions so took that bit of code out. This is w
 Tested out pathfinder algorithm on a moderate sized maze with good results.
 
 ![Path through maze](maze_pathfinder.png?raw=true "Path through maze")
+
+Had a go at creating a webworker from an in-line function. To be used for the path finder to lighten the load.

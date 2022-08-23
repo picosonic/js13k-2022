@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>  
+  <script>
+      var useworker=false;
+      var worker;
+
+      // This becomes the webworker source
+      function ww()
+      {
+        self.onmessage=function(e)
+        {
+          self.postMessage('I was sent - '+e.data);
+        };
+      }
+
+      // Try to convert ww() function to a webworker
+      try
+      {
+        var blobURL=URL.createObjectURL(new Blob(['(',
+        ww.toString(),
+        ')()'], { type:'application/javascript' }));
+
+        worker=new Worker(blobURL);
+        URL.revokeObjectURL(blobURL);
+
+        useworker=true;
+      }
+      catch (e) {}
+
+      ///////////////
+
+      // If the creation went ok, then try to use it
+      if (useworker)
+      {
+        worker.onmessage = function(e) {
+          console.log("Received from worker : " + e.data);
+        };
+
+        worker.postMessage("hello"); // Start the worker.
+      }
+      else
+        console.log("Unable to use worker like this");
+  </script>
+</head>
+<body>
+</body>
+</html>
