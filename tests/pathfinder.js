@@ -1,6 +1,6 @@
 // A* algorithm from pseudocode in Wireframe magazine issue 48, by Paul Roberts
 
-var level={width:8, height:9, data:[
+var level={width:8, height:9, tiles:[
   0,0,0,0,0,0,0,0,
   0,1,1,0,1,1,1,1,
   0,1,0,0,0,0,0,0,
@@ -13,8 +13,6 @@ var level={width:8, height:9, data:[
 var openlist=[];
 var closedlist=[];
 var usedlist=[];
-var source=-1;
-var destination=-1;
 var dx=-1;
 var dy=-1;
 
@@ -25,17 +23,12 @@ function issolid(x, y)
     return true;
 
   // Solid check
-  return (level.data[(y*level.width)+x]==1);
+  return (level.tiles[(y*level.width)+x]==1);
 }
 
 function manhattan_cost(x1, y1, x2, y2)
 {
   return (Math.abs(x1-x2)+Math.abs(y1-y2));
-}
-
-function sumcost(x, y, acc)
-{
-  return (acc+manhattan_cost(x, y, dx, dy));
 }
 
 function addnode(id, x, y, prev, acc)
@@ -128,10 +121,10 @@ function findparent(id)
   return -1;
 }
 
-function retracepath()
+function retracepath(dest)
 {
-  var path=""+destination;
-  var prev=findparent(destination);
+  var path=""+dest;
+  var prev=findparent(dest);
   var steps=0;
   
   while (prev!=-1)
@@ -188,14 +181,11 @@ function init(src, dest)
   dx=Math.floor(dest%level.width);
   dy=Math.floor(dest/level.width);
 
-  source=src;
-  destination=dest;
-
   document.body.innerHTML="";
   document.write("Looking for path from "+src+" to "+dest+"<br/><br/>");
 
   // Add source to openlist list
-  addnode(source, nx, ny, -1, 0);
+  addnode(src, nx, ny, -1, 0);
   n=findcheapestopenlist();
 
   // While openlist list has nodes to search
@@ -235,7 +225,7 @@ function init(src, dest)
   if (n.id==dest)
   {
     document.write("Path found<br/>");
-    retracepath();
+    retracepath(dest);
   }
   else
     document.write("No path found");
