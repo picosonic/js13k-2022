@@ -24,8 +24,11 @@ const HEALTHGRUB=5;
 const HEALTHPLANT=2;
 const GROWTIME=(15*60); // Time to grow plant from small to big
 const SPEEDBEE=0.5;
+const SPEEDFLY=0.25;
 
 const SPAWNTIME=(8*60); // Time between spawns
+const MAXFLIES=10;
+const MAXBEES=10;
 
 const STARTED=new Date(); // Time at which the game was started
 
@@ -434,6 +437,7 @@ function loadlevel(level)
           case 53: // fly
           case 54:
             obj.health=HEALTHFLY;
+            obj.pollen=0;
             obj.dx=-1;
             obj.dy=-1;
             obj.path=[];
@@ -507,7 +511,7 @@ function drawchars()
 
       // Draw pollen above it
       if (gs.chars[id].pollen||0!=0)
-        write(gs.ctx, gs.chars[id].x-gs.xoffset, (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
+        write(gs.ctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
     }
   }
 }
@@ -1089,6 +1093,17 @@ function findnearestunusedchar(x, y, tileids)
   return charid;
 }
 
+function countchars(tileids)
+{
+  var found=0;
+
+  for (var id=0; id<gs.chars.length; id++)
+    if (tileids.includes(gs.chars[id].id))
+      found++;
+
+  return found;
+}
+
 function updatecharAI()
 {
   var id=0;
@@ -1162,6 +1177,15 @@ function updatecharAI()
                     // Transfer pollen from bee to hive
                     gs.chars[id2].pollen+=gs.chars[id].pollen;
                     gs.chars[id].pollen=0;
+
+                    // If hive has enough pollen, spawn another bee
+                    if ((gs.chars[id2].pollen>10) && (countchars([51, 52])<MAXBEES))
+                    {
+                      gs.chars[id2].pollen-=10;
+                      gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:0, inuse:-1, pollen:0, dx:-1, dy:-1, path:[], del:false});
+        
+                      generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
+                    }
                     break;
   
                   default: // Nothing here any more
@@ -1303,6 +1327,135 @@ function updatecharAI()
         }
         break;
 
+      case 53: // fly
+      case 54:
+        var nid=-1; // next target id
+
+        // If we are allowed to collide
+        if (gs.chars[id].dwell<=0)
+        {
+          // Check for collision
+          for (var id2=0; id2<gs.chars.length; id2++)
+          {
+            if (((gs.chars[id2].id==51) || (gs.chars[id2].id==52) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
+                (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)) &&
+                (gs.chars[id].dwell<=0))
+            {
+              switch (gs.chars[id2].id)
+              {
+                case 51: // bee
+                case 52:
+                  // Steal some pollen if it has any
+                  if (gs.chars[id2].pollen>0)
+                  {
+                    gs.chars[id2].pollen--;
+                    gs.chars[id].pollen++;
+
+                    // Don't allow further collisions for a while
+                    gs.chars[id].dwell=(5*60);
+                  }
+                  break;
+
+                case 36: // hive
+                  // Break hive
+                  gs.chars[id2].id++;
+
+                  // See if there is any pollen in the hive
+                  if (gs.chars[id2].pollen>0)
+                  {
+                    // Loose half the pollen in the hive
+                    gs.chars[id2].pollen=Math.floor(gs.chars[id2].pollen/2);
+                  }
+
+                  // Don't allow further collisions for a while
+                  gs.chars[id].dwell=(10*60);
+                  break;
+
+                default:
+                  break;
+              }
+            }
+          }
+        }
+        else
+          gs.chars[id].dwell--; // Reduce collision preventer
+
+        // Find nearest hive/bee
+        nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [36, 51, 52]);
+
+        // If something was found, check if we are already going there
+        if (nid!=-1)
+        {
+          // If our next point of interest is not where we are already headed, then re-route
+          if ((gs.chars[id].dx!=gs.chars[nid].x) && (gs.chars[id].dy!=gs.chars[nid].y))
+          {
+            gs.chars[id].path=pathfinder(
+              (Math.floor(gs.chars[id].y/TILESIZE)*gs.width)+Math.floor(gs.chars[id].x/TILESIZE)
+              ,
+              (Math.floor(gs.chars[nid].y/TILESIZE)*gs.width)+Math.floor(gs.chars[nid].x/TILESIZE)
+              );
+
+            gs.chars[id].dx=gs.chars[nid].x;
+            gs.chars[id].dy=gs.chars[nid].y;
+          }
+        }
+        else
+        {
+          // Nowhere to go next, dwell a bit to stop pathfinder running constantly
+          gs.chars[id].dwell=(2*60);
+        }
+
+        // Check if following a path, if so do move to next node
+        if (gs.chars[id].path.length>0)
+        {
+          var nextx=Math.floor(gs.chars[id].path[0]%gs.width)*TILESIZE;
+          var nexty=Math.floor(gs.chars[id].path[0]/gs.width)*TILESIZE;
+          var deltax=Math.abs(nextx-gs.chars[id].x);
+          var deltay=Math.abs(nexty-gs.chars[id].y);
+
+          // Check if we have arrived at the current path node
+          if ((deltax<=(TILESIZE/2)) && (deltay<=(TILESIZE/2)))
+          {
+            // We are here, so move on to next path node
+            gs.chars[id].path.shift();
+
+            // Check for being at end of path
+            if (gs.chars[id].path.length==0)
+            {
+              gs.chars[id].dwell=(2*60);
+
+              // Set a null destination
+              gs.chars[id].dx=-1;
+              gs.chars[id].dy=-1;
+            }
+          }
+          else
+          {
+            // Move onwards, following path
+            if (deltax!=0)
+            {
+              if (nextx!=gs.chars[id].x)
+              {
+                gs.chars[id].hs=(nextx<gs.chars[id].x)?-SPEEDFLY:SPEEDFLY;
+                gs.chars[id].x+=gs.chars[id].hs;
+                gs.chars[id].flip=(gs.chars[id].hs<0);
+              }
+
+              if (gs.chars[id].x<0)
+                gs.chars[id].x=0;
+            }
+
+            if (deltay!=0)
+            {
+              gs.chars[id].y+=(nexty<gs.chars[id].y)?-SPEEDFLY:SPEEDFLY;
+
+              if (gs.chars[id].x<0)
+                gs.chars[id].x=0;
+            }
+          }
+        }
+        break;
+
       case 55: // grub
       case 56:
         var eaten=false;
@@ -1353,10 +1506,11 @@ function updatecharAI()
             gs.chars[id].flip=(gs.chars[id].hs<0);
 
             // If this grub is well fed, turn it into a fly
-            if (gs.chars[id].health>(HEALTHGRUB*1.5))
+            if ((gs.chars[id].health>(HEALTHGRUB*1.5)) && (countchars([53, 54])<MAXFLIES))
             {
               gs.chars[id].id=53;
               gs.chars[id].health=HEALTHFLY;
+              gs.chars[id].pollen=0;
 
               generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
 

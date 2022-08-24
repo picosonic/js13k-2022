@@ -12,6 +12,7 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * Particle system
 * Switch between 2D platformer and top-down in the same level
 * [Wichmann-Hill pseudorandom number generator](https://en.wikipedia.org/wiki/Wichmann%E2%80%93Hill)
+* Entities follow paths around obsticles using [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -25,7 +26,6 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * [advzip](https://github.com/amadvance/advancecomp) (uses [7-Zip](https://sourceforge.net/projects/sevenzip/files/7-Zip/) deflate to compress further)
 
 # To do list
-- [ ] Make flying killers chase closest bees or hives to damage
 - [ ] Day / night transition
 - [ ] Parallax scrolling, with clouds or stars
 - [ ] State machine

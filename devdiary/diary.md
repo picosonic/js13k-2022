@@ -238,3 +238,7 @@ Keep looking for points of interest whilst en-route, and deviate if necessary. T
 ![Jump dust, rainbow particles and pathfinding bees](bees6.gif?raw=true "Jump dust, rainbow particles and pathfinding bees")
 
 Added dust when hitting the ground after jumping, gradient background and made metamorphosis use rainbow particles.
+
+Flies now chase down bees and hives. If they collide with a bee they steal some pollen. If they collide with a hive that has pollen then they break it and it looses half its pollen.
+
+When hives are added to, if the pollen content is over a threshold a new bee spawns. However I've limited spawning of bees and flies if there are already a few on the level.
