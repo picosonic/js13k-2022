@@ -102,6 +102,8 @@ var gs={
   step:(1/60), // target step time @ 60 fps
   acc:0, // accumulated time since last frame
   lasttime:0, // time of last frame
+  fps:0, // current FPS
+  frametimes:[], // array of frame times
 
   // physics in pixels per frame @ 60fps
   gravity:0.25,
@@ -1468,11 +1470,25 @@ function redraw()
 
   // Draw the particles
   drawparticles();
+
+  // Draw FPS
+  if (gs.debug)
+    write(gs.ctx, XMAX-(6*8), 8, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
 }
 
 // Request animation frame callback
 function rafcallback(timestamp)
 {
+  if (gs.debug)
+  {
+    // Calculate FPS
+    while ((gs.frametimes.length>0) && (gs.frametimes[0]<=(timestamp-1000)))
+      gs.frametimes.shift(); // Remove all entries older than a second
+
+    gs.frametimes.push(timestamp); // Add current time
+    gs.fps=gs.frametimes.length; // FPS = length of times in array
+  }
+
   // First time round, just save epoch
   if (gs.lasttime>0)
   {

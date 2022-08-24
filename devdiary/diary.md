@@ -226,3 +226,7 @@ Tested out pathfinder algorithm on a moderate sized maze with good results.
 ![Path through maze](maze_pathfinder.png?raw=true "Path through maze")
 
 Had a go at creating a webworker from an in-line function. To be used for the path finder to lighten the load.
+
+24th August
+-----------
+Added an FPS counter in debug mode to see how much difference code changes are making.
