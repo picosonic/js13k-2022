@@ -229,4 +229,8 @@ Had a go at creating a webworker from an in-line function. To be used for the pa
 
 24th August
 -----------
-Added an FPS counter in debug mode to see how much difference code changes are making.
+Added an FPS counter in debug mode to see how much difference code changes are making. This was based on some code I adapated from [here](https://www.growingwiththeweb.com/2017/12/fast-simple-js-fps-counter.html).
+
+Added the pathfinder algorithm to bee movements. Bees also now have a fixed speed rather than being based on distance to destination. When bees find they have nowhere of interest to go, they will follow the player.
+
+Keep looking for points of interest whilst en-route, and deviate if necessary. This is incase the intended destination becomes in use by another char, or gets used up entirely.

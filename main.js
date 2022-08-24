@@ -23,6 +23,7 @@ const HEALTHFLY=10;
 const HEALTHGRUB=5;
 const HEALTHPLANT=2;
 const GROWTIME=(15*60); // Time to grow plant from small to big
+const SPEEDBEE=0.5;
 
 const SPAWNTIME=(8*60); // Time between spawns
 
@@ -151,8 +152,8 @@ var gs={
   level:0, // Level number (0 based)
   width:0, // Width in tiles
   height:0, // height in tiles
-  xoffset:0, // current view offset from left
-  yoffset:0, // current view offset from top
+  xoffset:0, // current view offset from left (horizontal scroll)
+  yoffset:0, // current view offset from top (vertical scroll)
   topdown:false, // is the level in top-down mode, otherwise it's 2D platformer
   spawntime:SPAWNTIME, // time in frames until next spawn event
 
@@ -386,7 +387,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, inuse:false, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, inuse:-1, del:false};
 
         switch (tile-1)
         {
@@ -432,12 +433,18 @@ function loadlevel(level)
           case 53: // fly
           case 54:
             obj.health=HEALTHFLY;
+            obj.dx=-1;
+            obj.dy=-1;
+            obj.path=[];
             gs.chars.push(obj);
             break;
 
           case 51: // bee
           case 52:
             obj.pollen=0;
+            obj.dx=-1;
+            obj.dy=-1;
+            obj.path=[];
             gs.chars.push(obj);
             break;
 
@@ -1059,7 +1066,7 @@ function findnearestunusedchar(x, y, tileids)
 
   for (var id=0; id<gs.chars.length; id++)
   {
-    if ((tileids.includes(gs.chars[id].id)) && (gs.chars[id].inuse==false))
+    if ((tileids.includes(gs.chars[id].id)) && (gs.chars[id].inuse==-1))
     {
       dist=calcHypotenuse(Math.abs(x-gs.chars[id].x), Math.abs(y-gs.chars[id].y));
 
@@ -1086,7 +1093,7 @@ function updatecharAI()
     {
       case 31: // toadstool
       case 33: // flower
-        if (!gs.chars[id].inuse)
+        if (gs.chars[id].inuse==-1)
         {
           gs.chars[id].growtime--;
           if (gs.chars[id].growtime<=0)
@@ -1149,18 +1156,40 @@ function updatecharAI()
                     gs.chars[id].pollen=0;
                     break;
   
-                  default:
+                  default: // Nothing here any more
                     break;
                 }
 
-                // If bee is leaving, mark this as no longer in use
-                if (gs.chars[id].dwell==0)
-                  gs.chars[id2].inuse=false;
+                // Bee is leaving, mark this as no longer in use
+                gs.chars[id2].inuse=-1;
               }
             }
           }
           else
-            continue;
+          {
+            // Within dwell time
+            if (gs.chars[id].dwell==1)
+            {
+              for (var id2=0; id2<gs.chars.length; id2++)
+              {
+                // Check what we are overlapping
+                if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
+                    (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
+                {
+                  // If what we are overlapping is in use by another char, then keep waiting
+                  if (gs.chars[id2].inuse!=-1)
+                  {
+                    if (gs.chars[id2].inuse!=id)
+                      gs.chars[id].dwell++;
+                  }
+                  else
+                    gs.chars[id2].inuse=id; // Set which char id is using this resource
+                }
+              }
+            }
+          }
+
+          continue;
         }
 
         // Find nearest hive
@@ -1177,36 +1206,90 @@ function updatecharAI()
         if ((fid!=-1) && (gs.chars[id].pollen<5))
           nid=fid;
 
-        // If something was found, move towards it
+        // If something was found, check if we are already going there
         if (nid!=-1)
         {
-          var deltax=Math.abs(gs.chars[nid].x-gs.chars[id].x);
-          var deltay=Math.abs(gs.chars[nid].y-gs.chars[id].y);
-
-          if ((deltax<=(TILESIZE/2)) && (deltay<=(TILESIZE/2)))
+          // If our next point of interest is not where we are already headed, then re-route
+          if ((gs.chars[id].dx!=gs.chars[nid].x) && (gs.chars[id].dy!=gs.chars[nid].y))
           {
-            if (!gs.chars[nid].inuse)
+            gs.chars[id].path=pathfinder(
+              (Math.floor(gs.chars[id].y/TILESIZE)*gs.width)+Math.floor(gs.chars[id].x/TILESIZE)
+              ,
+              (Math.floor(gs.chars[nid].y/TILESIZE)*gs.width)+Math.floor(gs.chars[nid].x/TILESIZE)
+              );
+
+            gs.chars[id].dx=gs.chars[nid].x;
+            gs.chars[id].dy=gs.chars[nid].y;
+          }
+        }
+        else
+        {
+          // Nowhere to go next
+          if (gs.chars[id].path.length==0)
+          {
+            // Go to player
+            gs.chars[id].path=pathfinder(
+              (Math.floor(gs.chars[id].y/TILESIZE)*gs.width)+Math.floor(gs.chars[id].x/TILESIZE)
+              ,
+              (Math.floor(gs.y/TILESIZE)*gs.width)+Math.floor(gs.x/TILESIZE)
+              );
+
+            // Check if we didn't find the player on the map
+            if (gs.chars[id].path.length<=1)
             {
+              // If not, dwell a bit to stop pathfinder running constantly
               gs.chars[id].dwell=(2*60);
-              gs.chars[nid].inuse=true;
             }
           }
-          
-          // Only move if we're not busy
-          if (gs.chars[id].dwell==0)
+        }
+
+        // Check if following a path, if so do move to next node
+        if (gs.chars[id].path.length>0)
+        {
+          var nextx=Math.floor(gs.chars[id].path[0]%gs.width)*TILESIZE;
+          var nexty=Math.floor(gs.chars[id].path[0]/gs.width)*TILESIZE;
+          var deltax=Math.abs(nextx-gs.chars[id].x);
+          var deltay=Math.abs(nexty-gs.chars[id].y);
+
+          // Check if we have arrived at the current path node
+          if ((deltax<=(TILESIZE/2)) && (deltay<=(TILESIZE/2)))
           {
+            // We are here, so move on to next path node
+            gs.chars[id].path.shift();
+
+            // Check for being at end of path
+            if (gs.chars[id].path.length==0)
+            {
+              // If not following player, wait a bit here
+              if (gs.chars[id].dx!=-1)
+              {
+                gs.chars[id].dwell=(2*60);
+
+                // Set a null destination
+                gs.chars[id].dx=-1;
+                gs.chars[id].dy=-1;
+              }
+            }
+          }
+          else
+          {
+            // Move onwards, following path
             if (deltax!=0)
             {
-              deltax=Math.min(deltax/80, 0.25);
-              gs.chars[id].hs=(gs.chars[nid].x<gs.chars[id].x)?-deltax:deltax;
+              gs.chars[id].hs=(nextx<gs.chars[id].x)?-SPEEDBEE:SPEEDBEE;
               gs.chars[id].x+=gs.chars[id].hs;
               gs.chars[id].flip=(gs.chars[id].hs<0);
+
+              if (gs.chars[id].x<0)
+                gs.chars[id].x=0;
             }
 
             if (deltay!=0)
             {
-              deltay=Math.min(deltay/80, 0.25);
-              gs.chars[id].y+=(gs.chars[nid].y<gs.chars[id].y)?-deltay:deltay;
+              gs.chars[id].y+=(nexty<gs.chars[id].y)?-SPEEDBEE:SPEEDBEE;
+
+              if (gs.chars[id].x<0)
+                gs.chars[id].x=0;
             }
           }
         }
@@ -1369,7 +1452,7 @@ function checkspawn()
       var spawnid=(rng()<0.6)?31:33; // Pick randomly between flowers and toadstools
 
       // Add spawned item to front of chars
-      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, inuse:false, health:HEALTHPLANT, growtime:GROWTIME, del:false});
+      gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, inuse:-1, health:HEALTHPLANT, growtime:GROWTIME, del:false});
     }
 
     gs.spawntime=SPAWNTIME; // Set up for next spawn check

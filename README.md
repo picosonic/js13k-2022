@@ -26,7 +26,6 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 
 # To do list
 - [ ] Make flying killers chase closest bees or hives to damage
-- [ ] Make bees fly between flowers and hives, with route finding
 - [ ] Day / night transition
 - [ ] Parallax scrolling, with clouds or stars
 - [ ] State machine
