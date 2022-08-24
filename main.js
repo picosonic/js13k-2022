@@ -156,6 +156,7 @@ var gs={
   yoffset:0, // current view offset from top (vertical scroll)
   topdown:false, // is the level in top-down mode, otherwise it's 2D platformer
   spawntime:SPAWNTIME, // time in frames until next spawn event
+  gradient:null,
 
   // Tiles
   tiles:[], // copy of current level (to allow destruction)
@@ -613,6 +614,10 @@ function groundcheck()
   // Check we are on the ground
   if (playercollide(gs.x, gs.y+1))
   {
+    // If we just hit the ground after falling, create a few particles under foot
+    if (gs.fall==true)
+      generateparticles(gs.x+(TILESIZE/2), gs.y+TILESIZE, 4, 4, {r:170, g:170, b:170});
+
     gs.vs=0;
     gs.jump=false;
     gs.fall=false;
@@ -818,12 +823,15 @@ function updateanimation()
 }
 
 // Generate some particles around an origin
-function generateparticles(cx, cy, mt, count, r, g, b)
+function generateparticles(cx, cy, mt, count, rgb)
 {
   for (var i=0; i<count; i++)
   {
     var ang=(Math.floor(rng()*360)); // angle to eminate from
     var t=Math.floor(rng()*mt); // travel from centre
+    var r=rgb.r||(rng()*255);
+    var g=rgb.g||(rng()*255);
+    var b=rgb.b||(rng()*255);
 
     gs.particles.push({x:cx, y:cy, ang:ang, t:t, r:r, g:g, b:b, a:1.0, s:(rng()<0.05)?2:1});
   }
@@ -877,7 +885,7 @@ function guncheck()
                 gs.chars[id].del=true;
             }
 
-            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 8, (gs.chars[id].health<=0)?16:2, 252, 104, 59);
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 8, (gs.chars[id].health<=0)?16:2, {r:252, g:104, b:59});
 
             gs.shots[i].dir=0;
             gs.shots[i].ttl=3;
@@ -889,7 +897,7 @@ function guncheck()
             if (gs.chars[id].health<=0)
               gs.chars[id].del=true;
 
-            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, 44, 197, 246);
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, {r:44, g:197, b:246});
 
             gs.shots[i].dir=0;
             gs.shots[i].ttl=3;
@@ -901,7 +909,7 @@ function guncheck()
             if (gs.chars[id].health<=0)
               gs.chars[id].del=true;
 
-            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, 252, 104, 59);
+            generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, (gs.chars[id].health<=0)?32:4, {r:252, g:104, b:59});
 
             gs.shots[i].dir=0;
             gs.shots[i].ttl=3;
@@ -1350,7 +1358,7 @@ function updatecharAI()
               gs.chars[id].id=53;
               gs.chars[id].health=HEALTHFLY;
 
-              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, 255, 191, 0);
+              generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
 
               return;
             }
@@ -1533,7 +1541,8 @@ function redraw()
   scrolltoplayer(true);
 
   // Clear the tile canvas
-  gs.ctx.fillStyle=BGCOLOUR;
+  //gs.ctx.fillStyle=BGCOLOUR;
+  gs.ctx.fillStyle=gs.gradient;
   gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
 
   // Draw the level
@@ -1630,6 +1639,12 @@ function init()
   // Set up tiles canvas
   gs.canvas=document.getElementById("tiles");
   gs.ctx=gs.canvas.getContext("2d");
+
+  // Create a gradient to use for the background
+  gs.gradient=gs.ctx.createLinearGradient(0, 0, 0, YMAX);
+  gs.gradient.addColorStop(0, "rgb(252, 223, 205)");
+  gs.gradient.addColorStop(0.5, "rgb(252, 223, 205)");
+  gs.gradient.addColorStop(1, "rgb(189, 167, 153)");
 
   // Set up sprites canvas
   gs.scanvas=document.getElementById("sprites");

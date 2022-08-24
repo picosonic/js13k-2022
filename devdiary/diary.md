@@ -234,3 +234,7 @@ Added an FPS counter in debug mode to see how much difference code changes are m
 Added the pathfinder algorithm to bee movements. Bees also now have a fixed speed rather than being based on distance to destination. When bees find they have nowhere of interest to go, they will follow the player.
 
 Keep looking for points of interest whilst en-route, and deviate if necessary. This is incase the intended destination becomes in use by another char, or gets used up entirely.
+
+![Jump dust, rainbow particles and pathfinding bees](bees6.gif?raw=true "Jump dust, rainbow particles and pathfinding bees")
+
+Added dust when hitting the ground after jumping, gradient background and made metamorphosis use rainbow particles.
