@@ -249,4 +249,6 @@ Added some parallax clouds, randomly dispersed when the level is loaded.
 -----------
 Added gamepad support, for "default" gamepad and a set of known common ones (with mappings).
 
-Noticed some offities with the entity AI, so doing some investigations and making code alterations.
+Noticed some oddities with the entity AI, so doing some investigations and making code alterations.
+
+Spent ages debugging a wierd issue cause by an assignment which was incorrectly using "==" instead of "=", due to a cut-and-paste oversight.
