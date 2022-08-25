@@ -171,6 +171,9 @@ var gs={
   // Particles
   particles:[], // an array of particles for explosion frage, footprint / jump dust
 
+  // Parallax
+  parallax:[], // an array of particles placed at random x, y, z
+
   // Game state
   state:2, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
 
@@ -478,6 +481,13 @@ function loadlevel(level)
   // Sort chars such sprites are at the end (so are drawn last, i.e on top)
   gs.chars.sort(sortChars);
 
+  // Populate parallax field
+  gs.parallax=[];
+  for (var i=0; i<4; i++)
+    for (var z=1; z<=2; z++)
+      gs.parallax.push({t:Math.floor(rng()*3), x:Math.floor((rng()*gs.width)*TILESIZE), y:Math.floor((rng()*(gs.height/2))*TILESIZE), z:(z*10)});
+
+  // Move scroll offset to player with damping disabled
   scrolltoplayer(false);
 }
 
@@ -550,6 +560,29 @@ function drawparticles()
 {
   for (var i=0; i<gs.particles.length; i++)
     drawparticle(gs.particles[i]);
+}
+
+// Draw parallax
+function drawparallax()
+{
+  for (var i=0; i<gs.parallax.length; i++)
+  {
+    switch (gs.parallax[i].t)
+    {
+      case 0:
+      case 1:
+        drawtile(11+gs.parallax[i].t, gs.parallax[i].x-Math.floor(gs.xoffset/gs.parallax[i].z), gs.parallax[i].y-Math.floor(gs.yoffset/gs.parallax[i].z));
+        break;
+
+      case 2:
+        drawtile(1, gs.parallax[i].x-Math.floor(gs.xoffset/gs.parallax[i].z), gs.parallax[i].y-Math.floor(gs.yoffset/gs.parallax[i].z));
+        drawtile(2, gs.parallax[i].x-Math.floor(gs.xoffset/gs.parallax[i].z)+TILESIZE, gs.parallax[i].y-Math.floor(gs.yoffset/gs.parallax[i].z));
+        break;
+
+      default:
+        break;
+    }      
+  }
 }
 
 // Check if player has left the map
@@ -1698,6 +1731,9 @@ function redraw()
   //gs.ctx.fillStyle=BGCOLOUR;
   gs.ctx.fillStyle=gs.gradient;
   gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+  // Draw the parallax
+  drawparallax();
 
   // Draw the level
   drawlevel();

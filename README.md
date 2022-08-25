@@ -13,6 +13,7 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * Switch between 2D platformer and top-down in the same level
 * [Wichmann-Hill pseudorandom number generator](https://en.wikipedia.org/wiki/Wichmann%E2%80%93Hill)
 * Entities follow paths around obsticles using [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+* Parallax clouds
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -27,7 +28,6 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 
 # To do list
 - [ ] Day / night transition
-- [ ] Parallax scrolling, with clouds or stars
 - [ ] State machine
 - [ ] Menu system
 - [ ] Completion screen
