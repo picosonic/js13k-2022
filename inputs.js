@@ -300,7 +300,7 @@ function gamepadscan()
       for (i=0; i<gamepads[padid].buttons.length; i++)
       {
         var val=gamepads[padid].buttons[i];
-        var pressed=val==1.0;
+        var pressed=(val==1.0);
 
         if (typeof(val)=="object")
         {
