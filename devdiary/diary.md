@@ -244,3 +244,7 @@ Flies now chase down bees and hives. If they collide with a bee they steal some 
 When hives are added to, if the pollen content is over a threshold a new bee spawns. However I've limited spawning of bees and flies if there are already a few on the level.
 
 Added some parallax clouds, randomly dispersed when the level is loaded.
+
+25th August
+-----------
+Added gamepad support, for "default" gamepad and a set of known common ones (with mappings).
