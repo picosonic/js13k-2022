@@ -1104,7 +1104,7 @@ function updatecharAI()
             // Depending on what the bee just visited, transfer pollen to bee or to hive
             for (var id2=0; id2<gs.chars.length; id2++)
             {
-              if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
+              if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) && (gs.chars[id2].inuse==id) &&
                   (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
               {
                 switch (gs.chars[id2].id)
