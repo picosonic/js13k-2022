@@ -440,15 +440,15 @@ function drawchars()
     {
       // Draw health above it
       if (gs.chars[id].health||0!=0)
-        write(gs.ctx, gs.chars[id].x-gs.xoffset, (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].health, 1, "rgb(0,0,0)");
+        write(gs.sctx, gs.chars[id].x-gs.xoffset, (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].health, 1, "rgb(0,0,0)");
 
       // Draw pollen above it
       if (gs.chars[id].pollen||0!=0)
-        write(gs.ctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
+        write(gs.sctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
 
       // Draw dwell below it
       if (gs.chars[id].dwell||0!=0)
-        write(gs.ctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)+TILESIZE, ""+gs.chars[id].dwell, 1, "rgb(0,255,0)");
+        write(gs.sctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)+TILESIZE, ""+gs.chars[id].dwell, 1, "rgb(0,255,0)");
     }
   }
 }
