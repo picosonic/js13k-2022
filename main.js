@@ -247,8 +247,8 @@ function drawtile(tileid, x, y)
 // Draw sprite
 function drawsprite(sprite)
 {
-  // Don't draw tile 0 (background)
-  if (sprite==0) return;
+  // Don't draw sprite 0 (background)
+  if (sprite.id==0) return;
 
   // Clip to what's visible
   if (((Math.floor(sprite.x)-gs.xoffset)<-TILESIZE) && // clip left
@@ -1783,7 +1783,7 @@ function init()
   }
 
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
+  gs.tilemap.onload=function() {loadlevel(2); window.requestAnimationFrame(rafcallback);};
   gs.tilemap.src=tilemap;
 }
 

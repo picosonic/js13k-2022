@@ -118,7 +118,7 @@ function gamepadscan()
       // If we don't already have this one, add mapping for it
       if (gs.gamepad!=padid)
       {
-        console.log("Found new gamepad "+padid+" '"+gamepads[padid].id+"'");
+        //console.log("Found new gamepad "+padid+" '"+gamepads[padid].id+"'");
 
         gs.gamepad=padid;
 
@@ -324,36 +324,36 @@ function gamepadscan()
 
       // Update padstate
       if (gup)
-        gs.padstate|=2;
+        gs.padstate|=KEYUP;
       else
-        gs.padstate&=~2;
+        gs.padstate&=~KEYUP;
 
       if (gdown)
-        gs.padstate|=8;
+        gs.padstate|=KEYDOWN;
       else
-        gs.padstate&=~8;
+        gs.padstate&=~KEYDOWN;
 
       if (gleft)
-        gs.padstate|=1;
+        gs.padstate|=KEYLEFT;
       else
-        gs.padstate&=~1;
+        gs.padstate&=~KEYLEFT;
 
       if (gright)
-        gs.padstate|=4;
+        gs.padstate|=KEYRIGHT;
       else
-        gs.padstate&=~4;
+        gs.padstate&=~KEYRIGHT;
 
       if (gjump)
-        gs.padstate|=16;
+        gs.padstate|=KEYACTION;
       else
-        gs.padstate&=~16;
+        gs.padstate&=~KEYACTION;
     }
   }
 
   // Detect disconnect
   if ((found==0) && (gs.gamepad!=-1))
   {
-    console.log("Disconnected gamepad "+padid);
+    //console.log("Disconnected gamepad "+padid);
     
     gs.gamepad=-1;
   }
