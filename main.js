@@ -182,7 +182,10 @@ var gs={
   parallax:[], // an array of particles placed at random x, y, z
 
   // Game state
-  state:STATEPLAYING, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
+  state:STATEINTRO, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
+
+  // Timeline for animation
+  timeline:new timelineobj(),
 
   // Debug flag
   debug:false
@@ -1719,6 +1722,42 @@ function rafcallback(timestamp)
     window.requestAnimationFrame(rafcallback);
 }
 
+// Intro animation
+function intro(percent)
+{
+  // Check if done or control key/gamepad pressed
+  if ((percent>=96) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+  {
+    // Ensure timeline is stopped
+    gs.timeline.end();
+    gs.timeline.reset();
+
+    // Start a new timeline 
+    gs.timeline.add(0, function()
+    {
+      gs.state=STATEMENU;
+      //show_title();
+    });
+
+    gs.timeline.add(1*1000, function()
+    {
+      gs.state=STATEPLAYING;
+      loadlevel(3);
+      window.requestAnimationFrame(rafcallback);
+    });
+
+    gs.timeline.begin();
+  }
+  else
+  {
+    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+    gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+
+    // Draw rabbit
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:(percent/100)*XMAX, y:(YMAX/2)-(TILESIZE/2), flip:false});
+  }
+}
+
 // Entry point
 function init()
 {
@@ -1768,8 +1807,14 @@ function init()
     ms--;
   }
 
+  // Set up intro animation callback
+  gs.timeline.reset();
+  gs.timeline.add(10*1000, undefined);
+  gs.timeline.addcallback(intro);
+
+  // Once image has loaded, start timeline for intro
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() {loadlevel(3); window.requestAnimationFrame(rafcallback);};
+  gs.tilemap.onload=function() { gs.timeline.begin(0); };
   gs.tilemap.src=tilemap;
 }
 

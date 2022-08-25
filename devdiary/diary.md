@@ -252,3 +252,7 @@ Added gamepad support, for "default" gamepad and a set of known common ones (wit
 Noticed some oddities with the entity AI, so doing some investigations and making code alterations.
 
 Spent ages debugging a wierd issue cause by an assignment which was incorrectly using "==" instead of "=", due to a cut-and-paste oversight.
+
+Removed inuse flags on flowers and hives, may add again later, but for now it was causing issues.
+
+Started working on state machine and intro animation.
