@@ -125,7 +125,6 @@ var gs={
   tilemap:null,
 
   // Main character
-  keystate:KEYNONE,
   x:0, // x position
   y:0, // y position
   px:0, // previous x position
@@ -161,6 +160,13 @@ var gs={
   spawntime:SPAWNTIME, // time in frames until next spawn event
   gradient:null,
 
+  // Input
+  keystate:KEYNONE,
+  padstate:KEYNONE,
+  gamepadbuttons:[], // Button mapping
+  gamepadaxes:[], // Axes mapping
+  gamepadaxesval:[], // Axes values
+
   // Tiles
   tiles:[], // copy of current level (to allow destruction)
 
@@ -175,98 +181,11 @@ var gs={
   parallax:[], // an array of particles placed at random x, y, z
 
   // Game state
-  state:2, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
+  state:STATEPLAYING, // state machine, 0=intro, 1=menu, 2=playing, 3=complete
 
   // Debug flag
   debug:false
 };
-
-// Clear keyboard input state
-function clearinputstate()
-{
-  gs.keystate=KEYNONE;
-}
-
-// Check if an input is set in keyboard input state
-function ispressed(keybit)
-{
-  return ((gs.keystate&keybit)!=0);
-}
-
-// Update the player key state
-function updatekeystate(e, dir)
-{
-  var a=rng(); // advance rng
-
-  switch (e.code)
-  {
-    case "ArrowLeft": // cursor left
-    case "KeyA": // A
-    case "KeyZ": // Z
-      if (dir==1)
-        gs.keystate|=KEYLEFT;
-      else
-        gs.keystate&=~KEYLEFT;
-
-      e.preventDefault();
-      break;
-
-    case "ArrowUp": // cursor up
-    case "KeyW": // W
-    case "Semiolon": // semicolon
-      if (dir==1)
-        gs.keystate|=KEYUP;
-      else
-        gs.keystate&=~KEYUP;
-
-      e.preventDefault();
-      break;
-
-    case "ArrowRight": // cursor right
-    case "KeyD": // D
-    case "KeyX": // X
-      if (dir==1)
-        gs.keystate|=KEYRIGHT;
-      else
-        gs.keystate&=~KEYRIGHT;
-
-      e.preventDefault();
-      break;
-
-    case "ArrowDown": // cursor down
-    case "KeyS": // S
-    case "Period": // dot
-      if (dir==1)
-        gs.keystate|=KEYDOWN;
-      else
-        gs.keystate&=~KEYDOWN;
-
-      e.preventDefault();
-      break;
-
-    case "Enter": // enter
-    case "ShiftLeft": // L shift
-    case "ShiftRight": // R shift
-    case "Space": // space
-      if (dir==1)
-        gs.keystate|=KEYACTION;
-      else
-        gs.keystate&=~KEYACTION;
-
-      e.preventDefault();
-      break;
-
-    case "KeyI": // I (for info/debug)
-      if (dir==1)
-        gs.debug=(!gs.debug);
-
-      e.preventDefault();
-      break;
-
-    default:
-      break;
-  }
-}
 
 // Handle resize events
 function playfieldsize()
@@ -328,6 +247,9 @@ function drawtile(tileid, x, y)
 // Draw sprite
 function drawsprite(sprite)
 {
+  // Don't draw tile 0 (background)
+  if (sprite==0) return;
+
   // Clip to what's visible
   if (((Math.floor(sprite.x)-gs.xoffset)<-TILESIZE) && // clip left
       ((Math.floor(sprite.x)-gs.xoffset)>XMAX) && // clip right
@@ -883,7 +805,7 @@ function guncheck()
   if (gs.gunheat>0) gs.gunheat--;
 
   // Check for having gun and want to use it
-  if ((gs.gun==true) && (gs.gunheat==0) && (gs.keystate!=KEYNONE) && (ispressed(KEYACTION)))
+  if ((gs.gun==true) && (gs.gunheat==0) && ((gs.keystate!=KEYNONE) || ((gs.padstate!=KEYNONE))) && (ispressed(KEYACTION)))
   {
     var velocity=(gs.flip?-5:5);
     var shot={x:gs.x+velocity, y:gs.y+3, dir:velocity, flip:gs.flip, ttl:40, id:44, del:false};
@@ -1026,7 +948,7 @@ function updatemovements()
   particlecheck();
 
   // When a movement key is pressed, adjust players speed and direction
-  if (gs.keystate!=KEYNONE)
+  if ((gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
   {
     // Left key
     if ((ispressed(KEYLEFT)) && (!ispressed(KEYRIGHT)))
@@ -1644,7 +1566,7 @@ function checkspawn()
     if (sps.length>0)
     {
       var spid=Math.floor(rng()*sps.length); // Pick random spawn point from list
-      var spawnid=(rng()<0.6)?31:33; // Pick randomly between flowers and toadstools
+      var spawnid=(rng()<0.6)?33:31; // Pick randomly between flowers and toadstools
 
       // Add spawned item to front of chars
       gs.chars.unshift({id:spawnid, x:(sps[spid].x*TILESIZE), y:(sps[spid].y*TILESIZE), flip:false, hs:0, vs:0, inuse:-1, health:HEALTHPLANT, growtime:GROWTIME, del:false});
@@ -1780,6 +1702,14 @@ function rafcallback(timestamp)
     // If it's more than 15 seconds since last call, reset
     if ((gs.acc>gs.step) && ((gs.acc/gs.step)>(60*15)))
       gs.acc=gs.step*2;
+
+    // Gamepad support
+    try
+    {
+      if (!!(navigator.getGamepads))
+        gamepadscan();
+    }
+    catch(e){}
 
     // Process "steps" since last call
     while (gs.acc>gs.step)
