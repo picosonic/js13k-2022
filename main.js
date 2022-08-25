@@ -25,6 +25,7 @@ const HEALTHPLANT=2;
 const GROWTIME=(15*60); // Time to grow plant from small to big
 const SPEEDBEE=0.5;
 const SPEEDFLY=0.25;
+const SPEEDGRUB=0.25;
 
 const SPAWNTIME=(8*60); // Time between spawns
 const MAXFLIES=10;
@@ -444,6 +445,10 @@ function drawchars()
       // Draw pollen above it
       if (gs.chars[id].pollen||0!=0)
         write(gs.ctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)-8, ""+gs.chars[id].pollen, 1, "rgb(255,0,255)");
+
+      // Draw dwell below it
+      if (gs.chars[id].dwell||0!=0)
+        write(gs.ctx, gs.chars[id].x-gs.xoffset+(TILESIZE*0.75), (gs.chars[id].y-gs.yoffset)+TILESIZE, ""+gs.chars[id].dwell, 1, "rgb(0,255,0)");
     }
   }
 }
@@ -1024,7 +1029,7 @@ function updateplayerchar()
   }
 }
 
-// Find the nearst char of type tileid to given x, y point or -1
+// Find the nearst char of type included in tileids to given x, y point or -1
 function findnearestunusedchar(x, y, tileids)
 {
   var closest=(gs.width*gs.height*TILESIZE);
@@ -1093,7 +1098,7 @@ function updatecharAI()
         {
           gs.chars[id].dwell--;
 
-          // When bee stops dwelling, if over a flower pick up pollen, if over hive dump pollen
+          // When bee stops dwelling, if over target flower pick up pollen, if over target hive dump pollen
           if (gs.chars[id].dwell==0)
           {
             // Depending on what the bee just visited, transfer pollen to bee or to hive
@@ -1111,7 +1116,7 @@ function updatecharAI()
                     gs.chars[id2].health--; // Decrease flower health
                     if (gs.chars[id2].health<=0)
                     {
-                      if (gs.chars[id2].id==32) // If it's big, change to small flower, then the bee can get a bit more pollen
+                      if (gs.chars[id2].id==32) // If it's big flower, change to small flower, then the bee can get a bit more pollen
                       {
                         gs.chars[id2].health=HEALTHPLANT;
                         gs.chars[id2].growtime=GROWTIME;
@@ -1143,7 +1148,7 @@ function updatecharAI()
                     }
                     break;
   
-                  default: // Nothing here any more
+                  default: // Something we are not interested in
                     break;
                 }
 
@@ -1211,7 +1216,7 @@ function updatecharAI()
         }
         else
         {
-          // Nowhere to go next
+          // No new targets found
           if (gs.chars[id].path.length==0)
           {
             // Go to player
@@ -1230,7 +1235,7 @@ function updatecharAI()
           }
         }
 
-        // Check if following a path, if so do move to next node
+        // Check if following a path, then do move to next node
         if (gs.chars[id].path.length>0)
         {
           var nextx=Math.floor(gs.chars[id].path[0]%gs.width)*TILESIZE;
@@ -1377,6 +1382,7 @@ function updatecharAI()
             // Check for being at end of path
             if (gs.chars[id].path.length==0)
             {
+              // Path completed so wait a bit
               gs.chars[id].dwell=(2*60);
 
               // Set a null destination
@@ -1415,49 +1421,48 @@ function updatecharAI()
       case 56:
         var eaten=false;
 
+        // If dwelling, don't process any further
+        if (gs.chars[id].dwell>0)
+        {
+          gs.chars[id].dwell--;
+          gs.chars[id].hs=0; // Prevent movement
+
+          continue;
+        }
+
         // Check if overlapping a toadstool, if so stop and eat some
         for (var id2=0; id2<gs.chars.length; id2++)
         {
-          if ((((gs.chars[id2].id==30) || (gs.chars[id2].id==31)) && overlap(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 1, 1, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
+          if ((eaten==false) && ((gs.chars[id2].id==30) || (gs.chars[id2].id==31)) &&
+               (overlap(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 1, 1, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
           {
-            if (gs.chars[id].hs!=0)
-              gs.chars[id].dwell=(3*60); // wait here for a bit
-
-            gs.chars[id].hs=0; // Stop moving
-
-            gs.chars[id].dwell--;
-
-            if (gs.chars[id].dwell<0)
-            {
-              gs.chars[id].health++; // Increase grub health
-
-              gs.chars[id2].health--; // Decrease toadstool health
-              if (gs.chars[id2].health<=0)
-              {
-                if (gs.chars[id2].id==30) // If it's tall, change to small toadstool, then eat a bit more
-                {
-                  gs.chars[id2].health=HEALTHPLANT;
-                  gs.chars[id2].growtime=GROWTIME;
-                  gs.chars[id2].id=31;
-
-                  gs.chars[id].dwell=(3*60);
-                }
-                else
-                  gs.chars[id2].del=true;
-              }
-            }
-
+            gs.chars[id].health++; // Increase grub health
             eaten=true;
+            gs.chars[id].dwell=(3*60);
+
+            gs.chars[id2].health--; // Decrease toadstool health
+            if (gs.chars[id2].health<=0)
+            {
+              if (gs.chars[id2].id==30) // If it's a tall toadstool, change to small toadstool, then eat a bit more
+              {
+                gs.chars[id2].health=HEALTHPLANT;
+                gs.chars[id2].growtime=GROWTIME;
+                gs.chars[id2].id=31;
+              }
+              else
+                gs.chars[id2].del=true;
+            }
 
             break;
           }
         }
 
-        if (eaten==false)
+        if (((gs.chars[id].dwell==0)) && (eaten==false))
         {
+          // Not eating, nor moving
           if (gs.chars[id].hs==0)
           {
-            gs.chars[id].hs=(rng()<0.5)?-0.25:0.25; // Nothing eaten so move onwards
+            gs.chars[id].hs=(rng()<0.5)?-SPEEDGRUB:SPEEDGRUB; // Nothing eaten so move onwards
             gs.chars[id].flip=(gs.chars[id].hs<0);
 
             // If this grub is well fed, turn it into a fly
@@ -1783,7 +1788,7 @@ function init()
   }
 
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() {loadlevel(2); window.requestAnimationFrame(rafcallback);};
+  gs.tilemap.onload=function() {loadlevel(0); window.requestAnimationFrame(rafcallback);};
   gs.tilemap.src=tilemap;
 }
 
