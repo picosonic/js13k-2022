@@ -1098,90 +1098,68 @@ function updatecharAI()
         {
           gs.chars[id].dwell--;
 
-          // When bee stops dwelling, if over target flower pick up pollen, if over target hive dump pollen
-          if (gs.chars[id].dwell==0)
+          continue;
+        }
+
+        // Check if overlapping hive or flowers not in use or being used by this bee
+        for (var id2=0; id2<gs.chars.length; id2++)
+        {
+          if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) && ((gs.chars[id2].inuse==-1) || (gs.chars[id2].inuse==id)) &&
+              (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
           {
-            // Depending on what the bee just visited, transfer pollen to bee or to hive
-            for (var id2=0; id2<gs.chars.length; id2++)
+            switch (gs.chars[id2].id)
             {
-              if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) && (gs.chars[id2].inuse==id) &&
-                  (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
-              {
-                switch (gs.chars[id2].id)
+              case 32: // flower
+              case 33:
+                gs.chars[id2].inuse=id; // Mark that this bee is using it (held until it runs out of pollen)
+                gs.chars[id].dwell=(2*60);
+
+                gs.chars[id].pollen++; // Increase pollen that the bee is carrying
+
+                gs.chars[id2].health--; // Decrease flower health
+                if (gs.chars[id2].health<=0)
                 {
-                  case 32: // flower
-                  case 33:
-                    gs.chars[id].pollen++; // Increase pollen that the bee is carrying
-
-                    gs.chars[id2].health--; // Decrease flower health
-                    if (gs.chars[id2].health<=0)
-                    {
-                      if (gs.chars[id2].id==32) // If it's big flower, change to small flower, then the bee can get a bit more pollen
-                      {
-                        gs.chars[id2].health=HEALTHPLANT;
-                        gs.chars[id2].growtime=GROWTIME;
-                        gs.chars[id2].id=33;
-      
-                        gs.chars[id].dwell=(2*60);
-                      }
-                      else
-                      {
-                        gs.chars[id].dwell=0; // This bee can move on now
-                        gs.chars[id2].del=true; // Remove plant
-                      }
-                    }
-                    break;
-  
-                  case 36: // hive
-                  case 37:
-                    // Transfer pollen from bee to hive
-                    gs.chars[id2].pollen+=gs.chars[id].pollen;
-                    gs.chars[id].pollen=0;
-
-                    // If hive has enough pollen, spawn another bee
-                    if ((gs.chars[id2].pollen>10) && (countchars([51, 52])<MAXBEES))
-                    {
-                      gs.chars[id2].pollen-=10;
-                      gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:0, inuse:-1, pollen:0, dx:-1, dy:-1, path:[], del:false});
-        
-                      generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
-                    }
-                    break;
-  
-                  default: // Something we are not interested in
-                    break;
-                }
-
-                // Bee is leaving, mark this as no longer in use
-                gs.chars[id2].inuse=-1;
-              }
-            }
-          }
-          else
-          {
-            // Within dwell time
-            if (gs.chars[id].dwell==1)
-            {
-              for (var id2=0; id2<gs.chars.length; id2++)
-              {
-                // Check what we are overlapping
-                if (((gs.chars[id2].id==32) || (gs.chars[id2].id==33) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
-                    (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)))
-                {
-                  // If what we are overlapping is in use by another char, then keep waiting
-                  if (gs.chars[id2].inuse!=-1)
+                  if (gs.chars[id2].id==32) // If it's big flower, change to small flower, then the bee can get a bit more pollen
                   {
-                    if (gs.chars[id2].inuse!=id)
-                      gs.chars[id].dwell++;
+                    gs.chars[id2].health=HEALTHPLANT;
+                    gs.chars[id2].growtime=GROWTIME;
+                    gs.chars[id2].id=33;
                   }
                   else
-                    gs.chars[id2].inuse=id; // Set which char id is using this resource
+                    gs.chars[id2].del=true; // Remove plant
                 }
-              }
+                break;
+
+              case 36: // hive
+              case 37:
+                // Only use this hive if this bee has pollen
+                if (gs.chars[id].pollen>0)
+                {
+                  gs.chars[id2].inuse=id; // Mark that this bee is using this hive
+                  gs.chars[id].dwell=(2*60);
+
+                  // Transfer pollen from bee to hive
+                  gs.chars[id2].pollen+=gs.chars[id].pollen;
+                  gs.chars[id].pollen=0;
+
+                  // If hive has enough pollen, spawn another bee
+                  if ((gs.chars[id2].pollen>10) && (countchars([51, 52])<MAXBEES))
+                  {
+                    gs.chars[id2].pollen-=10;
+                    gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:0, inuse:-1, pollen:0, dx:-1, dy:-1, path:[], del:false});
+      
+                    generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
+                  }
+                }
+                else
+                  gs.chars[id2].inuse=-1; // Not using it
+
+                break;
+
+              default: // Something we are not interested in
+                break;
             }
           }
-
-          continue;
         }
 
         // Find nearest hive
@@ -1190,8 +1168,8 @@ function updatecharAI()
         // Find nearest flower
         fid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [32, 33]);
 
-        // If we have any pollen, go to nearest hive
-        if (gs.chars[id].pollen>0)
+        // If we have any pollen, go to nearest hive (if there is one)
+        if ((hid!=-1) && (gs.chars[id].pollen>0))
           nid=hid;
 
         // However, if we need more pollen and there is a flower available, go there first
@@ -1252,15 +1230,13 @@ function updatecharAI()
             // Check for being at end of path
             if (gs.chars[id].path.length==0)
             {
-              // If not following player, wait a bit here
-              if (gs.chars[id].dx!=-1)
-              {
+              // If following player, wait a bit here
+              if (gs.chars[id].dx==-1)
                 gs.chars[id].dwell=(2*60);
 
-                // Set a null destination
-                gs.chars[id].dx=-1;
-                gs.chars[id].dy=-1;
-              }
+              // Set a null destination
+              gs.chars[id].dx=-1;
+              gs.chars[id].dy=-1;
             }
           }
           else
@@ -1292,14 +1268,14 @@ function updatecharAI()
         var nid=-1; // next target id
 
         // If we are allowed to collide
-        if (gs.chars[id].dwell<=0)
+        if (gs.chars[id].dwell==0)
         {
           // Check for collision
           for (var id2=0; id2<gs.chars.length; id2++)
           {
             if (((gs.chars[id2].id==51) || (gs.chars[id2].id==52) || (gs.chars[id2].id==36) || (gs.chars[id2].id==37)) &&
                 (overlap(gs.chars[id].x, gs.chars[id].y, TILESIZE, TILESIZE, gs.chars[id2].x, gs.chars[id2].y, TILESIZE, TILESIZE)) &&
-                (gs.chars[id].dwell<=0))
+                (gs.chars[id].dwell==0))
             {
               switch (gs.chars[id2].id)
               {
@@ -1338,7 +1314,11 @@ function updatecharAI()
           }
         }
         else
+        {
           gs.chars[id].dwell--; // Reduce collision preventer
+
+          continue; // Stop further processing, we are still dwelling
+        }
 
         // Find nearest hive/bee
         nid=findnearestunusedchar(gs.chars[id].x, gs.chars[id].y, [36, 51, 52]);
