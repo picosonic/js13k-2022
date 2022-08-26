@@ -60,13 +60,9 @@ class timelineobj
             this.timeline[i].item();
         }
 
-        try
-        {
-          // Keep a count of all remaining jobs
-          if (!this.timeline[i].done)
-            remain++;
-        }
-        catch(e) {}
+        // Keep a count of all remaining jobs if still running
+        if ((this.running==true) && ((this.timeline.length-1)>=i) && (!this.timeline[i].done))
+          remain++;
       }
 
       // If a callback was requested, then call it
