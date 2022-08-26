@@ -14,7 +14,10 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * [Wichmann-Hill pseudorandom number generator](https://en.wikipedia.org/wiki/Wichmann%E2%80%93Hill)
 * Entities follow paths around obsticles using [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 * Parallax clouds
-* Gamepad support
+* Gamepad support, with JS13k controller icon
+* Timeline based animations
+* Level transition screen showing level names
+* Intro screen
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -28,11 +31,11 @@ JS13KGames entry for 2022, theme is "**DEATH**".
 * [advzip](https://github.com/amadvance/advancecomp) (uses [7-Zip](https://sourceforge.net/projects/sevenzip/files/7-Zip/) deflate to compress further)
 
 # To do list
-- [ ] Day / night transition
-- [ ] State machine
+- [ ] Introduce characters on intro screen
 - [ ] Menu system
 - [ ] Completion screen
-- [ ] Intro animation
+- [ ] Speech bubbles
+- [ ] First level as a trainer level
 - [ ] Weather effects
 - [ ] Sound effects and music track
 - [ ] Touch support for phone/tablet

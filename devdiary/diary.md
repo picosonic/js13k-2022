@@ -262,3 +262,15 @@ Started working on state machine and intro animation, put a framework in place t
 Did some more work on the intro animation, added a rabbit going across the screen with the letters to spell out the game name appears above it as it passes, and some bees going the other way at the same speed so they cross in the middle.
 
 ![WIP intro sequence](bk_intro.gif?raw=true "WIP intro sequence")
+
+27th August
+-----------
+Created a base set of 7 bee-pun named levels. The name is done as a custom map property within Tiled.
+
+Updated build script to extract level name when building new levels.js file.
+
+Added new level screen when changing levels, it shows the level number and name for 2 seconds, then launches into the game.
+
+Did some fixes on my timeline library. What I found was that if a timeline entry cleared out the timeline with a view to creating a new one it could mess up the calculations for how many entries remain to be run on the timeline.
+
+Added tiny JS13k logo to tileset.

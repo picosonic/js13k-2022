@@ -37,34 +37,38 @@ const STARTED=new Date(); // Time at which the game was started
 // Tiles list
 //
 // blanks
-//   0, 10, 14, 17
+//   14, 17
+// switcheroo
+//   0
+// JS13k logo
+//   10
 // clouds
 //   1, 2 (big)
 //   11 (small)
 //   12 (double)
 // lines
-//  3 (top left)
-//  4 (top)
-//  5 (top right)
-//  13 (left)
-//  15 (right)
-//  6 (earth top left)
-//  7 (earth top)
-//  8 (earth top right)
-//  9 (small top fade)
-//  16 (left fade)
-//  18 (right fade)
-//  19 (small top)
-//  20 (thick top 1)
-//  21 (thick top 2)
-//  22 (thick top 3)
-//  23 (bottom left)
-//  24 (bottom right)
-//  25 (earth bottom left)
-//  26 (earth bottom right)
-//  27 (top left fade)
-//  28 (top right fade)
-//  29 (small bottom fade)
+//   3 (top left)
+//   4 (top)
+//   5 (top right)
+//   13 (left)
+//   15 (right)
+//   6 (earth top left)
+//   7 (earth top)
+//   8 (earth top right)
+//   9 (small top fade)
+//   16 (left fade)
+//   18 (right fade)
+//   19 (small top)
+//   20 (thick top 1)
+//   21 (thick top 2)
+//   22 (thick top 3)
+//   23 (bottom left)
+//   24 (bottom right)
+//   25 (earth bottom left)
+//   26 (earth bottom right)
+//   27 (top left fade)
+//   28 (top right fade)
+//   29 (small bottom fade)
 // toadstool
 //   30 (tall)
 //   31 (short)
@@ -1819,6 +1823,9 @@ function intro(percent)
 
     // Clear sprite canvas
     gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+
+    // Draw JS13k
+    drawsprite({id:10, x:0, y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
 
     // Draw rabbit
     drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
