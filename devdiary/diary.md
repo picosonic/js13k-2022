@@ -255,4 +255,10 @@ Spent ages debugging a wierd issue cause by an assignment which was incorrectly 
 
 Removed inuse flags on flowers and hives, may add again later, but for now it was causing issues.
 
-Started working on state machine and intro animation.
+Started working on state machine and intro animation, put a framework in place to use timelines.
+
+26th August
+-----------
+Did some more work on the intro animation, added a rabbit going across the screen with the letters to spell out the game name appears above it as it passes, and some bees going the other way at the same speed so they cross in the middle.
+
+![WIP intro sequence](bk_intro.gif?raw=true "WIP intro sequence")

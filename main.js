@@ -1750,11 +1750,22 @@ function intro(percent)
   }
   else
   {
-    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+    var tenth=Math.floor(percent/10);
+
+    if (tenth==0)
+      gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+
+    write(gs.ctx, tenth*(8*4), 40, " BEE KIND ".charAt(tenth), 5, "rgb(255, 191, 0)");
+
+    // Clear sprite canvas
     gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
 
     // Draw rabbit
-    drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:(percent/100)*XMAX, y:(YMAX/2)-(TILESIZE/2), flip:false});
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
+
+    // Draw bees
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?51:52, x:XMAX-Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)+(TILESIZE*2)), flip:true});
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?52:51, x:XMAX-Math.floor((percent/100)*XMAX)+TILESIZE, y:Math.floor((YMAX/2)+TILESIZE), flip:true});
   }
 }
 
