@@ -10,7 +10,8 @@ const BGCOLOUR="rgb(252, 223, 205)";
 const STATEINTRO=0;
 const STATEMENU=1;
 const STATEPLAYING=2;
-const STATECOMPLETE=3;
+const STATENEWLEVEL=3;
+const STATECOMPLETE=4;
 
 const KEYNONE=0;
 const KEYLEFT=1;
@@ -1583,6 +1584,45 @@ function update()
   checkspawn();
 }
 
+// Check for level being completed
+function islevelcompleted()
+{
+  var numgrubs=0;
+  var numflies=0;
+  var numbees=0;
+
+  for (var i=0; i<gs.chars.length; i++)
+  {
+    switch (gs.chars[i].id)
+    {
+      case 51:
+      case 52:
+        numbees++;
+        break;
+  
+      case 53:
+      case 54:
+        numflies++;
+        break;
+
+      case 55:
+      case 56:
+        numgrubs++;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  // This is defined as ..
+  //   no grubs
+  //   no flies
+  //   10 or more bees
+
+  return ((numgrubs==0) && (numflies==0) && (numbees>=10));
+}
+
 // Scroll level to player
 function scrolltoplayer(dampened)
 {
@@ -1722,31 +1762,47 @@ function rafcallback(timestamp)
     window.requestAnimationFrame(rafcallback);
 }
 
+// New level screen
+function newlevel(level)
+{
+  if ((level<0) || (level>=levels.length))
+    return;
+
+  // Ensure timeline is stopped
+  gs.timeline.end();
+  gs.timeline.reset();
+  gs.timeline=new timelineobj();
+
+  gs.state=STATENEWLEVEL;
+
+  gs.timeline.add(0, function()
+  {
+    gs.level=level;
+
+    gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+    gs.sctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+  
+    write(gs.ctx, (3*3)*13, 40, "Level "+(gs.level+1), 3, "rgb(255, 191, 0)");
+    write(gs.ctx, (XMAX/2)-((levels[gs.level].title.length/2)*8), YMAX/2, levels[gs.level].title, 2, "rgb(255, 255, 255)");
+  });
+
+  gs.timeline.add(3*1000, function()
+  {
+    gs.state=STATEPLAYING;
+    loadlevel(gs.level);
+    window.requestAnimationFrame(rafcallback);
+  });
+
+  gs.timeline.begin(1);
+}
+
 // Intro animation
 function intro(percent)
 {
   // Check if done or control key/gamepad pressed
   if ((percent>=96) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
   {
-    // Ensure timeline is stopped
-    gs.timeline.end();
-    gs.timeline.reset();
-
-    // Start a new timeline 
-    gs.timeline.add(0, function()
-    {
-      gs.state=STATEMENU;
-      //show_title();
-    });
-
-    gs.timeline.add(1*1000, function()
-    {
-      gs.state=STATEPLAYING;
-      loadlevel(3);
-      window.requestAnimationFrame(rafcallback);
-    });
-
-    gs.timeline.begin();
+    newlevel(0);
   }
   else
   {
