@@ -481,8 +481,8 @@ function drawparticle(particle)
     ((Math.floor(y)-gs.yoffset)>YMAX))   // clip bottom
   return;
 
-  gs.ctx.fillStyle="rgba("+particle.r+","+particle.g+","+particle.b+","+particle.a+")";
-  gs.ctx.fillRect(Math.floor(x)-gs.xoffset, Math.floor(y)-gs.yoffset, particle.s, particle.s);
+  gs.sctx.fillStyle="rgba("+particle.r+","+particle.g+","+particle.b+","+particle.a+")";
+  gs.sctx.fillRect(Math.floor(x)-gs.xoffset, Math.floor(y)-gs.yoffset, particle.s, particle.s);
 }
 
 // Draw particles
@@ -1751,11 +1751,15 @@ function intro(percent)
   else
   {
     var tenth=Math.floor(percent/10);
+    var curchar=" BEE KIND ".charAt(tenth);
 
     if (tenth==0)
       gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
 
-    write(gs.ctx, tenth*(8*4), 40, " BEE KIND ".charAt(tenth), 5, "rgb(255, 191, 0)");
+    write(gs.ctx, tenth*(8*4), 40, curchar, 5, "rgb(255, 191, 0)");
+
+    if (curchar!=" ")
+      generateparticles((tenth+0.4)*(8*4), 40, 4, 8, {r:255, g:191, b:0});
 
     // Clear sprite canvas
     gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
@@ -1766,6 +1770,10 @@ function intro(percent)
     // Draw bees
     drawsprite({id:((Math.floor(percent/2)%2)==1)?51:52, x:XMAX-Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)+(TILESIZE*2)), flip:true});
     drawsprite({id:((Math.floor(percent/2)%2)==1)?52:51, x:XMAX-Math.floor((percent/100)*XMAX)+TILESIZE, y:Math.floor((YMAX/2)+TILESIZE), flip:true});
+
+    // Animate the particles
+    drawparticles();
+    particlecheck();
   }
 }
 
