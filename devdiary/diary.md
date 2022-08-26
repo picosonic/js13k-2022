@@ -263,8 +263,6 @@ Did some more work on the intro animation, added a rabbit going across the scree
 
 ![WIP intro sequence](bk_intro.gif?raw=true "WIP intro sequence")
 
-27th August
------------
 Created a base set of 7 bee-pun named levels. The name is done as a custom map property within Tiled.
 
 Updated build script to extract level name when building new levels.js file.
