@@ -55,6 +55,13 @@ then
       echo -n ',' >> "${leveljs}"
     done
 
+    for property in "title"
+    do
+      echo -n "${property}:\"" >> "${leveljs}"
+      cat "${file}" | grep "<property " | grep 'name=\"'${property}'\"' | awk -F'"' '{ print $4 }' | tr -d '\n' >> "${leveljs}"
+      echo -n '",' >> "${leveljs}"
+    done
+
     for assettype in "tiles" "chars"
     do
       echo -n "${assettype}:[" >> "${leveljs}"
