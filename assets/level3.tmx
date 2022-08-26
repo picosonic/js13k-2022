@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="34" height="31" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+ <properties>
+  <property name="title" value="Bee Amazed"/>
+ </properties>
  <tileset firstgid="1" source="tilemap.tsx"/>
  <layer id="1" name="tiles" width="34" height="31">
   <data encoding="csv">
