@@ -2,7 +2,25 @@
 JS13KGames entry for 2022, theme is "**DEATH**".
 
 ## Bee Kind
-*WIP - You play as a rabbit trying to save the bees, there are alien grubs which turn into flying killers when they eat toadstools. The bees go between flowers and their hives but the killers try to stop them. If the bees die out, we all die, so it's a crucial mission. You get a gun which shoots honey and neutralises the enemies. Once the bees have made enough honey in their hives you can progress to the next level*
+You play as BeeKeeper Bunny trying to save the bees.
+
+The bees take pollen from the flowers to their hives but the ZomBees try to steal their pollen and break their hives.
+
+There are harmless grubs which turn into evil blue ZomBees when they eat enough toadstools.
+
+You can collect a gun which shoots super-strength 2000 MGO honey and neutralises the enemies. Once the bees have made enough honey in their hives, new baby bees are born.
+
+To progress to the next level you need to defeat all the enemies and help the bees grow to a colony of 10 or more bees.
+
+If the bees die out, we all die, so it is a crucial mission to increase their numbers.
+
+BEE LUCKY, and BEE KIND.
+
+Controls are :
+
+* Keyboard - **WASD** (or equivalently positioned keys, **ZQSD** etc) / Cursors to move
+* Keyboard - **SPACE** / **ENTER** / **SHIFT** to fire
+* Gamepad - **Left stick** to move, **south button** to fire
 
 # Stuff I managed to add
 * 2D platformer
