@@ -1731,6 +1731,26 @@ function rafcallback(timestamp)
 
     redraw();
 
+    // Check for level completed
+    if ((gs.state==STATEPLAYING) && (islevelcompleted()))
+    {
+      gs.xoffset=0;
+      gs.yoffset=0;
+
+      if ((gs.level+1)==levels.length)
+      {
+        // End of game - TODO
+        gs.state=STATEINTRO;
+
+        gs.timeline.reset();
+        gs.timeline.add(10*1000, undefined);
+        gs.timeline.addcallback(intro);
+        gs.timeline.begin(0);
+      }
+      else
+        newlevel(gs.level+1);
+    }
+
     // If the update took us out of play state then stop now
     if (gs.state!=STATEPLAYING)
       return;
