@@ -272,3 +272,17 @@ Added new level screen when changing levels, it shows the level number and name 
 Did some fixes on my timeline library. What I found was that if a timeline entry cleared out the timeline with a view to creating a new one it could mess up the calculations for how many entries remain to be run on the timeline.
 
 Added tiny JS13k logo to tileset.
+
+28th August
+-----------
+Added detection of level completion, to then progress to the next level. Or if you get to the end of all the levels go back to the intro screen.
+
+Re-entering the intro screen caused an issue where the title and bees were displayed but not the bunny. It turned out that it depends where the level was scrolled to when the intro screen was entered. The default when the into is entered for the first time is 0,0 but when entering at the end of the last level would leave the offsets as they were during gameplay. It took a lot of headscratching to realise this.
+
+Made some changes to the timeline library. You can now tell if the timeline has finished. Callback timelines will get called at 0% rather than only after the next frame.
+
+Decided to make the number of bees needed to complete a level dependant on the level number, so 5 for level 1, 6 for level 2, e.t.c. Also raised the maximum number of bees and zombees active in any given level from 10 to 20.
+
+Added more stats to debug, so now under the FPS it shows the number of grubs, zombees and bees to give an idea of what it required to compelte a level.
+
+Refactored the code for detecting if a level is complete, as I already had a library to count the number of active chars of a given set of tiles. Not sure it it helped keep the size down, but every little trim down is always good.
