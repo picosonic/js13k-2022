@@ -1591,40 +1591,12 @@ function update()
 // Check for level being completed
 function islevelcompleted()
 {
-  var numgrubs=0;
-  var numflies=0;
-  var numbees=0;
-
-  for (var i=0; i<gs.chars.length; i++)
-  {
-    switch (gs.chars[i].id)
-    {
-      case 51:
-      case 52:
-        numbees++;
-        break;
-  
-      case 53:
-      case 54:
-        numflies++;
-        break;
-
-      case 55:
-      case 56:
-        numgrubs++;
-        break;
-
-      default:
-        break;
-    }
-  }
-
   // This is defined as ..
   //   no grubs
   //   no flies
-  //   10 or more bees
+  //   5 or more bees for level 1, then 6, 7, 8, e.t.c.
 
-  return ((numgrubs==0) && (numflies==0) && (numbees>=10));
+  return ((countchars([55, 56])==0) && (countchars([53, 54])==0) && (countchars([51, 52])>=(5+gs.level)));
 }
 
 // Scroll level to player
