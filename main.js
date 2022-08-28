@@ -20,12 +20,12 @@ const KEYRIGHT=4;
 const KEYDOWN=8;
 const KEYACTION=16;
 
-const HEALTHFLY=10;
+const HEALTHZOMBEE=10;
 const HEALTHGRUB=5;
 const HEALTHPLANT=2;
 const GROWTIME=(15*60); // Time to grow plant from small to big
 const SPEEDBEE=0.5;
-const SPEEDFLY=0.25;
+const SPEEDZOMBEE=0.25;
 const SPEEDGRUB=0.25;
 
 const SPAWNTIME=(8*60); // Time between spawns
@@ -94,7 +94,7 @@ const STARTED=new Date(); // Time at which the game was started
 //   50
 // bee
 //   51, 52
-// fly
+// zombee
 //   53, 54
 // grub
 //   55, 56
@@ -368,9 +368,9 @@ function loadlevel(level)
             gs.chars.push(obj);
             break;
 
-          case 53: // fly
+          case 53: // zombee
           case 54:
-            obj.health=HEALTHFLY;
+            obj.health=HEALTHZOMBEE;
             obj.pollen=0;
             obj.dx=-1;
             obj.dy=-1;
@@ -863,7 +863,7 @@ function guncheck()
             gs.shots[i].ttl=3;
             break;
 
-          case 53: // fly
+          case 53: // zombee
           case 54:
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
@@ -1272,7 +1272,7 @@ function updatecharAI()
         }
         break;
 
-      case 53: // fly
+      case 53: // zombee
       case 54:
         var nid=-1; // next target id
 
@@ -1386,7 +1386,7 @@ function updatecharAI()
             {
               if (nextx!=gs.chars[id].x)
               {
-                gs.chars[id].hs=(nextx<gs.chars[id].x)?-SPEEDFLY:SPEEDFLY;
+                gs.chars[id].hs=(nextx<gs.chars[id].x)?-SPEEDZOMBEE:SPEEDZOMBEE;
                 gs.chars[id].x+=gs.chars[id].hs;
                 gs.chars[id].flip=(gs.chars[id].hs<0);
               }
@@ -1397,7 +1397,7 @@ function updatecharAI()
 
             if (deltay!=0)
             {
-              gs.chars[id].y+=(nexty<gs.chars[id].y)?-SPEEDFLY:SPEEDFLY;
+              gs.chars[id].y+=(nexty<gs.chars[id].y)?-SPEEDZOMBEE:SPEEDZOMBEE;
 
               if (gs.chars[id].x<0)
                 gs.chars[id].x=0;
@@ -1454,11 +1454,11 @@ function updatecharAI()
             gs.chars[id].hs=(rng()<0.5)?-SPEEDGRUB:SPEEDGRUB; // Nothing eaten so move onwards
             gs.chars[id].flip=(gs.chars[id].hs<0);
 
-            // If this grub is well fed, turn it into a fly
+            // If this grub is well fed, turn it into a zombee
             if ((gs.chars[id].health>(HEALTHGRUB*1.5)) && (countchars([53, 54])<MAXFLIES))
             {
               gs.chars[id].id=53;
-              gs.chars[id].health=HEALTHFLY;
+              gs.chars[id].health=HEALTHZOMBEE;
               gs.chars[id].pollen=0;
 
               generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
@@ -1802,7 +1802,7 @@ function newlevel(level)
 function intro(percent)
 {
   // Check if done or control key/gamepad pressed
-  if ((percent>=96) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+  if ((percent>=98) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
   {
     newlevel(0);
   }
@@ -1814,16 +1814,22 @@ function intro(percent)
     if (tenth==0)
       gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
 
-    write(gs.ctx, tenth*(8*4), 40, curchar, 5, "rgb(255, 191, 0)");
+    write(gs.ctx, tenth*(8*4), 30, curchar, 5, "rgb(255, 191, 0)");
 
     if (curchar!=" ")
-      generateparticles((tenth+0.4)*(8*4), 40, 4, 8, {r:255, g:191, b:0});
+      generateparticles((tenth+0.4)*(8*4), 30, 4, 8, {r:255, g:191, b:0});
 
     // Clear sprite canvas
     gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
 
-    // Draw JS13k
-    drawsprite({id:10, x:0, y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
+    // Introduce characters
+    // grub
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?55:56, x:XMAX-Math.floor((percent/100)*XMAX)+50, y:Math.floor((YMAX/2)+(TILESIZE*2)), flip:true});
+    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+50+TILESIZE, Math.floor((YMAX/2)+(TILESIZE*2.5)), "GRUB - eats toadstools, becomes ZOMBEE", 1, "rgb(240, 240, 240)");
+
+    // zombee
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?53:54, x:XMAX-Math.floor((percent/100)*XMAX)+TILESIZE+50, y:Math.floor((YMAX/2)+TILESIZE), flip:true});
+    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+(TILESIZE*2)+50, Math.floor((YMAX/2)+(TILESIZE*1.3)), "ZOMBEE - steals pollen, breaks hives", 1, "rgb(240, 240, 240)");
 
     // Draw rabbit
     drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
@@ -1831,6 +1837,17 @@ function intro(percent)
     // Draw bees
     drawsprite({id:((Math.floor(percent/2)%2)==1)?51:52, x:XMAX-Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)+(TILESIZE*2)), flip:true});
     drawsprite({id:((Math.floor(percent/2)%2)==1)?52:51, x:XMAX-Math.floor((percent/100)*XMAX)+TILESIZE, y:Math.floor((YMAX/2)+TILESIZE), flip:true});
+
+    // Draw controls
+    if ((Math.floor(percent)%16)<=8)
+    {
+      var keys=((Math.floor(percent/2)%32)<16)?"WASD":"ZQSD";
+      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-20, keys+"/CURSORS + ENTER/SPACE/SHIFT", 1, "rgb(240, 240, 240)");
+      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-10, "or use GAMEPAD", 1, "rgb(240, 240, 240)");
+
+      // Draw JS13k gamepad
+      drawsprite({id:10, x:(XMAX/4)+(TILESIZE/2), y:YMAX-TILESIZE, flip:false});
+    }
 
     // Animate the particles
     drawparticles();
