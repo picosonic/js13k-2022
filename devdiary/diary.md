@@ -286,3 +286,5 @@ Decided to make the number of bees needed to complete a level dependant on the l
 Added more stats to debug, so now under the FPS it shows the number of grubs, zombees and bees to give an idea of what it required to compelte a level.
 
 Refactored the code for detecting if a level is complete, as I already had a library to count the number of active chars of a given set of tiles. Not sure it it helped keep the size down, but every little trim down is always good.
+
+Added controls to intro screen including use of WASD or ZQSD (for AZERTY keyboards)

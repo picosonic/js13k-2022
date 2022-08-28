@@ -36,6 +36,7 @@ Controls are :
 * Timeline based animations
 * Level transition screen showing level names
 * Intro screen
+* Introduce characters on intro screen
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -49,7 +50,6 @@ Controls are :
 * [advzip](https://github.com/amadvance/advancecomp) (uses [7-Zip](https://sourceforge.net/projects/sevenzip/files/7-Zip/) deflate to compress further)
 
 # To do list
-- [ ] Introduce characters on intro screen
 - [ ] Menu system
 - [ ] Completion screen
 - [ ] Speech bubbles
