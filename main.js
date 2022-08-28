@@ -1708,9 +1708,15 @@ function redraw()
   // Draw the particles
   drawparticles();
 
-  // Draw FPS
+  // Draw FPS and stats
   if (gs.debug)
-    write(gs.ctx, XMAX-(6*8), 8, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
+  {
+    write(gs.ctx, XMAX-(6*8), 8*1, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
+
+    write(gs.ctx, XMAX-(6*8), 8*2, "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
+    write(gs.ctx, XMAX-(6*8), 8*3, "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
+    write(gs.ctx, XMAX-(6*8), 8*4, "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
+  }
 }
 
 // Request animation frame callback
