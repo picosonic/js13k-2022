@@ -38,42 +38,38 @@ class timelineobj
     // Stop further processing if we're not running
     if (!this.running) return;
 
-    // If this is the first call then just record the epoch
+    // If this is the first call then record the epoch
     if (this.timelinepos==0)
-    {
       this.timelineepoch=timestamp;
-    }
-    else
+
+    // Calculate delta time since timeline start
+    var delta=timestamp-this.timelineepoch;
+
+    // Look through timeline array for jobs not run which should have
+    for (var i=0; i<this.timeline.length; i++)
     {
-      // Calculate delta time since timeline start
-      var delta=timestamp-this.timelineepoch;
-
-      // Look through timeline array for jobs not run which should have
-      for (var i=0; i<this.timeline.length; i++)
+      if ((!this.timeline[i].done) && (this.timeline[i].start<delta))
       {
-        if ((!this.timeline[i].done) && (this.timeline[i].start<delta))
-        {
-          this.timeline[i].done=true;
+        this.timeline[i].done=true;
 
-          // Only call function if it is defined
-          if (this.timeline[i].item!=undefined)
-            this.timeline[i].item();
-        }
-
-        // Keep a count of all remaining jobs if still running
-        if ((this.running==true) && ((this.timeline.length-1)>=i) && (!this.timeline[i].done))
-          remain++;
+        // Only call function if it is defined
+        if (this.timeline[i].item!=undefined)
+          this.timeline[i].item();
       }
 
-      // If a callback was requested, then call it
-      if (this.callback!=null)
-      {
-        // If there's only a single undefined function on the timeline and it doesn't start at 0, then call with percentage
-        if ((this.timeline.length==1) && (this.timeline[0].item==undefined) && (this.timeline[0].start>0))
-          this.callback((delta/this.timeline[0].start)*100);
-        else
-          this.callback();
-      }
+      // Keep a count of all remaining jobs if still running
+      if ((this.running==true) && ((this.timeline.length-1)>=i) && (!this.timeline[i].done))
+        remain++;
+    }
+
+    // If a callback was requested, then call it
+    if (this.callback!=null)
+    {
+      // If there's only a single undefined function on the timeline and it doesn't start at 0, then call with percentage
+      if ((this.timeline.length==1) && (this.timeline[0].item==undefined) && (this.timeline[0].start>0))
+        this.callback((delta/this.timeline[0].start)*100);
+      else
+        this.callback();
     }
 
     // Record new timeline position
@@ -103,6 +99,8 @@ class timelineobj
         this.running=true; // Start next iteration
         window.requestAnimationFrame(this.timelineraf.bind(this));
       }
+      else
+        this.running=false;
     }
   }
 
