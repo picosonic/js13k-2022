@@ -966,7 +966,7 @@ function updatemovements()
     // Left key
     if ((ispressed(KEYLEFT)) && (!ispressed(KEYRIGHT)))
     {
-      gs.hs=gs.htime==0?-gs.speed:-2;
+      gs.hs=gs.htime==0?-gs.speed:-1;
       gs.dir=-1;
       gs.flip=true;
     }
@@ -974,7 +974,7 @@ function updatemovements()
     // Right key
     if ((ispressed(KEYRIGHT)) && (!ispressed(KEYLEFT)))
     {
-      gs.hs=gs.htime==0?gs.speed:2;
+      gs.hs=gs.htime==0?gs.speed:1;
       gs.dir=1;
       gs.flip=false;
     }
@@ -985,13 +985,13 @@ function updatemovements()
       // Up key
       if ((ispressed(KEYUP)) && (!ispressed(KEYDOWN)))
       {
-        gs.vs=gs.htime==0?-gs.speed:-2;
+        gs.vs=gs.htime==0?-gs.speed:-1;
       }
 
       // Down key
       if ((ispressed(KEYDOWN)) && (!ispressed(KEYUP)))
       {
-        gs.vs=gs.htime==0?gs.speed:2;
+        gs.vs=gs.htime==0?gs.speed:1;
       } 
     }
   }
@@ -1024,10 +1024,32 @@ function updateplayerchar()
           gs.topdown=(gs.vs<0); // pass over moving up for topdown, otherwise 2D
           break;
 
+        case 53: // Zombee
+        case 54:
+          if (gs.htime==0)
+            gs.htime=(5*60); // Set hurt timer
+
+          if (gs.gun)
+          {
+            // Drop gun
+            gs.chars.push({id:50, x:gs.x, y:gs.y, flip:false, path:[], del:false});
+            gs.gun=false;
+          }
+          break;
+
+        case 55: // Grub
+        case 56:
+          if (gs.htime==0)
+            gs.htime=(2*60); // Set hurt timer
+            break;
+
         case 50: // gun
-          gs.gun=true;
-          gs.tileid=40;
-          gs.chars[id].del=true;
+          if (gs.htime==0)
+          {
+            gs.gun=true;
+            gs.tileid=40;
+            gs.chars[id].del=true;
+          }
           break;
 
         default:
@@ -1672,7 +1694,8 @@ function redraw()
   drawchars();
 
   // Draw the player
-  drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
+  if ((gs.htime==0) || ((gs.htime%30)<=15)) // Flash when hurt
+    drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
 
   // Draw the shots
   drawshots();

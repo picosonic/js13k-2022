@@ -287,4 +287,10 @@ Added more stats to debug, so now under the FPS it shows the number of grubs, zo
 
 Refactored the code for detecting if a level is complete, as I already had a library to count the number of active chars of a given set of tiles. Not sure it it helped keep the size down, but every little trim down is always good.
 
-Added controls to intro screen including use of WASD or ZQSD (for AZERTY keyboards)
+Added controls to intro screen including use of WASD or ZQSD (for AZERTY keyboards) with SPACE/ENTER/SHIFT or gamepad.
+
+3rd September
+-------------
+After a little coding break for a holiday, getting back on to js13k with only 10 days remaining.
+
+Added hurt timer functionality, so that if the player collides with a grub or zombee they start flashing. Whilst hurt the player moves slower, cannot jump and cannot pick up the gun. If the player collides with a zombee the hurt period is longer and if they are carrying the gun that is dropped at the point of collision. 
