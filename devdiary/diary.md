@@ -296,3 +296,9 @@ After a little coding break for a holiday, getting back on to js13k with only 10
 Added hurt timer functionality, so that if the player collides with a grub or zombee they start flashing. Whilst hurt the player moves slower, cannot jump and cannot pick up the gun. If the player collides with a zombee the hurt period is longer and if they are carrying the gun that is dropped at the point of collision.
 
 Did some more work on the levels.
+
+5th September
+-------------
+Made a vertical level as wide as the viewport. Where you constantly switch between top down and platformer modes to ascend to the top to get the weapon. This feels a bit tricky so will put this as one of the later levels.
+
+Shuffled order of levels around to vaguely match increasing difficulty.

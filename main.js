@@ -29,7 +29,7 @@ const SPEEDZOMBEE=0.25;
 const SPEEDGRUB=0.25;
 
 const SPAWNTIME=(8*60); // Time between spawns
-const MAXFLIES=20;
+const MAXFLIES=15;
 const MAXBEES=20;
 
 const STARTED=new Date(); // Time at which the game was started
