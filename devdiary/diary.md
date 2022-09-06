@@ -306,3 +306,9 @@ Shuffled order of levels around to vaguely match increasing difficulty.
 Indicate on new level screen how many bees are required to progress to next level. This is in conjunction with removing threats.
 
 Added message box function with timeout. This is to give indication of things going on and what may be left to do.
+
+6th September
+-------------
+Made 8-bit font a const and added dimensions to aid readability and cut down on hard-coded repeated numbers.
+
+Added optional icon to be shown on message boxes, which makes them look a bit better.
