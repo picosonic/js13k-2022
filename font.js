@@ -1,6 +1,8 @@
 // 4x8 font
 //   ranging from 32 " " to 126 "~"
-var font_8bit = 
+const font_width = 4;
+const font_height = 8;
+const font_8bit = 
 [
 ,,,, /* SPACE */
 68,68,64,64, /* ! */
@@ -97,4 +99,4 @@ var font_8bit =
 4,68,4,68, /* | */
 8,196,100,200, /* } */
 10,232,,, /* ~ */
-]
+];

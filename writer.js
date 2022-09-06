@@ -19,19 +19,19 @@ function write(ctx, x, y, text, size, style)
     var px=0;
     var py=0;
 
-    // Iterate through the 4 bytes used to define character
-    for (var j=0; j<4; j++)
+    // Iterate through the 4 bytes (columns) used to define character
+    for (var j=0; j<font_width; j++)
     {
-      var dual=font_8bit[(offs*4)+j]||0;
+      var dual=font_8bit[(offs*font_width)+j]||0;
 
       // Iterate through bits in byte
-      for (var k=0; k<8; k++)
+      for (var k=0; k<font_height; k++)
       {
-        if (dual&(1<<(8-k)))
-          ctx.fillRect(Math.floor(x+(i*4*size)+(px*size)), Math.floor(y+(size*py)), Math.ceil(size), Math.ceil(size));
+        if (dual&(1<<(font_height-k)))
+          ctx.fillRect(Math.floor(x+(i*font_width*size)+(px*size)), Math.floor(y+(size*py)), Math.ceil(size), Math.ceil(size));
 
         px++;
-        if (px==4)
+        if (px==font_width)
         {
           px=0;
           py++;
