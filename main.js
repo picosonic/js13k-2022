@@ -549,28 +549,61 @@ function drawmsgbox()
     var i;
     var width=0;
     var height=0;
+    var icon=-1;
+    const boxborder=1;
 
     // Draw box //
     // Split on \n
     const txtlines=gs.msgboxtext.split("\n");
 
-    // Determine width (length of longest string + 2)
+    // Determine width (length of longest string + border)
     for (i=0; i<txtlines.length; i++)
+    {
+      // Check for and remove icon from first line
+      if ((i==0) && (txtlines[i].indexOf("[")==0))
+      {
+        var endbracket=txtlines[i].indexOf("]");
+        if (endbracket!=-1)
+        {
+          icon=parseInt(txtlines[i].substring(1, endbracket));
+          txtlines[i]=txtlines[i].substring(endbracket+1);
+        }
+      }
+
       if (txtlines[i].length>width)
         width=txtlines[i].length;
+    }
 
-    width+=2;
+    width+=(boxborder*2);
 
-    // Determine height (number of lines + 2)
-    height=txtlines.length+2;
+    // Determine height (number of lines + border)
+    height=txtlines.length+(boxborder*2);
 
+    // Convert width/height into pixels
+    width*=font_width;
+    height*=font_height;
+
+    // Add space if sprite is to be drawn
+    if (icon!=-1)
+    {
+      width+=(TILESIZE+(font_width*2));
+
+      if (height<(TILESIZE+(2*font_height)))
+        height=TILESIZE+(2*font_height);
+    }
+
+    // Draw box
     gs.sctx.fillStyle="rgba(255,255,255,0.5)";
     gs.sctx.strokeStyle="rgba(0,0,0,0)";
-    gs.sctx.roundRect(XMAX-((width+1)*4), 8, width*4, height*8, 4).fill();
+    gs.sctx.roundRect(XMAX-(width+(boxborder*font_width)), 1*font_height, width, height, font_width).fill();
+
+    // Draw optional sprite
+    if (icon!=-1)
+      drawsprite({id:icon, x:XMAX-width, y:(boxborder*2)*font_height, flip:false});
 
     // Draw text //
     for (i=0; i<txtlines.length; i++)
-      write(gs.sctx, XMAX-(width*4), (i+2)*8, txtlines[i], 1, "rgba(0,0,0,0.5)");
+      write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2))*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
 
     gs.msgboxtime--;
   }
@@ -1293,7 +1326,15 @@ function updatecharAI()
 
                       generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
                       
-                      showmessagebox(""+((gs.level+5)-countchars([51, 52]))+" more bees needed", 3*60);
+                      var beesneeded=((gs.level+5)-countchars([51, 52]));
+
+                      if (beesneeded<=0)
+                      {
+                        if (!islevelcompleted())
+                          showmessagebox("[53]Remove all threats", 3*60);
+                      }
+                      else
+                        showmessagebox("[51]"+beesneeded+" more bees needed", 3*60);
                     }
                   }
 
