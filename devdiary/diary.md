@@ -312,3 +312,5 @@ Added message box function with timeout. This is to give indication of things go
 Made 8-bit font a const and added dimensions to aid readability and cut down on hard-coded repeated numbers.
 
 Added optional icon to be shown on message boxes, which makes them look a bit better.
+
+I didn't really like the way that the sprites were being flipped, so I found [another way to do it](https://stackoverflow.com/questions/21610321/javascript-horizontally-flip-an-image-object-and-save-it-into-a-new-image-objec) which seems better. This creates a flipped version of the image by drawing it flipped to a canvas and then turning that canvas into the source for a new image via a dataURL.

@@ -129,6 +129,7 @@ var gs={
 
   // Tilemap image
   tilemap:null,
+  tilemapflip:null,
 
   // Main character
   x:0, // x position
@@ -247,13 +248,6 @@ function drawtile(tileid, x, y)
       ((y-gs.yoffset)>YMAX))   // clip bottom
     return;
 
-  // to draw flipped
-  //
-  // gs.ctx.save();
-  // gs.ctx.scale(-1, 1);
-  // gs.ctx.drawImage(gs.tilemap, (tileid*tilesize) % (tilesperrow*tilesize), Math.floor((tileid*tilesize) / (tilesperrow*tilesize))*tilesize, tilesize, tilesize, x*-1, y, tilesize*-1, tilesize);
-  // gs.ctx.restore();
-
   gs.ctx.drawImage(gs.tilemap, (tileid*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((tileid*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE, x-gs.xoffset, y-gs.yoffset, TILESIZE, TILESIZE);
 }
 
@@ -271,6 +265,7 @@ function drawsprite(sprite)
     return;
 
   if (sprite.flip)
+  /*
   {
    gs.sctx.save();
    gs.sctx.scale(-1, 1);
@@ -278,6 +273,9 @@ function drawsprite(sprite)
       (Math.floor(sprite.x)-gs.xoffset)*-1, (Math.floor(sprite.y)-gs.yoffset), TILESIZE*-1, TILESIZE);
    gs.sctx.restore();
   }
+  */
+    gs.sctx.drawImage(gs.tilemapflip, ((TILESPERROW*TILESIZE)-((sprite.id*TILESIZE) % (TILESPERROW*TILESIZE)))-TILESIZE, Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
+      Math.floor(sprite.x)-gs.xoffset, Math.floor(sprite.y)-gs.yoffset, TILESIZE, TILESIZE);
   else
     gs.sctx.drawImage(gs.tilemap, (sprite.id*TILESIZE) % (TILESPERROW*TILESIZE), Math.floor((sprite.id*TILESIZE) / (TILESPERROW*TILESIZE))*TILESIZE, TILESIZE, TILESIZE,
       Math.floor(sprite.x)-gs.xoffset, Math.floor(sprite.y)-gs.yoffset, TILESIZE, TILESIZE);
@@ -565,7 +563,7 @@ function drawmsgbox()
         var endbracket=txtlines[i].indexOf("]");
         if (endbracket!=-1)
         {
-          icon=parseInt(txtlines[i].substring(1, endbracket));
+          icon=parseInt(txtlines[i].substring(1, endbracket), 10);
           txtlines[i]=txtlines[i].substring(endbracket+1);
         }
       }
@@ -2053,7 +2051,25 @@ function init()
 
   // Once image has loaded, start timeline for intro
   gs.tilemap=new Image;
-  gs.tilemap.onload=function() { gs.timeline.begin(0); };
+  gs.tilemap.onload=function()
+  {
+    // Create a flipped version of the spritesheet
+    // https://stackoverflow.com/questions/21610321/javascript-horizontally-flip-an-image-object-and-save-it-into-a-new-image-objec
+    var c=document.createElement('canvas');
+    var ctx=c.getContext('2d');
+    c.width=gs.tilemap.width;
+    c.height=gs.tilemap.height;
+    ctx.scale(-1, 1);
+    ctx.drawImage(gs.tilemap, -gs.tilemap.width, 0);
+
+    gs.tilemapflip=new Image;
+    gs.tilemapflip.onload=function()
+    {
+      // Start intro
+      gs.timeline.begin(0);
+    };
+    gs.tilemapflip.src=c.toDataURL();
+  };
   gs.tilemap.src=tilemap;
 }
 
