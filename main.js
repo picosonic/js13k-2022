@@ -192,6 +192,10 @@ var gs={
   // Timeline for animation
   timeline:new timelineobj(),
 
+  // Messagebox popup
+  msgboxtext:"", // text to show in messagebox
+  msgboxtime:0, // timer for showing messagebox
+
   // Debug flag
   debug:false
 };
@@ -518,6 +522,68 @@ function drawparallax()
         break;
     }      
   }
+}
+
+// https://stackoverflow.com/questions/1255512/how-to-draw-a-rounded-rectangle-using-html-canvas
+CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r)
+{
+  if (w<(2*r)) r=w/2;
+  if (h<(2*r)) r=h/2;
+
+  this.beginPath();
+  this.moveTo(x+r, y);
+  this.arcTo(x+w, y,   x+w, y+h, r);
+  this.arcTo(x+w, y+h, x,   y+h, r);
+  this.arcTo(x,   y+h, x,   y,   r);
+  this.arcTo(x,   y,   x+w, y,   r);
+  this.closePath();
+
+  return this;
+};
+
+// Draw messagebox if required
+function drawmsgbox()
+{
+  if (gs.msgboxtime>0)
+  {
+    var i;
+    var width=0;
+    var height=0;
+
+    // Draw box //
+    // Split on \n
+    const txtlines=gs.msgboxtext.split("\n");
+
+    // Determine width (length of longest string + 2)
+    for (i=0; i<txtlines.length; i++)
+      if (txtlines[i].length>width)
+        width=txtlines[i].length;
+
+    width+=2;
+
+    // Determine height (number of lines + 2)
+    height=txtlines.length+2;
+
+    gs.sctx.fillStyle="rgba(255,255,255,0.5)";
+    gs.sctx.strokeStyle="rgba(0,0,0,0)";
+    gs.sctx.roundRect(XMAX-((width+1)*4), 8, width*4, height*8, 4).fill();
+
+    // Draw text //
+    for (i=0; i<txtlines.length; i++)
+      write(gs.sctx, XMAX-(width*4), (i+2)*8, txtlines[i], 1, "rgba(0,0,0,0.5)");
+
+    gs.msgboxtime--;
+  }
+}
+
+// Show messsage box
+function showmessagebox(text, timing)
+{
+    // Set text to display
+    gs.msgboxtext=text;
+
+    // Set time to display messagebox
+    gs.msgboxtime=timing;
 }
 
 // Check if player has left the map
@@ -1226,6 +1292,8 @@ function updatecharAI()
                       gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:(5*60), pollen:0, dx:-1, dy:-1, path:[], del:false});
 
                       generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
+                      
+                      showmessagebox(""+((gs.level+5)-countchars([51, 52]))+" more bees needed", 3*60);
                     }
                   }
 
@@ -1703,14 +1771,17 @@ function redraw()
   // Draw the particles
   drawparticles();
 
+  // Draw any visible messagebox
+  drawmsgbox();
+
   // Draw FPS and stats
   if (gs.debug)
   {
-    write(gs.ctx, XMAX-(6*8), 8*1, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(6*8), 8*1, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
 
-    write(gs.ctx, XMAX-(6*8), 8*2, "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
-    write(gs.ctx, XMAX-(6*8), 8*3, "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
-    write(gs.ctx, XMAX-(6*8), 8*4, "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(6*8), 8*2, "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(6*8), 8*3, "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(6*8), 8*4, "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
   }
 }
 
@@ -1800,6 +1871,9 @@ function newlevel(level)
 
   gs.state=STATENEWLEVEL;
 
+  // Clear any messageboxes left on screen
+  gs.msgboxtime=0;
+
   gs.timeline.add(0, function()
   {
     gs.level=level;
@@ -1807,8 +1881,12 @@ function newlevel(level)
     gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
     gs.sctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
   
+    // Write level number and title
     write(gs.ctx, (3*3)*13, 40, "Level "+(gs.level+1), 3, "rgb(255, 191, 0)");
     write(gs.ctx, (XMAX/2)-((levels[gs.level].title.length/2)*8), YMAX/2, levels[gs.level].title, 2, "rgb(255, 255, 255)");
+
+    // Indicate what is required to progress to next level
+    write(gs.ctx, 9*12, YMAX-20, "Increase colony to "+(gs.level+5)+" bees", 1, "rgb(255, 191, 0)");
   });
 
   gs.timeline.add(3*1000, function()

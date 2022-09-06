@@ -302,3 +302,7 @@ Did some more work on the levels.
 Made a vertical level as wide as the viewport. Where you constantly switch between top down and platformer modes to ascend to the top to get the weapon. This feels a bit tricky so will put this as one of the later levels.
 
 Shuffled order of levels around to vaguely match increasing difficulty.
+
+Indicate on new level screen how many bees are required to progress to next level. This is in conjunction with removing threats.
+
+Added message box function with timeout. This is to give indication of things going on and what may be left to do.
