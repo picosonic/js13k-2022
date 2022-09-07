@@ -8,6 +8,8 @@
   -moz-user-select:none; /* Firefox */
 
   touch-action:none; /* disable panning/zooming gestures */
+
+  cursor:none; /* hide mouse cursor */
 }
 
 body
