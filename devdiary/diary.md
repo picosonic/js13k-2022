@@ -313,4 +313,10 @@ Made 8-bit font a const and added dimensions to aid readability and cut down on 
 
 Added optional icon to be shown on message boxes, which makes them look a bit better.
 
+![Message box with icon](messagebox.png?raw=true "Message box with icon")
+
 I didn't really like the way that the sprites were being flipped, so I found [another way to do it](https://stackoverflow.com/questions/21610321/javascript-horizontally-flip-an-image-object-and-save-it-into-a-new-image-objec) which seems better. This creates a flipped version of the image by drawing it flipped to a canvas and then turning that canvas into the source for a new image via a dataURL.
+
+7th September
+-------------
+Improve vertical centering on message boxes when an icon is used and only 1 line of text is shown.

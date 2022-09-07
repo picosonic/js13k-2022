@@ -547,6 +547,7 @@ function drawmsgbox()
     var i;
     var width=0;
     var height=0;
+    var top=0;
     var icon=-1;
     const boxborder=1;
 
@@ -584,6 +585,10 @@ function drawmsgbox()
     // Add space if sprite is to be drawn
     if (icon!=-1)
     {
+      // Check for centering text when only one line and icon pads height
+      if (txtlines.length==1)
+        top=0.5;
+    
       width+=(TILESIZE+(font_width*2));
 
       if (height<(TILESIZE+(2*font_height)))
@@ -601,7 +606,7 @@ function drawmsgbox()
 
     // Draw text //
     for (i=0; i<txtlines.length; i++)
-      write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2))*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
+      write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2)+top)*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
 
     gs.msgboxtime--;
   }
@@ -1816,11 +1821,12 @@ function redraw()
   // Draw FPS and stats
   if (gs.debug)
   {
-    write(gs.sctx, XMAX-(6*8), 8*1, "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
+    var dtop=1;
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
 
-    write(gs.sctx, XMAX-(6*8), 8*2, "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
-    write(gs.sctx, XMAX-(6*8), 8*3, "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
-    write(gs.sctx, XMAX-(6*8), 8*4, "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
   }
 }
 
