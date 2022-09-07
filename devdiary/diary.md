@@ -324,3 +324,5 @@ Improve vertical centering on message boxes when an icon is used and only 1 line
 Fix message box icon requiring x and y scroll offsets to place the icon correctly.
 
 Show health bars above enemies and toadstools whilst being hurt.
+
+Added music playback using part of Harp Solo from "[Blue Danube](https://en.wikipedia.org/wiki/The_Blue_Danube)" (Op.314) by [Johann Strauss II](https://en.wikipedia.org/wiki/Johann_Strauss_II) (in the public domain since it was composed in 1866 - before 1924).

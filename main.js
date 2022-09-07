@@ -198,7 +198,10 @@ var gs={
   msgboxtime:0, // timer for showing messagebox
 
   // Debug flag
-  debug:false
+  debug:false,
+
+  // True when music has been started (by user interaction)
+  music:false
 };
 
 // Handle resize events
@@ -1981,7 +1984,7 @@ function newlevel(level)
     window.requestAnimationFrame(rafcallback);
   });
 
-  gs.timeline.begin(1);
+  gs.timeline.begin();
 }
 
 // Intro animation
@@ -2049,6 +2052,12 @@ function init()
   {
     e = e || window.event;
     updatekeystate(e, 1);
+
+    if (!gs.music)
+    {
+      gs.music=true;
+      music_play();
+    }
   };
 
   document.onkeyup=function(e)
@@ -2062,6 +2071,18 @@ function init()
   {
     e = e || window.event;
     e.preventDefault();
+  };
+
+  // Start music if clicked and not already started
+  window.onmousedown=function(e)
+  {
+    e.preventDefault();
+
+    if (!gs.music)
+    {
+      gs.music=true;
+      music_play();
+    }
   };
 
   // Set up tiles canvas
