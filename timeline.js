@@ -105,7 +105,7 @@ class timelineobj
   }
 
   // Start the timeline running
-  begin(loop)
+  begin(loop=1)
   {
     this.looped=0;
     this.loop=(loop==undefined?1:loop);
