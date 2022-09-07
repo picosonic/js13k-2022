@@ -37,7 +37,7 @@ function updatekeystate(e, dir)
 
     case "ArrowUp": // cursor up
     case "KeyW": // W
-    case "Semiolon": // semicolon
+    case "Semicolon": // semicolon
       if (dir==1)
         gs.keystate|=KEYUP;
       else
