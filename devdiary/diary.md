@@ -320,3 +320,7 @@ I didn't really like the way that the sprites were being flipped, so I found [an
 7th September
 -------------
 Improve vertical centering on message boxes when an icon is used and only 1 line of text is shown.
+
+Fix message box icon requiring x and y scroll offsets to place the icon correctly.
+
+Show health bars above enemies and toadstools whilst being hurt.

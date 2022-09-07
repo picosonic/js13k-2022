@@ -327,7 +327,7 @@ function loadlevel(level)
 
       if (tile!=0)
       {
-        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, del:false};
+        var obj={id:(tile-1), x:(x*TILESIZE), y:(y*TILESIZE), flip:false, hs:0, vs:0, dwell:0, htime:0, del:false};
 
         switch (tile-1)
         {
@@ -445,6 +445,40 @@ function drawchars()
   for (var id=0; id<gs.chars.length; id++)
   {
     drawsprite(gs.chars[id]);
+
+    // Draw health bar
+    if (((gs.chars[id].health||0)>0) && ((gs.chars[id].htime||0)>0))
+    {
+      var hmax=0;
+
+      switch (gs.chars[id].id)
+      {
+        case 30:
+        case 31:
+          hmax=HEALTHPLANT;
+          break;
+
+        case 53:
+        case 54:
+          hmax=HEALTHZOMBEE;
+          break;
+
+        case 55:
+        case 56:
+          hmax=HEALTHGRUB;
+          break;
+
+        default:
+          break;
+      }
+
+      if (hmax>0)
+      {
+        gs.sctx.fillStyle="rgba(0, 255, 0, 0.75)";
+        gs.sctx.fillRect(gs.chars[id].x-gs.xoffset, gs.chars[id].y-gs.yoffset, Math.ceil(TILESIZE*(gs.chars[id].health/hmax)), 2);
+        gs.sctx.stroke();
+      }
+    }
 
     if (gs.debug)
     {
@@ -602,7 +636,7 @@ function drawmsgbox()
 
     // Draw optional sprite
     if (icon!=-1)
-      drawsprite({id:icon, x:XMAX-width, y:(boxborder*2)*font_height, flip:false});
+      drawsprite({id:icon, x:(XMAX-width)+gs.xoffset, y:((boxborder*2)*font_height)+gs.yoffset, flip:false});
 
     // Draw text //
     for (i=0; i<txtlines.length; i++)
@@ -946,6 +980,7 @@ function guncheck()
         {
           case 30: // toadstool
           case 31:
+            gs.chars[id].htime=(2*60);
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
             {
@@ -967,6 +1002,7 @@ function guncheck()
 
           case 53: // zombee
           case 54:
+            gs.chars[id].htime=(2*60);
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
               gs.chars[id].del=true;
@@ -979,6 +1015,7 @@ function guncheck()
 
           case 55: // grub
           case 56:
+            gs.chars[id].htime=(2*60);
             gs.chars[id].health--;
             if (gs.chars[id].health<=0)
               gs.chars[id].del=true;
@@ -1204,6 +1241,9 @@ function updatecharAI()
 
   for (id=0; id<gs.chars.length; id++)
   {
+    // Decrease hurt timer
+    if ((gs.chars[id].htime||0)>0) gs.chars[id].htime--;
+
     switch (gs.chars[id].id)
     {
       case 31: // toadstool
@@ -1325,7 +1365,7 @@ function updatecharAI()
                     if ((gs.chars[id2].pollen>10) && (countchars([51, 52])<MAXBEES))
                     {
                       gs.chars[id2].pollen-=10;
-                      gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:(5*60), pollen:0, dx:-1, dy:-1, path:[], del:false});
+                      gs.chars.push({id:51, x:gs.chars[id2].x, y:gs.chars[id2].y, flip:false, hs:0, vs:0, dwell:(5*60), htime:0, pollen:0, dx:-1, dy:-1, path:[], del:false});
 
                       generateparticles(gs.chars[id].x+(TILESIZE/2), gs.chars[id].y+(TILESIZE/2), 16, 16, {});
                       
