@@ -4,7 +4,6 @@ function pathfinder(src, dest)
 {
   var openlist=[]; // List of node ids yet to visit
   var closedlist=[]; // List of visited node ids
-  var usedlist=[];
   const dx=Math.floor(dest%gs.width); // Destination X grid position
   const dy=Math.floor(dest/gs.width); // Destination Y grid position
 
