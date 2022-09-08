@@ -4,7 +4,8 @@ var music={
   panNode:null,
   f:[],
   notelen:(1/7),
-  clocktime:1
+  clocktime:1,
+  nomore:false
 };
 
 // Note table as per BBC Micro user guide p.156
@@ -182,7 +183,8 @@ function music_play()
       osc.stop(e+music.notelen);
     }
 
-    setTimeout(music_play, (music.notelen*1000)*(music.clocktime));
+    if (!music.nomore)
+      setTimeout(music_play, (music.notelen*1000)*(music.clocktime));
   }
 
   catch (e) {}

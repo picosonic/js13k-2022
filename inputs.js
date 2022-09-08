@@ -87,6 +87,13 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
+    case "KeyM": // M (for music off)
+      if (dir==1)
+        music.nomore=true;
+
+      e.preventDefault();
+      break;
+
     default:
       break;
   }
