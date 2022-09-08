@@ -346,3 +346,5 @@ Updated timeline library to return this in the member functions. Doing this allo
 becomes
 
     timeline.add(0, function() {console.log("A");}).add(1000, function() {console.log("A");}).begin();
+
+Made message boxes less transparent, 50% was a bit too see-through. Also spaced out better vertically.
