@@ -22,12 +22,18 @@ class timelineobj
 
     // Keep timeline sorted by start time of items
     this.timeline.sort(function(a,b) {return ((b.start<a.start)?1:(b.start==a.start)?0:-1)});
+
+    // Allow chaining
+    return this;
   }
 
   // Add a timeline callback
   addcallback(item)
   {
     this.callback=item;
+
+    // Allow chaining
+    return this;
   }
 
   // Animation frame callback
@@ -119,6 +125,9 @@ class timelineobj
   end()
   {
     this.running=false;
+
+    // Allow chaining
+    return this;
   }
 
   // Reset the timeline to be used again
@@ -132,5 +141,8 @@ class timelineobj
     this.callback=null; // Optional callback on each timeline "tick"
     this.looped=0; // Completed iterations
     this.loop=1; // Number of times to loop, 0 means infinite
+
+    // Allow chaining
+    return this;
   }
 }

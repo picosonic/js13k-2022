@@ -332,3 +332,15 @@ Added music playback using part of Harp Solo from "[Blue Danube](https://en.wiki
 8th September
 -------------
 Added some pop-up hints at the start of the first level, so that it acts as a trainer.
+
+Added message box rollup, so that near the end of the display time, the messagebox rolls up to disappear.
+
+Updated timeline library to return this in the member functions. Doing this allows chaining multiple calls together without specifying the variable each time, e.g.
+
+    timeline.add(0, function() {console.log("A");});
+    timeline.add(1000, function() {console.log("A");});
+    timeline.begin();
+
+becomes
+
+    timeline.add(0, function() {console.log("A");}).add(1000, function() {console.log("A");}).begin();

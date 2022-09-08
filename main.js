@@ -632,18 +632,25 @@ function drawmsgbox()
         height=TILESIZE+(2*font_height);
     }
 
+    // Roll-up
+    if (gs.msgboxtime<8)
+      height=Math.floor(height*(gs.msgboxtime/8));
+
     // Draw box
     gs.sctx.fillStyle="rgba(255,255,255,0.5)";
     gs.sctx.strokeStyle="rgba(0,0,0,0)";
     gs.sctx.roundRect(XMAX-(width+(boxborder*font_width)), 1*font_height, width, height, font_width).fill();
 
-    // Draw optional sprite
-    if (icon!=-1)
-      drawsprite({id:icon, x:(XMAX-width)+gs.xoffset, y:((boxborder*2)*font_height)+gs.yoffset, flip:false});
+    if (gs.msgboxtime>=8)
+    {
+      // Draw optional sprite
+      if (icon!=-1)
+        drawsprite({id:icon, x:(XMAX-width)+gs.xoffset, y:((boxborder*2)*font_height)+gs.yoffset, flip:false});
 
-    // Draw text //
-    for (i=0; i<txtlines.length; i++)
-      write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2)+top)*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
+      // Draw text //
+      for (i=0; i<txtlines.length; i++)
+        write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2)+top)*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
+    }
 
     gs.msgboxtime--;
   }
@@ -1924,10 +1931,7 @@ function rafcallback(timestamp)
         // End of game - TODO
         gs.state=STATEINTRO;
 
-        gs.timeline.reset();
-        gs.timeline.add(10*1000, undefined);
-        gs.timeline.addcallback(intro);
-        gs.timeline.begin(0);
+        gs.timeline.reset().add(10*1000, undefined).addcallback(intro).begin(0);
       }
       else
         newlevel(gs.level+1);
@@ -1953,8 +1957,7 @@ function newlevel(level)
     return;
 
   // Ensure timeline is stopped
-  gs.timeline.end();
-  gs.timeline.reset();
+  gs.timeline.end().reset();
   gs.timeline=new timelineobj();
 
   gs.state=STATENEWLEVEL;
@@ -1975,37 +1978,25 @@ function newlevel(level)
 
     // Indicate what is required to progress to next level
     write(gs.ctx, 9*12, YMAX-20, "Increase colony to "+(gs.level+5)+" bees", 1, "rgb(255, 191, 0)");
-  });
-
-  gs.timeline.add(3*1000, function()
+  }).add(3*1000, function()
   {
     gs.state=STATEPLAYING;
     loadlevel(gs.level);
     window.requestAnimationFrame(rafcallback);
     showmessagebox("[50]Shoot enemies\nwith the honey gun", 3*60);
-  });
-
-  gs.timeline.add(7*1000, function()
+  }).add(7*1000, function()
   {
     showmessagebox("[55]Grubs turn into Zombees\nwhen they eat toadstools", 3*60);
-  });
-
-  gs.timeline.add(11*1000, function()
+  }).add(11*1000, function()
   {
     showmessagebox("[53]Zombees chase bees\nsteal pollen and honey\nand break hives", 3*60);
-  });
-
-  gs.timeline.add(15*1000, function()
+  }).add(15*1000, function()
   {
     showmessagebox("[51]Bees collect pollen from flowers\nto make pollen in their hives", 3*60);
-  });
-
-  gs.timeline.add(19*1000, function()
+  }).add(19*1000, function()
   {
     showmessagebox("[30]Clear away toadstools to prevent\ngrubs turning into ZomBees and\nmake space for flowers to grow", 3*60);
-  });
-
-  gs.timeline.begin();
+  }).begin();
 }
 
 // Intro animation
@@ -2133,9 +2124,7 @@ function init()
   }
 
   // Set up intro animation callback
-  gs.timeline.reset();
-  gs.timeline.add(10*1000, undefined);
-  gs.timeline.addcallback(intro);
+  gs.timeline.reset().add(10*1000, undefined).addcallback(intro);
 
   // Once image has loaded, start timeline for intro
   gs.tilemap=new Image;
