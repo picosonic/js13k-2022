@@ -617,7 +617,7 @@ function drawmsgbox()
 
     // Convert width/height into pixels
     width*=font_width;
-    height*=font_height;
+    height*=(font_height+1);
 
     // Add space if sprite is to be drawn
     if (icon!=-1)
@@ -637,7 +637,7 @@ function drawmsgbox()
       height=Math.floor(height*(gs.msgboxtime/8));
 
     // Draw box
-    gs.sctx.fillStyle="rgba(255,255,255,0.5)";
+    gs.sctx.fillStyle="rgba(255,255,255,0.75)";
     gs.sctx.strokeStyle="rgba(0,0,0,0)";
     gs.sctx.roundRect(XMAX-(width+(boxborder*font_width)), 1*font_height, width, height, font_width).fill();
 
@@ -649,7 +649,7 @@ function drawmsgbox()
 
       // Draw text //
       for (i=0; i<txtlines.length; i++)
-        write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2)+top)*font_height, txtlines[i], 1, "rgba(0,0,0,0.5)");
+        write(gs.sctx, XMAX-width+(icon==-1?0:TILESIZE+font_width), (i+(boxborder*2)+top)*(font_height+1), txtlines[i], 1, "rgba(0,0,0,0.75)");
     }
 
     gs.msgboxtime--;
