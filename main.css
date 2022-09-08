@@ -3,16 +3,15 @@
   margin:0px;
   padding:0px;
 
-  user-select:none; /* Chrome and Opera */
-  -webkit-user-select:none; /* Safari */
-  -moz-user-select:none; /* Firefox */
+  user-select:none;
 
   touch-action:none; /* disable panning/zooming gestures */
+
+  overflow:hidden;
 }
 
 body
 {
-  overflow:hidden;
   background:#000;
 }
 
@@ -23,18 +22,12 @@ body
   top:0px;
   width:100%;
   height:100%;
-  overflow:hidden;
 }
 
 canvas
 {
   position:absolute;
-  padding:0px;
-  margin:0px;
-  overflow:hidden;
 
-  image-rendering:-moz-crisp-edges;
-  image-rendering:-webkit-crisp-edges;
   image-rendering:pixelated;
   image-rendering:crisp-edges;
 }
