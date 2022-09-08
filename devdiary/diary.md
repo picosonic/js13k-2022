@@ -350,3 +350,5 @@ becomes
 Made message boxes less transparent, 50% was a bit too see-through. Also spaced out better vertically.
 
 Removed predictive random number generator as we are not going to need anything other than standard random. Saves about 140 bytes in .zip size.
+
+Removed \n characters from Google Closure output, which saves about another 140 bytes in the .zip size. It would seem that it adds these every 500 or so characters to [fix issues with some firewalls and proxies](https://developers.google.com/closure/compiler/faq#linefeeds) which intentionally break JS with long lines.
