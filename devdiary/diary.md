@@ -333,6 +333,8 @@ Added music playback using part of Harp Solo from "[Blue Danube](https://en.wiki
 -------------
 Added some pop-up hints at the start of the first level, so that it acts as a trainer.
 
+![Roll up](rollup.gif?raw=true "Roll up")
+
 Added message box rollup, so that near the end of the display time, the messagebox rolls up to disappear.
 
 Updated timeline library to return this in the member functions. Doing this allows chaining multiple calls together without specifying the variable each time, e.g.
