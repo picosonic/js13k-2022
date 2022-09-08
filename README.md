@@ -31,7 +31,6 @@ Controls are :
 * Low resolution pixelated retro feel
 * Particle system
 * Switch between 2D platformer and top-down in the same level
-* [Wichmann-Hill pseudorandom number generator](https://en.wikipedia.org/wiki/Wichmann%E2%80%93Hill)
 * Entities follow paths around obsticles using [A* pathfinder algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
 * Parallax clouds
 * Gamepad support, with JS13k controller icon

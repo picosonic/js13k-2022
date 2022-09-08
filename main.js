@@ -32,8 +32,6 @@ const SPAWNTIME=(8*60); // Time between spawns
 const MAXFLIES=15;
 const MAXBEES=20;
 
-const STARTED=new Date(); // Time at which the game was started
-
 // Tiles list
 //
 // blanks
@@ -203,6 +201,12 @@ var gs={
   // True when music has been started (by user interaction)
   music:false
 };
+
+// Random number generator
+function rng()
+{
+  return Math.random();
+}
 
 // Handle resize events
 function playfieldsize()
@@ -1757,8 +1761,6 @@ function checkspawn()
 // Update function called once per frame
 function update()
 {
-  var a=rng(); // advance rng
-
   // Apply keystate/physics to player
   updatemovements();
 
@@ -2122,14 +2124,6 @@ function init()
   window.addEventListener("resize", function() { playfieldsize(); });
 
   playfieldsize();
-
-  // Add a bit of entropy to the rng
-  var ms=STARTED.getMilliseconds()+STARTED.getSeconds();
-  while (ms>=0)
-  {
-    var a=rng(); // advance rng
-    ms--;
-  }
 
   // Set up intro animation callback
   gs.timeline.reset().add(10*1000, undefined).addcallback(intro);

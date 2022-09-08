@@ -20,8 +20,6 @@ function ispressed(keybit)
 // Update the player key state
 function updatekeystate(e, dir)
 {
-  var a=rng(); // advance rng
-
   switch (e.code)
   {
     case "ArrowLeft": // cursor left

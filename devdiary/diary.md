@@ -348,3 +348,5 @@ becomes
     timeline.add(0, function() {console.log("A");}).add(1000, function() {console.log("A");}).begin();
 
 Made message boxes less transparent, 50% was a bit too see-through. Also spaced out better vertically.
+
+Removed predictive random number generator as we are not going to need anything other than standard random. Saves about 140 bytes in .zip size.
