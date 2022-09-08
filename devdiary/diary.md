@@ -328,3 +328,7 @@ Fix message box icon requiring x and y scroll offsets to place the icon correctl
 Show health bars above enemies and toadstools whilst being hurt. It only shows for the enemy being hurt or ones which were hurt recently.
 
 Added music playback using part of Harp Solo from "[Blue Danube](https://en.wikipedia.org/wiki/The_Blue_Danube)" (Op.314) by [Johann Strauss II](https://en.wikipedia.org/wiki/Johann_Strauss_II) (in the public domain since it was composed in 1866 - before 1924).
+
+8th September
+-------------
+Added some pop-up hints at the start of the first level, so that it acts as a trainer.

@@ -1982,6 +1982,27 @@ function newlevel(level)
     gs.state=STATEPLAYING;
     loadlevel(gs.level);
     window.requestAnimationFrame(rafcallback);
+    showmessagebox("[50]Shoot enemies\nwith the honey gun", 3*60);
+  });
+
+  gs.timeline.add(7*1000, function()
+  {
+    showmessagebox("[55]Grubs turn into Zombees\nwhen they eat toadstools", 3*60);
+  });
+
+  gs.timeline.add(11*1000, function()
+  {
+    showmessagebox("[53]Zombees chase bees\nsteal pollen and honey\nand break hives", 3*60);
+  });
+
+  gs.timeline.add(15*1000, function()
+  {
+    showmessagebox("[51]Bees collect pollen from flowers\nto make pollen in their hives", 3*60);
+  });
+
+  gs.timeline.add(19*1000, function()
+  {
+    showmessagebox("[30]Clear away toadstools to prevent\ngrubs turning into ZomBees and\nmake space for flowers to grow", 3*60);
   });
 
   gs.timeline.begin();

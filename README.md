@@ -41,6 +41,7 @@ Controls are :
 * Introduce characters on intro screen
 * Pop-up message boxes with optional icon
 * Music track
+* First level as a trainer level
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -57,7 +58,6 @@ Controls are :
 # To do list
 - [ ] Menu system
 - [ ] Completion screen
-- [ ] First level as a trainer level
 - [ ] Weather effects
 - [ ] Sound effects
 - [ ] Touch support for phone/tablet
