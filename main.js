@@ -1174,7 +1174,7 @@ function updateplayerchar()
       switch (gs.chars[id].id)
       {
         case 0: // flip between 2D and topdown
-          gs.topdown=(gs.vs<0); // pass over moving up for topdown, otherwise 2D
+          gs.topdown=((gs.hs==0) && (gs.vs<0)); // pass over moving up for topdown, otherwise 2D
           break;
 
         case 53: // Zombee
