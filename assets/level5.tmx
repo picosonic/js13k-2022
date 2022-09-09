@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="20" height="64" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="20" height="64" tilewidth="16" tileheight="16" nextobjectid="1">
  <properties>
   <property name="title" value="Plan Bee"/>
  </properties>
  <tileset firstgid="1" source="tilemap.tsx"/>
- <layer id="1" name="tiles" width="20" height="64">
+ <layer name="tiles" width="20" height="64">
   <data encoding="csv">
 35,35,35,35,35,35,35,35,35,35,35,35,35,36,36,35,35,35,35,35,
 0,0,0,0,0,0,35,0,0,0,35,0,0,0,35,0,0,0,0,0,
@@ -72,7 +72,7 @@
 22,21,22,23,22,22,21,22,23,22,22,21,23,22,21,23,6,0,7,23
 </data>
  </layer>
- <layer id="2" name="chars" width="20" height="64">
+ <layer name="chars" width="20" height="64">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -104,7 +104,7 @@
 56,0,33,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,35,35,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,52,35,35,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,56,0,0,32,0,0,0,32,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,35,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
