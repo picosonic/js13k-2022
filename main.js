@@ -5,7 +5,7 @@ const XMAX=320;
 const YMAX=180;
 const TILESIZE=16;
 const TILESPERROW=10;
-const BGCOLOUR="rgb(252, 223, 205)";
+const BGCOLOUR="rgb(252,223,205)";
 
 const STATEINTRO=0;
 const STATEMENU=1;
@@ -163,7 +163,6 @@ var gs={
   yoffset:0, // current view offset from top (vertical scroll)
   topdown:false, // is the level in top-down mode, otherwise it's 2D platformer
   spawntime:SPAWNTIME, // time in frames until next spawn event
-  gradient:null,
 
   // Input
   keystate:KEYNONE,
@@ -482,7 +481,7 @@ function drawchars()
 
       if (hmax>0)
       {
-        gs.sctx.fillStyle="rgba(0, 255, 0, 0.75)";
+        gs.sctx.fillStyle="rgba(0,255,0,0.75)";
         gs.sctx.fillRect(gs.chars[id].x-gs.xoffset, gs.chars[id].y-gs.yoffset, Math.ceil(TILESIZE*(gs.chars[id].health/hmax)), 2);
         gs.sctx.stroke();
       }
@@ -1868,8 +1867,7 @@ function redraw()
   scrolltoplayer(true);
 
   // Clear the tile canvas
-  //gs.ctx.fillStyle=BGCOLOUR;
-  gs.ctx.fillStyle=gs.gradient;
+  gs.ctx.fillStyle=BGCOLOUR;
   gs.ctx.fillRect(0, 0, gs.canvas.width, gs.canvas.height);
 
   // Draw the parallax
@@ -1901,11 +1899,12 @@ function redraw()
   if (gs.debug)
   {
     var dtop=1;
-    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "FPS : "+gs.fps, 1, "rgba(0,0,0,0.5)");
+    var textcol="rgba(0,0,0,0.5)";
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "FPS : "+gs.fps, 1, textcol);
 
-    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "GRB : "+countchars([55, 56]), 1, "rgba(0,0,0,0.5)");
-    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "ZOM : "+countchars([53, 54]), 1, "rgba(0,0,0,0.5)");
-    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "BEE : "+countchars([51, 52]), 1, "rgba(0,0,0,0.5)");
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "GRB : "+countchars([55, 56]), 1, textcol);
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "ZOM : "+countchars([53, 54]), 1, textcol);
+    write(gs.sctx, XMAX-(12*font_width), font_height*(dtop++), "BEE : "+countchars([51, 52]), 1, textcol);
   }
 }
 
@@ -2005,11 +2004,11 @@ function newlevel(level)
     gs.sctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
   
     // Write level number and title
-    write(gs.ctx, (3*3)*13, 40, "Level "+(gs.level+1), 3, "rgb(255, 191, 0)");
-    write(gs.ctx, (XMAX/2)-((levels[gs.level].title.length/2)*8), YMAX/2, levels[gs.level].title, 2, "rgb(255, 255, 255)");
+    write(gs.ctx, (3*3)*13, 40, "Level "+(gs.level+1), 3, "rgb(255,191,0)");
+    write(gs.ctx, (XMAX/2)-((levels[gs.level].title.length/2)*8), YMAX/2, levels[gs.level].title, 2, "rgb(255,255,255)");
 
     // Indicate what is required to progress to next level
-    write(gs.ctx, 9*12, YMAX-20, "Increase colony to "+(gs.level+5)+" bees", 1, "rgb(255, 191, 0)");
+    write(gs.ctx, 9*12, YMAX-20, "Increase colony to "+(gs.level+5)+" bees", 1, "rgb(255,191,0)");
   }).add(3*1000, function()
   {
     gs.state=STATEPLAYING;
@@ -2075,11 +2074,12 @@ function intro(percent)
   {
     var tenth=Math.floor(percent/10);
     var curchar=" BEE KIND ".charAt(tenth);
+    var textcol="rgb(240,240,240)";
 
     if (tenth==0)
       gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
 
-    write(gs.ctx, tenth*(8*4), 30, curchar, 5, "rgb(255, 191, 0)");
+    write(gs.ctx, tenth*(8*4), 30, curchar, 5, "rgb(255,191,0)");
 
     if (curchar!=" ")
       generateparticles((tenth+0.4)*(8*4), 30, 4, 8, {r:255, g:191, b:0});
@@ -2090,11 +2090,11 @@ function intro(percent)
     // Introduce characters
     // grub
     drawsprite({id:((Math.floor(percent/2)%2)==1)?55:56, x:XMAX-Math.floor((percent/100)*XMAX)+50, y:Math.floor((YMAX/2)+(TILESIZE*2)), flip:true});
-    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+50+TILESIZE, Math.floor((YMAX/2)+(TILESIZE*2.5)), "GRUB - eats toadstools, becomes ZOMBEE", 1, "rgb(240, 240, 240)");
+    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+50+TILESIZE, Math.floor((YMAX/2)+(TILESIZE*2.5)), "GRUB - eats toadstools, becomes ZOMBEE", 1, textcol);
 
     // zombee
     drawsprite({id:((Math.floor(percent/2)%2)==1)?53:54, x:XMAX-Math.floor((percent/100)*XMAX)+TILESIZE+50, y:Math.floor((YMAX/2)+TILESIZE), flip:true});
-    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+(TILESIZE*2)+50, Math.floor((YMAX/2)+(TILESIZE*1.3)), "ZOMBEE - steals pollen, breaks hives", 1, "rgb(240, 240, 240)");
+    write(gs.sctx, XMAX-Math.floor((percent/100)*XMAX)+(TILESIZE*2)+50, Math.floor((YMAX/2)+(TILESIZE*1.3)), "ZOMBEE - steals pollen, breaks hives", 1, textcol);
 
     // Draw rabbit
     drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:Math.floor((percent/100)*XMAX), y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
@@ -2107,8 +2107,8 @@ function intro(percent)
     if ((Math.floor(percent)%16)<=8)
     {
       var keys=((Math.floor(percent/2)%32)<16)?"WASD":"ZQSD";
-      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-20, keys+"/CURSORS + ENTER/SPACE/SHIFT", 1, "rgb(240, 240, 240)");
-      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-10, "or use GAMEPAD", 1, "rgb(240, 240, 240)");
+      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-20, keys+"/CURSORS + ENTER/SPACE/SHIFT", 1, textcol);
+      write(gs.sctx, (XMAX/4)+(TILESIZE*2), YMAX-10, "or use GAMEPAD", 1, textcol);
 
       // Draw JS13k gamepad
       drawsprite({id:10, x:(XMAX/4)+(TILESIZE/2), y:YMAX-TILESIZE, flip:false});
@@ -2167,12 +2167,6 @@ function init()
   // Set up tiles canvas
   gs.canvas=document.getElementById("tiles");
   gs.ctx=gs.canvas.getContext("2d");
-
-  // Create a gradient to use for the background
-  gs.gradient=gs.ctx.createLinearGradient(0, 0, 0, YMAX);
-  gs.gradient.addColorStop(0, "rgb(252, 223, 205)");
-  gs.gradient.addColorStop(0.5, "rgb(252, 223, 205)");
-  gs.gradient.addColorStop(1, "rgb(189, 167, 153)");
 
   // Set up sprites canvas
   gs.scanvas=document.getElementById("sprites");

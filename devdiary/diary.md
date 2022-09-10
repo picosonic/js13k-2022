@@ -370,3 +370,5 @@ Allow message boxes to be queued up to be shown one at a time. Used in the hint 
 10th September
 --------------
 Added payment pointer for Web Monetization. Thought I'd take a look at a different category this year. I've previously made entries in the  **Desktop**, **Mobile** and **Decentralized** categories. When monetization detected, player can still jump when hurt and bees move faster.
+
+Space is starting to get tight, so removed the subtle background gradient which saved about 71 bytes. Removed spaces in rgb() declarations but didn't make much difference. Tested removing OSD debug metrics code, this saved about 169 bytes.
