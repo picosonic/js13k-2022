@@ -192,14 +192,15 @@ var gs={
   timeline:new timelineobj(),
 
   // Messagebox popup
-  msgboxtext:"", // text to show in messagebox
-  msgboxtime:0, // timer for showing messagebox
+  msgboxtext:"", // text to show in current messagebox
+  msgboxtime:0, // timer for showing current messagebox
+  msgqueue:[],// Message box queue
 
   // Debug flag
   debug:false,
 
   // True when music has been started (by user interaction)
-  music:false
+  music:false 
 };
 
 // Random number generator
@@ -658,16 +659,30 @@ function drawmsgbox()
 
     gs.msgboxtime--;
   }
+  else
+  {
+    // Check if there are any message boxes queued up
+    if ((gs.state==STATEPLAYING) && (gs.msgqueue.length>0))
+    {
+      showmessagebox(gs.msgqueue[0].text, gs.msgqueue[0].duration);
+      gs.msgqueue.shift();
+    }
+  }
 }
 
 // Show messsage box
 function showmessagebox(text, timing)
 {
+  if ((gs.msgboxtime==0) && (gs.state==STATEPLAYING))
+  {
     // Set text to display
     gs.msgboxtext=text;
 
     // Set time to display messagebox
     gs.msgboxtime=timing;
+  }
+  else
+    gs.msgqueue.push({text:text, duration:timing});
 }
 
 // Check if player has left the map
@@ -1965,6 +1980,8 @@ function rafcallback(timestamp)
 // New level screen
 function newlevel(level)
 {
+  var hints=[];
+
   if ((level<0) || (level>=levels.length))
     return;
 
@@ -1975,6 +1992,7 @@ function newlevel(level)
   gs.state=STATENEWLEVEL;
 
   // Clear any messageboxes left on screen
+  gs.msgqueue=[];
   gs.msgboxtime=0;
 
   gs.timeline.add(0, function()
@@ -1997,24 +2015,45 @@ function newlevel(level)
     window.requestAnimationFrame(rafcallback);
   });
 
-  // Add hints when loading up first level
-  if (level==0)
-    gs.timeline.add(3.5*1000, function()
-    {
-      showmessagebox("[50]Shoot enemies\nwith the honey gun", 3*60);
-    }).add(7*1000, function()
-    {
-      showmessagebox("[55]Grubs turn into Zombees\nwhen they eat toadstools", 3*60);
-    }).add(11*1000, function()
-    {
-      showmessagebox("[53]Zombees chase bees\nsteal pollen and honey\nand break hives", 3*60);
-    }).add(15*1000, function()
-    {
-      showmessagebox("[51]Bees collect pollen from flowers\nto make pollen in their hives", 3*60);
-    }).add(19*1000, function()
-    {
-      showmessagebox("[30]Clear away toadstools to prevent\ngrubs turning into ZomBees and\nmake space for flowers to grow", 3*60);
-    });
+  // Add hints depending on level
+  switch (level)
+  {
+    case 0:
+      hints.push("[10]Welcome to JS13K entry\nby picosonic",
+        "[50]Shoot enemies\nwith the honey gun",
+        "[55]Grubs turn into Zombees\nwhen they eat toadstools",
+        "[53]Zombees chase bees\nsteal pollen and honey\nand break hives",
+        "[51]Bees collect pollen from flowers\nto make pollen in their hives",
+        "[30]Clear away toadstools to prevent\ngrubs turning into ZomBees and\nmake space for flowers to grow");
+      break;
+
+    case 1:
+      hints.push("[45]Watch out for gravity toggles");
+      break;
+
+    case 2:
+      hints.push("[50]Solve the maze\nto find your prize");
+      break;
+
+    case 3:
+      hints.push("[50]Use gravity toggle\nto get honey gun");
+      break;
+
+    case 4:
+      hints.push("[45]Race to the top\nwith care");
+      break;
+
+    case 5:
+      hints.push("[55]Hop to it before the\ngrubs change to Zombees");
+      break;
+
+    default:
+      break;
+  }
+
+  // Queue up all the hints as message boxes one after the other
+  for (var n=0; n<hints.length; n++)
+    showmessagebox(hints[n], 3*60);
 
   gs.timeline.begin();
 }

@@ -364,3 +364,5 @@ Added a "secret" underground section to one of the levels, hard to get to and tr
 Made plants grow more randomly so they don't all sprout up at the same time.
 
 Added workaround for collision issue where player could get stuck and the browser could hang in a tight loop.
+
+Allow message boxes to be queued up to be shown one at a time. Used in the hint system.
