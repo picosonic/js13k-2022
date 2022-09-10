@@ -351,4 +351,16 @@ Made message boxes less transparent, 50% was a bit too see-through. Also spaced 
 
 Removed predictive random number generator as we are not going to need anything other than standard random. Saves about 140 bytes in .zip size.
 
-Removed \n characters from Google Closure output, which saves about another 140 bytes in the .zip size. It would seem that it adds these every 500 or so characters to [fix issues with some firewalls and proxies](https://developers.google.com/closure/compiler/faq#linefeeds) which intentionally break JS with long lines.
+Removed \n characters from Google Closure output, which saves about another 140 bytes in the .zip size. It would seem that it adds these every 500 or so characters to [fix issues with some firewalls and proxies](https://developers.google.com/closure/compiler/faq#linefeeds) which intentionally break JS with long lines
+
+9th September
+-------------
+Some levels could be "cheated" by abusing the topdown/platformer switches. Enforced that switching to topdown only happens when only up is pressed.
+
+More level editing, trying to make sure all the existing levels are completable and that the difficulty ramps up. Also added some visual variety in the levels.
+
+Added a "secret" underground section to one of the levels, hard to get to and traverse but well worth the risk.
+
+Made plants grow more randomly so they don't all sprout up at the same time.
+
+Added workaround for collision issue where player could get stuck and the browser could hang in a tight loop.

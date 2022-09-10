@@ -366,14 +366,14 @@ function loadlevel(level)
           case 30: // toadstool
           case 31:
             obj.health=HEALTHPLANT;
-            obj.growtime=GROWTIME;
+            obj.growtime=(GROWTIME+Math.floor(rng()*120));
             gs.chars.push(obj);
             break;
 
           case 32: // flower
           case 33:
             obj.health=HEALTHPLANT;
-            obj.growtime=GROWTIME;
+            obj.growtime=(GROWTIME+Math.floor(rng()*120));
             gs.chars.push(obj);
             break;
 
@@ -789,12 +789,18 @@ function jumpcheck()
 // Move player by appropriate amount, up to a collision
 function collisioncheck()
 {
+  var loop;
+
   // Check for horizontal collisions
   if ((gs.hs!=0) && (playercollide(gs.x+gs.hs, gs.y)))
   {
+    loop=TILESIZE;
     // A collision occured, so move the character until it hits
-    while (!playercollide(gs.x+(gs.hs>0?1:-1), gs.y))
+    while ((!playercollide(gs.x+(gs.hs>0?1:-1), gs.y)) && (loop>0))
+    {
       gs.x+=(gs.hs>0?1:-1);
+      loop--;
+    }
 
     // Stop horizontal movement
     gs.hs=0;
@@ -804,9 +810,13 @@ function collisioncheck()
   // Check for vertical collisions
   if ((gs.vs!=0) && (playercollide(gs.x, gs.y+gs.vs)))
   {
+    loop=TILESIZE;
     // A collision occured, so move the character until it hits
-    while (!playercollide(gs.x, gs.y+(gs.vs>0?1:-1)))
+    while ((!playercollide(gs.x, gs.y+(gs.vs>0?1:-1))) && (loop>0))
+    {
       gs.y+=(gs.vs>0?1:-1);
+      loop--;
+    }
 
     // Stop vertical movement
     gs.vs=0;
@@ -1001,7 +1011,7 @@ function guncheck()
               if (gs.chars[id].id==30) // If it's tall, change to small toadstool
               {
                 gs.chars[id].health=HEALTHPLANT;
-                gs.chars[id].growtime=GROWTIME;
+                gs.chars[id].growtime=(GROWTIME+Math.floor(rng()*120));
                 gs.chars[id].id=31;
               }
               else
@@ -1356,7 +1366,7 @@ function updatecharAI()
                     if (gs.chars[id2].id==32) // If it's big flower, change to small flower, then the bee can get a bit more pollen
                     {
                       gs.chars[id2].health=HEALTHPLANT;
-                      gs.chars[id2].growtime=GROWTIME;
+                      gs.chars[id2].growtime=(GROWTIME+Math.floor(rng()*120));
                       gs.chars[id2].id=33;
                     }
                     else
@@ -1623,7 +1633,7 @@ function updatecharAI()
               if (gs.chars[id2].id==30) // If it's a tall toadstool, change to small toadstool, then eat a bit more
               {
                 gs.chars[id2].health=HEALTHPLANT;
-                gs.chars[id2].growtime=GROWTIME;
+                gs.chars[id2].growtime=(GROWTIME+Math.floor(rng()*120));
                 gs.chars[id2].id=31;
               }
               else
