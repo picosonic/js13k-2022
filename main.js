@@ -843,7 +843,7 @@ function collisioncheck()
 function standcheck()
 {
   // Check for ducking, or injured
-  if ((ispressed(KEYDOWN)) || (gs.htime>0))
+  if ((ispressed(KEYDOWN)) || ((gs.htime>0) && (!monetized)))
     gs.duck=true;
   else
     gs.duck=false;
@@ -1337,10 +1337,12 @@ function updatecharAI()
           }
           else
           {
+            var beespeed=SPEEDBEE*(monetized?2:1);
+
             // Move onwards, following path
             if (deltax!=0)
             {
-              gs.chars[id].hs=(nextx<gs.chars[id].x)?-SPEEDBEE:SPEEDBEE;
+              gs.chars[id].hs=(nextx<gs.chars[id].x)?-beespeed:beespeed;
               gs.chars[id].x+=gs.chars[id].hs;
               gs.chars[id].flip=(gs.chars[id].hs<0);
 
@@ -1350,7 +1352,7 @@ function updatecharAI()
 
             if (deltay!=0)
             {
-              gs.chars[id].y+=(nexty<gs.chars[id].y)?-SPEEDBEE:SPEEDBEE;
+              gs.chars[id].y+=(nexty<gs.chars[id].y)?-beespeed:beespeed;
 
               if (gs.chars[id].x<0)
                 gs.chars[id].x=0;
@@ -2025,6 +2027,9 @@ function newlevel(level)
         "[53]Zombees chase bees\nsteal pollen and honey\nand break hives",
         "[51]Bees collect pollen from flowers\nto make pollen in their hives",
         "[30]Clear away toadstools to prevent\ngrubs turning into ZomBees and\nmake space for flowers to grow");
+
+      if (monetized)
+        hints.push("[10]Web Monetization detected..\nBees move faster and you can still\njump when hurt");
       break;
 
     case 1:
@@ -2155,6 +2160,9 @@ function init()
       music_play();
     }
   };
+
+  // Web Monetization
+  setupmonetization();
 
   // Set up tiles canvas
   gs.canvas=document.getElementById("tiles");

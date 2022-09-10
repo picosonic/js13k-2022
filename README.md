@@ -24,6 +24,9 @@ Controls are :
 * *Keyboard* - Fire ... **SPACE** / **ENTER** / **SHIFT**
 * *Gamepad* - Move ... **Left stick**, Fire ... **South button**
 
+# Web Monetization
+Coil subscribers get extra functionality based on the 100+20 rule. When monetization detected, player can still jump when hurt and bees move faster.
+
 # Stuff I managed to add
 * 2D platformer
 * Desktop support
@@ -41,6 +44,7 @@ Controls are :
 * Pop-up message boxes with optional icon
 * Music track
 * First level as a trainer level
+* Web Monetization
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)

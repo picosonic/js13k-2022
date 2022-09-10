@@ -366,3 +366,7 @@ Made plants grow more randomly so they don't all sprout up at the same time.
 Added workaround for collision issue where player could get stuck and the browser could hang in a tight loop.
 
 Allow message boxes to be queued up to be shown one at a time. Used in the hint system.
+
+10th September
+--------------
+Added payment pointer for Web Monetization. Thought I'd take a look at a different category this year. I've previously made entries in the  **Desktop**, **Mobile** and **Decentralized** categories. When monetization detected, player can still jump when hurt and bees move faster.

@@ -121,13 +121,13 @@ mkdir "${buildpath}"
 # Concatenate the JS files
 echo "Concatenating JS"
 touch "${jscat}" >/dev/null 2>&1
-for file in "timeline.js" "font.js" "writer.js" "${assetjs}" "${leveljs}" "pathfinder.js" "inputs.js" "music.js" "main.js"
+for file in "monetization.js" "timeline.js" "font.js" "writer.js" "${assetjs}" "${leveljs}" "pathfinder.js" "inputs.js" "music.js" "main.js"
 do
   cat "${file}" >> "${jscat}"
 done
 
 # Add the index header
-echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><title>Bee Kind</title><style>' > "${indexcat}"
+echo -n '<!DOCTYPE html><html><head><meta charset="utf-8"/><meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><meta name="monetization" content="$ilp.uphold.com/iFiFnRFdU8fa"><title>Bee Kind</title><style>' > "${indexcat}"
 
 # Inject the concatenated and minified CSS files
 echo "Minifying CSS"
