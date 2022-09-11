@@ -374,3 +374,9 @@ Added payment pointer for Web Monetization. Thought I'd take a look at a differe
 Space is starting to get tight, so removed the subtle background gradient which saved about 71 bytes. Removed spaces in rgb() declarations but didn't make much difference. Tested removing OSD debug metrics code, this saved about 169 bytes.
 
 Added completion animation with CONGRATULATIONS, the bunny and loads of bees swarming round happily.
+
+11th September
+--------------
+Created small and large screenshots which are needed for the game submission process. Also added a manifest.json file.
+
+Expanded the text of the game completion message to include a message from the Queen Bee, as a nod to her majesty Queen Elizabeth II.

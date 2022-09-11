@@ -2087,8 +2087,8 @@ function endgame(percent)
     {
       gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
       write(gs.ctx, 35, 30, "CONGRATULATIONS", 4, "rgb(255,191,0)");
-      write(gs.ctx, 94, (YMAX/2)+20, "You've help save", 2, "rgb(255,255,255)");
-      write(gs.ctx, 88, (YMAX/2)+40, "the bees and planet", 2, "rgb(255,255,255)");
+      write(gs.ctx, 15, (YMAX/2)+20, "The Queen Bee thanks you for helping", 2, "rgb(255,255,255)");
+      write(gs.ctx, 50, (YMAX/2)+40, "to save the bees and planet", 2, "rgb(255,255,255)");
 
       // Add Bees
       gs.chars=[];
