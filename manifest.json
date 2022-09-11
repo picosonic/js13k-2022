@@ -1,0 +1,16 @@
+{
+  "name": "Bee Kind",
+  "description": "You play as BeeKeeper Bunny trying to save the bees. The bees take pollen from the flowers to their hives, but the blue ZomBees try to steal pollen and break the hives. Watch out for the grubs which turn into evil blue ZomBees when they eat enough toadstools. You can collect a gun which shoots super-strength 2000 MGO honey and neutralises the enemies. Once the bees have made enough honey in a hive, new baby bees are born.",
+  "images" :
+  {
+    "image_large": "big_screenshot.png",
+    "image_thumbnail": "small_screenshot.png"
+  },
+  "categories": ["Desktop", "Web Monetization"],
+  "user" :
+  {
+    "name": "picosonic",
+    "website": "https://picosonic.github.io/js13k-2022/",
+    "twitter": "femtosonic"
+  }
+}
