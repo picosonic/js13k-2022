@@ -380,3 +380,5 @@ Added completion animation with CONGRATULATIONS, the bunny and loads of bees swa
 Created small and large screenshots which are needed for the game submission process. Also added a manifest.json file.
 
 Expanded the text of the game completion message to include a message from the Queen Bee, as a nod to her majesty Queen Elizabeth II.
+
+Changed gravity toggles to allow horizontal movement when passing through, but to only switch to top-down if moving upwards and tile above toggle is empty.
