@@ -1956,10 +1956,10 @@ function rafcallback(timestamp)
 
       if ((gs.level+1)==levels.length)
       {
-        // End of game - TODO
-        gs.state=STATEINTRO;
+        // End of game
+        gs.state=STATECOMPLETE;
 
-        gs.timeline.reset().add(10*1000, undefined).addcallback(intro).begin(0);
+        gs.timeline.reset().add(10*1000, undefined).addcallback(endgame).begin(0);
       }
       else
         newlevel(gs.level+1);
@@ -2060,6 +2060,64 @@ function newlevel(level)
     showmessagebox(hints[n], 3*60);
 
   gs.timeline.begin();
+}
+
+function resettointro()
+{
+  gs.timeline.reset().add(10*1000, undefined).addcallback(intro).begin(0);
+}
+
+// End game animation
+function endgame(percent)
+{
+  if (gs.state!=STATECOMPLETE)
+    return;
+
+  // Check if done or control key/gamepad pressed
+  if ((percent>=98) || (gs.keystate!=KEYNONE) || (gs.padstate!=KEYNONE))
+  {
+    gs.state=STATEINTRO;
+    gs.ctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+    gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+    setTimeout(resettointro, 300);
+  }
+  else
+  {
+    if (percent==0)
+    {
+      gs.ctx.clearRect(0, 0, gs.canvas.width, gs.canvas.height);
+      write(gs.ctx, 35, 30, "CONGRATULATIONS", 4, "rgb(255,191,0)");
+      write(gs.ctx, 94, (YMAX/2)+20, "You've help save", 2, "rgb(255,255,255)");
+      write(gs.ctx, 88, (YMAX/2)+40, "the bees and planet", 2, "rgb(255,255,255)");
+
+      // Add Bees
+      gs.chars=[];
+
+      for (var n=0; n<50; n++)
+        gs.chars.push({id:51, x:Math.floor(Math.random()*XMAX), y:Math.floor(Math.random()*XMAX), flip:false, hs:Math.random()<0.5?-SPEEDBEE*2:SPEEDBEE*2, vs:Math.random()<0.5?-SPEEDBEE*2:SPEEDBEE*2});
+    }
+
+    // Clear sprite canvas
+    gs.sctx.clearRect(0, 0, gs.scanvas.width, gs.scanvas.height);
+
+    // Draw rabbit
+    drawsprite({id:((Math.floor(percent/2)%2)==1)?45:46, x:XMAX/2, y:Math.floor((YMAX/2)-(TILESIZE/2)), flip:false});
+
+    // Draw bees
+    for (var i=0; i<gs.chars.length; i++)
+    {
+      drawsprite({id:((Math.floor(percent/2)%2)==1)?51:52, x:gs.chars[i].x, y:gs.chars[i].y, flip:false});
+
+      // move bee onwards
+      gs.chars[i].x+=gs.chars[i].hs;
+      if ((gs.chars[i].x<0) || (gs.chars[i].x+TILESIZE>XMAX))
+        gs.chars[i].hs*=-1;
+
+      gs.chars[i].y+=gs.chars[i].vs;
+      if ((gs.chars[i].y<0) || (gs.chars[i].y+TILESIZE>YMAX))
+        gs.chars[i].vs*=-1;
+    }
+  }
 }
 
 // Intro animation

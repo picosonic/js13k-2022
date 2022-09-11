@@ -45,6 +45,7 @@ Coil subscribers get extra functionality based on the 100+20 rule. When monetiza
 * Music track
 * First level as a trainer level
 * Web Monetization
+* Completion screen
 
 # Tools used
 * [Ubuntu OS](https://www.ubuntu.com/)
@@ -60,7 +61,6 @@ Coil subscribers get extra functionality based on the 100+20 rule. When monetiza
 
 # To do list
 - [ ] Menu system
-- [ ] Completion screen
 - [ ] Weather effects
 - [ ] Sound effects
 - [ ] Touch support for phone/tablet
