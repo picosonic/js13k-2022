@@ -383,6 +383,8 @@ Expanded the text of the game completion message to include a message from the Q
 
 Changed gravity toggles to allow horizontal movement when passing through, but to only switch to top-down if moving upwards and tile above toggle is empty.
 
+![JS13k power up](powerup.gif?raw=true "JS13k power up")
+
 Added JS13k logo to levels, which when collected affords temporary invulnerability.
 
 Spent some time making the levels more "complicated" so that they would look nicer and therefore take up more space, got it down to 4 bytes left.
