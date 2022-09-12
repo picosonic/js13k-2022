@@ -390,3 +390,13 @@ Added JS13k logo to levels, which when collected affords temporary invulnerabili
 Spent some time making the levels more "complicated" so that they would look nicer and therefore take up more space, got it down to 4 bytes left.
 
 Thought I'd better submit the game now.
+
+12th September
+--------------
+My game is [now live](https://js13kgames.com/entries/bee-kind) on the JS13k website.
+
+![Code layout](codelayout.png?raw=true "Code layout")
+
+I've created a small graphic to visualise the layout of the code and data in my JS13k game. Where pink=HTML/CSS, green=JS, yellow=music, red=levels and light blue=tilemap.
+
+Added link on [JS13k resources page](https://js13kgames.github.io/resources/) to this dev diary / postmortem page.
