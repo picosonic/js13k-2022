@@ -8,9 +8,9 @@ The bees take pollen from the flowers to their hives, but the blue ZomBees try t
 
 Watch out for the grubs which turn into evil blue ZomBees when they eat enough toadstools.
 
-You can collect a gun which shoots super-strength 2000 MGO honey and neutralises the enemies. Once the bees have made enough honey in a hive, new baby bees are born.
+You can collect a gun which shoots super-strength 2000 MGO honey and neutralises the enemies. Once the bees have made enough honey in a hive, new baby bees are born. There is also a JS13K logo which gives temporary invulnerability.
 
-To progress to the next level you need to defeat all the enemies and help the bees grow their colony. The further you progres, the more bees you'll need to safeguard to move onwwards.
+To progress to the next level you need to defeat all the enemies and help the bees grow their colony. The further you progress, the more bees you'll need to safeguard to move onwards.
 
 Clear away toadstools to prevent grubs turning into ZomBees and make space for flowers to grow.
 
