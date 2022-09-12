@@ -142,6 +142,7 @@ var gs={
   fall:false, // falling
   duck:false, // ducking (for defence)
   htime:0, // hurt timer following enemy collision
+  invtime:0, // invulnerable time following JS13k collection
   dir:0, //direction (-1=left, 0=none, 1=right)
   hsp:1, // max horizontal speed
   vsp:1, // max vertical speed
@@ -1176,6 +1177,9 @@ function updatemovements()
   // Decrease hurt timer
   if (gs.htime>0) gs.htime--;
 
+  // Decrease invulnerability timer
+  if (gs.invtime>0) gs.invtime--;
+
   // Update any animation frames
   updateanimation();
 }
@@ -1203,9 +1207,15 @@ function updateplayerchar()
             (gs.vs<0)); // pass over moving up for topdown, otherwise 2D
           break;
 
+        case 10: // JS13K - invulnerability
+          gs.htime=0; // cure player
+          gs.invtime+=(10*60);
+          gs.chars[id].del=true;
+          break;
+
         case 53: // Zombee
         case 54:
-          if (gs.htime==0)
+          if ((gs.invtime==0) && (gs.htime==0))
             gs.htime=(5*60); // Set hurt timer
 
           if (gs.gun)
@@ -1218,12 +1228,12 @@ function updateplayerchar()
 
         case 55: // Grub
         case 56:
-          if (gs.htime==0)
+          if ((gs.invtime==0) && (gs.htime==0))
             gs.htime=(2*60); // Set hurt timer
             break;
 
         case 50: // gun
-          if (gs.htime==0)
+          if ((gs.invtime>0) || (gs.htime==0))
           {
             gs.gun=true;
             gs.tileid=40;
@@ -1885,6 +1895,9 @@ function redraw()
   drawchars();
 
   // Draw the player
+  if (gs.invtime>0)
+    generateparticles(gs.x+(TILESIZE/2), gs.y+TILESIZE, 4, 2, {r:44, g:197, b:246}); // leave a trail when invulnerable JRC
+
   if ((gs.htime==0) || ((gs.htime%30)<=15)) // Flash when hurt
     drawsprite({id:gs.tileid, x:gs.x, y:gs.y, flip:gs.flip});
 
@@ -2051,6 +2064,10 @@ function newlevel(level)
 
     case 5:
       hints.push("[55]Hop to it before the\ngrubs change to Zombees");
+      break;
+
+    case 6:
+      hints.push("[40]Take a leap of faith");
       break;
 
     default:
