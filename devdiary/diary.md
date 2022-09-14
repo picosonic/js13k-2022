@@ -4,14 +4,14 @@ This is my fifth game jam entry.
 
 Like in previous years, just before the theme was announced I created a new project template with updated build and minify steps from my entry last year.
 
-As soon as the theme was announced I had some thoughts as to what kind of game I want to create to fit the theme, here as some of my inital thoughts/notes/ideas ..
+As soon as the theme was announced I had some thoughts as to what kind of game I want to create to fit the theme, here as some of my initial thoughts/notes/ideas ..
 
 DEATH
 -----
-* The irreversable cessation of all biological functions that sustain an organism
+* The irreversible cessation of all biological functions that sustain an organism
 * End of consciousness
 * The grim reaper
-* Human skull as a representaion / symbol
+* Human skull as a representation / symbol
 * The opposite of life
 * Point in time representing the end of a timeline which started with birth
 * Ageing
@@ -107,7 +107,7 @@ Fixed issue where sprite x or y with fractional values would render slightly blu
 
 17th August
 -----------
-Improved feel of player hit detection, by making the collision box smaller. It's now 1/3rd of a tile wide (centered), and 3/5th of a tile high (clamped to the bottom). This smaller size means it's easier to navigate single-tile-wide spaces. It also means that the player's body/legs are the collision area, so the head/arms are not included, this gives a nice sprite overlap when against solid edges.
+Improved feel of player hit detection, by making the collision box smaller. It's now 1/3rd of a tile wide (centred), and 3/5th of a tile high (clamped to the bottom). This smaller size means it's easier to navigate single-tile-wide spaces. It also means that the player's body/legs are the collision area, so the head/arms are not included, this gives a nice sprite overlap when against solid edges.
 
 Reduce CPU load by not doing movement hit detection when not moving.
 
@@ -123,7 +123,7 @@ Added player/char collision testing, and ability to pick up gun.
 
 To improve readability, changed constants to uppercase and added keystate bitmask constants.
 
-Changed jump from SPACE/ENTER to UP, which seems more intuitve, leaving those free for actions.
+Changed jump from SPACE/ENTER to UP, which seems more intuitive, leaving those free for actions.
 
 Edited tilemap to change "gate" into "bee hive". This is so bees have somewhere to return to, plus I wanted the tile to be full height so when the player stands on it they don't appear to hover.
 
@@ -143,7 +143,7 @@ Prevent player going off the left/right of the level. Previously all my test lev
 
 Added predictable random number generator using Wichmann-Hill algorithm. I've used this in previous game jam entries and had good success with it.
 
-Added particle system. Initally used for exploding enemies. They get drawn last so are always visible. Currently 32 particles are generated in a specified RGB colour and scattered around a specified central point at random polar coordinates (angle and distance). They are then reduced in alpha value (become more transparent) as they decay, once 0 is reached for alpha the particle is deleted. Particles travel outwards away from their central point but are subject to a fixed (non-accelerating) gravity.
+Added particle system. Initially used for exploding enemies. They get drawn last so are always visible. Currently 32 particles are generated in a specified RGB colour and scattered around a specified central point at random polar coordinates (angle and distance). They are then reduced in alpha value (become more transparent) as they decay, once 0 is reached for alpha the particle is deleted. Particles travel outwards away from their central point but are subject to a fixed (non-accelerating) gravity.
 
 ![Shooting and particle explosions](bees3.gif?raw=true "Shooting and particle explosions")
 
@@ -199,7 +199,7 @@ Made the bees alternate between flowers and hives depending on amount of pollen 
 
 ![Bee AI debug](beedebug.png?raw=true "Bee AI debug")
 
-Added a debug indicator of pollen carried (bees/hives) and remaining health (plants/characters). This is so that I can verify the bee's descisions when moving around prior to implementing the pathfinding. Since when the pathfinding is enabled I won't as easily know where the bees are going because they won't be travelling line of sight anymore.
+Added a debug indicator of pollen carried (bees/hives) and remaining health (plants/characters). This is so that I can verify the bee's decisions when moving around prior to implementing the pathfinding. Since when the pathfinding is enabled I won't as easily know where the bees are going because they won't be travelling line of sight any more.
 
 Just about to turn in for the night, when I thought I'd test the minified version that Google Closure is outputting, however it failed to run citing undefined variables. It turned out that the 2 arrays of level data for tiles and characters within the levels was getting assigned a new variable name that wasn't in the data. By changing the way I access these it started working again. So *levels[gs.level].tiles* needed to be changed to *levels[gs.level]['tiles']* for the Closure output to be valid.
 
@@ -229,7 +229,7 @@ Had a go at creating a webworker from an in-line function. To be used for the pa
 
 24th August
 -----------
-Added an FPS counter in debug mode to see how much difference code changes are making. This was based on some code I adapated from [here](https://www.growingwiththeweb.com/2017/12/fast-simple-js-fps-counter.html).
+Added an FPS counter in debug mode to see how much difference code changes are making. This was based on some code I adapted from [here](https://www.growingwiththeweb.com/2017/12/fast-simple-js-fps-counter.html).
 
 Added the pathfinder algorithm to bee movements. Bees also now have a fixed speed rather than being based on distance to destination. When bees find they have nowhere of interest to go, they will follow the player.
 
@@ -251,7 +251,7 @@ Added gamepad support, for "default" gamepad and a set of known common ones (wit
 
 Noticed some oddities with the entity AI, so doing some investigations and making code alterations.
 
-Spent ages debugging a wierd issue cause by an assignment which was incorrectly using "==" instead of "=", due to a cut-and-paste oversight.
+Spent ages debugging a weird issue cause by an assignment which was incorrectly using "==" instead of "=", due to a cut-and-paste oversight.
 
 Removed inuse flags on flowers and hives, may add again later, but for now it was causing issues.
 
@@ -277,13 +277,13 @@ Added tiny JS13k logo to tileset.
 -----------
 Added detection of level completion, to then progress to the next level. Or if you get to the end of all the levels go back to the intro screen.
 
-Re-entering the intro screen caused an issue where the title and bees were displayed but not the bunny. It turned out that it depends where the level was scrolled to when the intro screen was entered. The default when the intro is entered for the first time is 0,0 but when entering at the end of the last level would leave the offsets as they were during gameplay. It took a lot of headscratching to realise this.
+Re-entering the intro screen caused an issue where the title and bees were displayed but not the bunny. It turned out that it depends where the level was scrolled to when the intro screen was entered. The default when the intro is entered for the first time is 0,0 but when entering at the end of the last level would leave the offsets as they were during gameplay. It took a lot of heads cratching to realise this.
 
 Made some changes to the timeline library. You can now tell if the timeline has finished. Callback timelines will get called at 0% rather than only after the next frame.
 
 Decided to make the number of bees needed to complete a level dependant on the level number, so 5 for level 1, 6 for level 2, e.t.c. Also raised the maximum number of bees and zombees active in any given level from 10 to 20.
 
-Added more stats to debug, so now under the FPS it shows the number of grubs, zombees and bees to give an idea of what it required to compelte a level.
+Added more stats to debug, so now under the FPS it shows the number of grubs, zombees and bees to give an idea of what it required to complete a level.
 
 Refactored the code for detecting if a level is complete, as I already had a library to count the number of active chars of a given set of tiles. Not sure it it helped keep the size down, but every little trim down is always good.
 
@@ -319,7 +319,7 @@ I didn't really like the way that the sprites were being flipped, so I found [an
 
 7th September
 -------------
-Improve vertical centering on message boxes when an icon is used and only 1 line of text is shown.
+Improve vertical centring on message boxes when an icon is used and only 1 line of text is shown.
 
 Fix message box icon requiring x and y scroll offsets to place the icon correctly.
 
@@ -419,7 +419,7 @@ Next I wanted to give the Bees a hive that they could take the pollen back to so
 
 I wanted to target a low retro type resolution but one which was widescreen so it would look better on modern TVs/monitors, so settled on 320x180. This made the 16x16 tiles feel about the right size when shown on a map and allowed about the right amount of the map to be visible. I found that showing too much map meant the player wanted to explore less.
 
-Last year I made the descision to make 2 games for JS13k at the same time, which was certainly challenging, but I wanted to have one which targeted [mobile gaming](https://js13kgames.com/entries/crater-space) alongside a more feature-rich [desktop](https://js13kgames.com/entries/airspace-alpha-zulu) game. This was very stressful and took up a lot of my spare time, which didn't leave much downtime. So I decided that given I was doing another 2D platformer, I would reuse as much of my previous games engines and libraries as possible so that I could concentrate on the levels and playability.
+Last year I made the decision to make 2 games for JS13k at the same time, which was certainly challenging, but I wanted to have one which targeted [mobile gaming](https://js13kgames.com/entries/crater-space) alongside a more feature-rich [desktop](https://js13kgames.com/entries/airspace-alpha-zulu) game. This was very stressful and took up a lot of my spare time, which didn't leave much downtime. So I decided that given I was doing another 2D platformer, I would reuse as much of my previous games engines and libraries as possible so that I could concentrate on the levels and playability.
 
 Since I'd not done any sprite stuff onto canvas before, I had to ditch the way my first platformer did rendering and work out from first principles how to draw sprites from a spritesheet. I was very surprised to find out that there wasn't a neat method for drawing flipped sprites and ended up going through two iterations of code snippets which I'd found on the internet. Ultimately I settled on a method which generated a second flipped version of the tilesheet that I could draw from.
 
@@ -427,7 +427,7 @@ I used VSCode more heavily this year for editing where previously I'd used almos
 
 To save time, I added a low res font which I'd used previously and an accompanying font renderer. I like the look of this font and it worked well with the low resolution theme.
 
-By the 4th day (so quite early on) I had a reasonbly good wokflow going with coding/level design and a basic platformer up and running. I made the descision to separate the tiles and characters into separate layers on the tiled maps, which may have been a contributing factor into how large they are when viewed as a percentage of the minified size. Maybe some investigation would be good to determine best way of representing them.
+By the 4th day (so quite early on) I had a reasonably good workflow going with coding/level design and a basic platformer up and running. I made the decision to separate the tiles and characters into separate layers on the tiled maps, which may have been a contributing factor into how large they are when viewed as a percentage of the minified size. Maybe some investigation would be good to determine best way of representing them.
 
 My first platformer used the browsers in-built capability to scroll around the DOM because all the on-screen elements were divs, but I needed to come up with a new way to scroll my platformer once I started making bigger levels. I ended up using an X and Y scrolling offset but that would not fix on the character directly, instead if would slow catch up with the player. Then if the player was moving too fast the scroll speed would increase to try to keep them in view. I quite like the way this ended up.
 
@@ -448,7 +448,7 @@ I spent quite a bit of time debugging odd behaviour of the characters movements,
 
 At one point I had a gradient background, but decided this didn't really fix the low colour palette theme, plus it took up valuable bytes I could use elsewhere, so that went.
 
-I like the way characters spawn witha release of particles so kept that in. I made a lot more of the particle system as I went on, and use it heavily on the intro screen, enemy damage, spawning, dust when hitting floor and later on the invulnerability power up.
+I like the way characters spawn with a release of particles so kept that in. I made a lot more of the particle system as I went on, and use it heavily on the intro screen, enemy damage, spawning, dust when hitting floor and later on the invulnerability power up.
 
 The clouds are randomly added on to the level and drawn first to make them appear in the background, they tend to appear only in the top half of the level and move in a subtle parallax way. Some of the later levels make use of solid clouds for you to stand on (like the Dizzy series) but it's meant as something you can discover rather than being told about.
 
@@ -464,6 +464,6 @@ Allowing the player to be hurt (like my first platformer) seemed a good mechanic
 
 Given the space dwindling towards the end, the last few levels are quite sparse and focus mostly on jumping between platforms, including some that require coyote-time jumps to be able to make it. One piece of feedback I had from my previous 2D game was that the difficulty started quite hard and got harder. So with the re-arragement of levels to ramp up difficulty and the addition of hints and messages I hope it's a more enjoyable experience.
 
-Music and sound for me are something else which adds to the game experience, I originally intended to use jsfxr for sound effects as I had done previously but bailed on this due to space. Instead I added a music track which is based on the harp solo from the Blue Danube. It sounds pretty peaceful and graceful, but does get a little repative after a while though.
+Music and sound for me are something else which adds to the game experience, I originally intended to use jsfxr for sound effects as I had done previously but bailed on this due to space. Instead I added a music track which is based on the harp solo from the Blue Danube. It sounds pretty peaceful and graceful, but does get a little repetitive after a while though.
 
 I thoroughly enjoyed making my entry this year, and look forward to playing and voting on all the other entries, not to mention entering again next year!
