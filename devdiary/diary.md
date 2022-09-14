@@ -277,7 +277,7 @@ Added tiny JS13k logo to tileset.
 -----------
 Added detection of level completion, to then progress to the next level. Or if you get to the end of all the levels go back to the intro screen.
 
-Re-entering the intro screen caused an issue where the title and bees were displayed but not the bunny. It turned out that it depends where the level was scrolled to when the intro screen was entered. The default when the into is entered for the first time is 0,0 but when entering at the end of the last level would leave the offsets as they were during gameplay. It took a lot of headscratching to realise this.
+Re-entering the intro screen caused an issue where the title and bees were displayed but not the bunny. It turned out that it depends where the level was scrolled to when the intro screen was entered. The default when the intro is entered for the first time is 0,0 but when entering at the end of the last level would leave the offsets as they were during gameplay. It took a lot of headscratching to realise this.
 
 Made some changes to the timeline library. You can now tell if the timeline has finished. Callback timelines will get called at 0% rather than only after the next frame.
 
@@ -400,3 +400,70 @@ My game is [now live](https://js13kgames.com/entries/bee-kind) on the JS13k webs
 I've created a small graphic to visualise the layout of the code and data in my JS13k game. Where pink=HTML/CSS, green=JS, yellow=music, red=levels and light blue=tilemap.
 
 Added link on [JS13k resources page](https://js13kgames.github.io/resources/) to this dev diary / postmortem page.
+
+Postmortem
+----------
+I found the theme quite tricky this year, despite many many games having some aspect of death in them, I felt that concentrating on death felt challenging.
+
+Given that Bees are so vital to life, my thoughts regarding not only keeping them alive but also upping their numbers felt like a suitable goal, but that so save them, sacrifices need to be made.
+
+I really enjoy playing 2D platform games, such as [Chuckie Egg](https://en.wikipedia.org/wiki/Chuckie_Egg), [Mario](https://en.wikipedia.org/wiki/Mario), [Sonic](https://en.wikipedia.org/wiki/Sonic_the_Hedgehog), [Dizzy](https://en.wikipedia.org/wiki/Dizzy_(series)), [Prince of Persia](https://en.wikipedia.org/wiki/Prince_of_Persia), [Another World](https://en.wikipedia.org/wiki/Another_World_(video_game)), [Titus the Fox](https://en.wikipedia.org/wiki/Titus_the_Fox), [Thomas Was Alone](https://en.wikipedia.org/wiki/Thomas_Was_Alone) and [Celeste](https://en.wikipedia.org/wiki/Celeste_(video_game)) to name but a few.
+
+Plus I had previously made a 2D platformer in my first JS13k entry in 2018 - [Planet Figadore has gone offline](https://js13kgames.com/entries/planet-figadore-has-gone-offline), which came in 28th place overall, and I wanted to revist the genre, and improve on the formula.
+
+I'm not a very good graphic designer, so for that first JS13k entry I used graphics that were designed by Kenney in the form of his [Abstract Platformer](https://kenney.nl/assets/abstract-platformer) set. That game was all vector based and used div elements that moved around the DOM rather than pixels on canvas.
+
+I quite like the pixelated look of retro games and their small colour palettes and low resolutions, so had a look in the Kenney releases for one I liked the look of that I might be able to use in my 2022 entry. I came across the [Pixel Line Platformer](https://kenney.nl/assets/pixel-line-platformer) which was small and compact (the spritesheet is only 1.4 kb) and fitted with the ideas I had for my new game.
+
+Next I wanted to give the Bees a hive that they could take the pollen back to so that they could make honey and ultimately new bees. So I redesigned the spritesheet slightly to remove the background colour and changed the crate to a hive.
+
+I wanted to target a low retro type resolution but one which was widescreen so it would look better on modern TVs/monitors, so settled on 320x180. This made the 16x16 tiles feel about the right size when shown on a map and allowed about the right amount of the map to be visible. I found that showing too much map meant the player wanted to explore less.
+
+Last year I made the descision to make 2 games for JS13k at the same time, which was certainly challenging, but I wanted to have one which targeted [mobile gaming](https://js13kgames.com/entries/crater-space) alongside a more feature-rich [desktop](https://js13kgames.com/entries/airspace-alpha-zulu) game. This was very stressful and took up a lot of my spare time, which didn't leave much downtime. So I decided that given I was doing another 2D platformer, I would reuse as much of my previous games engines and libraries as possible so that I could concentrate on the levels and playability.
+
+Since I'd not done any sprite stuff onto canvas before, I had to ditch the way my first platformer did rendering and work out from first principles how to draw sprites from a spritesheet. I was very surprised to find out that there wasn't a neat method for drawing flipped sprites and ended up going through two iterations of code snippets which I'd found on the internet. Ultimately I settled on a method which generated a second flipped version of the tilesheet that I could draw from.
+
+I used VSCode more heavily this year for editing where previously I'd used almost exclusively vim on the linux command line, I set up some nice workflows and hotkeys which ran scripts that were able to build/minify/package for seeing how much space was left, and also a quick launcher which didn't do as much so that I could iterate quicker. The build process checks the timestamp of some output/packed files and rebuilds them if/when the source equivalent is changed. I used this for the level files and spritesheet regeneration.
+
+To save time, I added a low res font which I'd used previously and an accompanying font renderer. I like the look of this font and it worked well with the low resolution theme.
+
+By the 4th day (so quite early on) I had a reasonbly good wokflow going with coding/level design and a basic platformer up and running. I made the descision to separate the tiles and characters into separate layers on the tiled maps, which may have been a contributing factor into how large they are when viewed as a percentage of the minified size. Maybe some investigation would be good to determine best way of representing them.
+
+My first platformer used the browsers in-built capability to scroll around the DOM because all the on-screen elements were divs, but I needed to come up with a new way to scroll my platformer once I started making bigger levels. I ended up using an X and Y scrolling offset but that would not fix on the character directly, instead if would slow catch up with the player. Then if the player was moving too fast the scroll speed would increase to try to keep them in view. I quite like the way this ended up.
+
+Next, since I wanted this to be a shooter rather than a jump on enemies heads, I had to be able to pick up the gun and for it to be able to shoot. This worked reasonably well and I added particle effects to the enemies being shot.
+
+As part of my test levels I drew up a maze (based on one at a castle I have visited), then one of the ideas I had, which I thought would be a good game mechanic is the ability to switch between 2D platformer and a kind of top-down mode to allow the maze to be completed, essentially turning off gravity. This felt quite cool so I put in an invisible toggle to the maze level, and some of the later ones which would allow for some more variety to the gameplay other than just shooting enemies.
+
+When I was thinking of a name for the game I came up with lots of bee related puns, I settle on "Bee Kind" as you have to be kind to the bees in this game and it's been a motto throughout covid of being kind to other people. The unused game names ultimately got used for the level names.
+
+To add a bit more variety I made existing small plants (toadstools / flowers) grow slightly randomly and to spawn from the ground where there is space on a flat platform with nothing above or too near it.
+There is a slight bias towards making flowers, to help the player out because some of the levels you end up waiting for bees to increase their numbers after all the enemies are removed.
+
+I found that some of the moving characters wouldn't carry out the whole of their function when they got to their destination and so wanted a way to slow them out whilst they are busy. This led me to introduce a dwell timer such that when a character gets somewhere it wants to go, it waits before deciding what to do next.
+
+Initially the AI for the grubs was coded using similar logic to the enemies in my first platform game, so it was pretty easy. But with the addition of flying characters I didn't want them to just use line of sight to move towards their next target. I found an article in Wireframe magazine (issue 48), which detailed how to implement the A* pathfinding algorithm. So I coded that up and now the flying characters go around solid objects and are able to navigate the large maze by themselves. Which I thought was pretty neat.
+
+I spent quite a bit of time debugging odd behaviour of the characters movements, so ended up adding a debug switch so I could get a better idea of where they were going and why. A lot of the initial rules were ditched because I didn't like their effect on the AI. Such as only a single visitor to toadstools, flowers and hives.
+
+At one point I had a gradient background, but decided this didn't really fix the low colour palette theme, plus it took up valuable bytes I could use elsewhere, so that went.
+
+I like the way characters spawn witha release of particles so kept that in. I made a lot more of the particle system as I went on, and use it heavily on the intro screen, enemy damage, spawning, dust when hitting floor and later on the invulnerability power up.
+
+The clouds are randomly added on to the level and drawn first to make them appear in the background, they tend to appear only in the top half of the level and move in a subtle parallax way. Some of the later levels make use of solid clouds for you to stand on (like the Dizzy series) but it's meant as something you can discover rather than being told about.
+
+Another important aspect for me in terms of what makes a good game is being able to play it with a gamepad, as it then feels much more like it's a game. I borrowed the library I'd written and added to over the years and added that on. I changed using a button for jump to pressing up on the stick because I wanted the button to be for shooting and the mazes needed an up and down capability. So to highlight this to the player I added a JS1k gamepad logo to the spritesheet which I could use to notify the user. This sprite ended up becoming a power up which gives invulnerability for a short time, whilst in this mode the player emits a lot of particles.
+
+I started adding some polish to the game towards the end, such as an intro screen, an in-between levels screen and a completion screen. This is something that some of my previous entries to JS13k didn't do very well, so I wanted to improve upon. The pop-up message boxes are something I ended up really liking. I used these for hints in the trainer level and to let the player know the progress of the bee population.
+
+I did other improvements to the game engine libraries I'd previously written including timelines so I could make more use of them in animation and game progression. Plus I decided to target a new platform this year in the form of web monetization. I don't know much about this or how it worked, but the lure of swag got me going. I looked at some entries in this category from previous years and went ahead and set up all the accounts and got a payment pointer to add to the header.
+
+I did have a week holiday camping with my kids in the middle of JS13k and this took a lot of dev time away. I did try to do some coding in the tent but ultimately I failed and ended up going to bed when the kids did. Still it was a welcome break. Plus I have 2 family birthdays (including my own) in the middle of JS13k which also gives a welcome break.
+
+Allowing the player to be hurt (like my first platformer) seemed a good mechanic so I added that in, with the player flashing whilst hurt and unable to jump. The Zombees also steal your gun when they hit you and that was something else which I liked as it meant you often had to go and get it back.
+
+Given the space dwindling towards the end, the last few levels are quite sparse and focus mostly on jumping between platforms, including some that require coyote-time jumps to be able to make it. One piece of feedback I had from my previous 2D game was that the difficulty started quite hard and got harder. So with the re-arragement of levels to ramp up difficulty and the addition of hints and messages I hope it's a more enjoyable experience.
+
+Music and sound for me are something else which adds to the game experience, I originally intended to use jsfxr for sound effects as I had done previously but bailed on this due to space. Instead I added a music track which is based on the harp solo from the Blue Danube. It sounds pretty peaceful and graceful, but does get a little repative after a while though.
+
+I thoroughly enjoyed making my entry this year, and look forward to playing and voting on all the other entries, not to mention entering again next year!
