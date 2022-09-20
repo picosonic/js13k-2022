@@ -1,6 +1,6 @@
 # Dev Diary / Postmortem
 
-This is my fifth game jam entry.
+This is my sixth game jam entry.
 
 Like in previous years, just before the theme was announced I created a new project template with updated build and minify steps from my entry last year.
 
@@ -49,7 +49,7 @@ Game ideas
 * Detective game where you have to solve a murder
 * Preventing nuclear war by hacking launch systems
 * Playing as death trying to capture beings who's number is up
-* Rolling 3D cube over a course, but with a limited set of moves
+* Rolling 3D cube over a perilous course, but with a limited set of moves
 
 Here is a rough diary of progress as posted on [Twitter](https://twitter.com/femtosonic) and taken from notes and [commit logs](https://github.com/picosonic/js13k-2022/commits/)..
 
@@ -425,6 +425,8 @@ Since I'd not done any sprite stuff onto canvas before, I had to ditch the way m
 
 I used VSCode more heavily this year for editing where previously I'd used almost exclusively vim on the linux command line, I set up some nice workflows and hotkeys which ran scripts that were able to build/minify/package for seeing how much space was left, and also a quick launcher which didn't do as much so that I could iterate quicker. The build process checks the timestamp of some output/packed files and rebuilds them if/when the source equivalent is changed. I used this for the level files and spritesheet regeneration.
 
+![8-bit font](alpha.png?raw=true "8-bit font")
+
 To save time, I added a low res font which I'd used previously and an accompanying font renderer. I like the look of this font and it worked well with the low resolution theme.
 
 By the 4th day (so quite early on) I had a reasonably good workflow going with coding/level design and a basic platformer up and running. I made the decision to separate the tiles and characters into separate layers on the tiled maps, which may have been a contributing factor into how large they are when viewed as a percentage of the minified size. Maybe some investigation would be good to determine best way of representing them.
@@ -433,7 +435,7 @@ My first platformer used the browsers in-built capability to scroll around the D
 
 Next, since I wanted this to be a shooter rather than a jump on enemies heads, I had to be able to pick up the gun and for it to be able to shoot. This worked reasonably well and I added particle effects to the enemies being shot.
 
-As part of my test levels I drew up a maze (based on one at a castle I have visited), then one of the ideas I had, which I thought would be a good game mechanic is the ability to switch between 2D platformer and a kind of top-down mode to allow the maze to be completed, essentially turning off gravity. This felt quite cool so I put in an invisible toggle to the maze level, and some of the later ones which would allow for some more variety to the gameplay other than just shooting enemies.
+As part of my test levels I drew up a maze (based on one at [a castle](https://eastnorcastle.com/things-to-do/knights-maze/) I have visited), then one of the ideas I had, which I thought would be a good game mechanic is the ability to switch between 2D platformer and a kind of top-down mode to allow the maze to be completed, essentially turning off gravity. This felt quite cool so I put in an invisible toggle to the maze level, and some of the later ones which would allow for some more variety to the gameplay other than just shooting enemies.
 
 When I was thinking of a name for the game I came up with lots of bee related puns, I settle on "Bee Kind" as you have to be kind to the bees in this game and it's been a motto throughout covid of being kind to other people. The unused game names ultimately got used for the level names.
 
@@ -442,7 +444,7 @@ There is a slight bias towards making flowers, to help the player out because so
 
 I found that some of the moving characters wouldn't carry out the whole of their function when they got to their destination and so wanted a way to slow them out whilst they are busy. This led me to introduce a dwell timer such that when a character gets somewhere it wants to go, it waits before deciding what to do next.
 
-Initially the AI for the grubs was coded using similar logic to the enemies in my first platform game, so it was pretty easy. But with the addition of flying characters I didn't want them to just use line of sight to move towards their next target. I found an article in Wireframe magazine (issue 48), which detailed how to implement the A* pathfinding algorithm. So I coded that up and now the flying characters go around solid objects and are able to navigate the large maze by themselves. Which I thought was pretty neat.
+Initially the AI for the grubs was coded using similar logic to the enemies in my first platform game, so it was pretty easy. But with the addition of flying characters I didn't want them to just use line of sight to move towards their next target. I found an article in [Wireframe magazine](https://wireframe.raspberrypi.com/issues/48) (issue 48), which detailed how to implement the A* pathfinding algorithm. So I coded that up and now the flying characters go around solid objects and are able to navigate the large maze by themselves. Which I thought was pretty neat.
 
 I spent quite a bit of time debugging odd behaviour of the characters movements, so ended up adding a debug switch so I could get a better idea of where they were going and why. A lot of the initial rules were ditched because I didn't like their effect on the AI. Such as only a single visitor to toadstools, flowers and hives.
 
@@ -456,7 +458,7 @@ Another important aspect for me in terms of what makes a good game is being able
 
 I started adding some polish to the game towards the end, such as an intro screen, an in-between levels screen and a completion screen. This is something that some of my previous entries to JS13k didn't do very well, so I wanted to improve upon. The pop-up message boxes are something I ended up really liking. I used these for hints in the trainer level and to let the player know the progress of the bee population.
 
-I did other improvements to the game engine libraries I'd previously written including timelines so I could make more use of them in animation and game progression. Plus I decided to target a new platform this year in the form of web monetization. I don't know much about this or how it worked, but the lure of swag got me going. I looked at some entries in this category from previous years and went ahead and set up all the accounts and got a payment pointer to add to the header.
+I did other improvements to the game engine libraries I'd previously written including [timelines](https://github.com/picosonic/js13k-2022/blob/main/timeline.js) so I could make more use of them in animation and game progression. Plus I decided to target a new platform this year in the form of [web monetization](https://js13kgames.com/webmonetization). I don't know much about this or how it worked, but the lure of swag got me going. I looked at some entries in this category from previous years and went ahead and set up all the accounts and got a payment pointer to add to the header.
 
 I did have a week holiday camping with my kids in the middle of JS13k and this took a lot of dev time away. I did try to do some coding in the tent but ultimately I failed and ended up going to bed when the kids did. Still it was a welcome break. Plus I have 2 family birthdays (including my own) in the middle of JS13k which also gives a welcome break.
 
@@ -464,6 +466,6 @@ Allowing the player to be hurt (like my first platformer) seemed a good mechanic
 
 Given the space dwindling towards the end, the last few levels are quite sparse and focus mostly on jumping between platforms, including some that require coyote-time jumps to be able to make it. One piece of feedback I had from my previous 2D game was that the difficulty started quite hard and got harder. So with the re-arragement of levels to ramp up difficulty and the addition of hints and messages I hope it's a more enjoyable experience.
 
-Music and sound for me are something else which adds to the game experience, I originally intended to use jsfxr for sound effects as I had done previously but bailed on this due to space. Instead I added a music track which is based on the harp solo from the Blue Danube. It sounds pretty peaceful and graceful, but does get a little repetitive after a while though.
+Music and sound for me are something else which adds to the game experience, I originally intended to use jsfxr for sound effects as I had done previously but bailed on this due to space. Instead I added a music track which is based on the harp solo from the [Blue Danube](https://en.wikipedia.org/wiki/The_Blue_Danube). It sounds pretty peaceful and graceful, but does get a little repetitive after a while though.
 
 I thoroughly enjoyed making my entry this year, and look forward to playing and voting on all the other entries, not to mention entering again next year!
