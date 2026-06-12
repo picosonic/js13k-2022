@@ -17,14 +17,17 @@ function ispressed(keybit)
 // Keyboard
 ///////////
 
+const key_arrow="Arrow";
+const key_key="Key";
+
 // Update the player key state
 function updatekeystate(e, dir)
 {
   switch (e.code)
   {
-    case "ArrowLeft": // cursor left
-    case "KeyA": // A
-    case "KeyZ": // Z
+    case key_arrow+"Left": // cursor left
+    case key_key+"A": // A
+    case key_key+"Z": // Z
       if (dir==1)
         gs.keystate|=KEYLEFT;
       else
@@ -33,8 +36,8 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case "ArrowUp": // cursor up
-    case "KeyW": // W
+    case key_arrow+"Up": // cursor up
+    case key_key+"W": // W
     case "Semicolon": // semicolon
       if (dir==1)
         gs.keystate|=KEYUP;
@@ -44,9 +47,9 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case "ArrowRight": // cursor right
-    case "KeyD": // D
-    case "KeyX": // X
+    case key_arrow+"Right": // cursor right
+    case key_key+"D": // D
+    case key_key+"X": // X
       if (dir==1)
         gs.keystate|=KEYRIGHT;
       else
@@ -55,8 +58,8 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case "ArrowDown": // cursor down
-    case "KeyS": // S
+    case key_arrow+"Down": // cursor down
+    case key_key+"S": // S
     case "Period": // dot
       if (dir==1)
         gs.keystate|=KEYDOWN;
@@ -78,14 +81,14 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
-    case "KeyI": // I (for info/debug)
+    case key_key+"I": // I (for info/debug)
       if (dir==1)
         gs.debug=(!gs.debug);
 
       e.preventDefault();
       break;
 
-    case "KeyM": // M (for music off)
+    case key_key+"M": // M (for music off)
       if (dir==1)
         music.nomore=true;
 
