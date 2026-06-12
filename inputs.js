@@ -92,6 +92,11 @@ function updatekeystate(e, dir)
       e.preventDefault();
       break;
 
+    case "Slash": // forward slash (prevent search popup)
+    case "Quote":
+      e.preventDefault();
+      break;
+
     default:
       break;
   }
